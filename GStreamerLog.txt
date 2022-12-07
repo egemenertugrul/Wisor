@@ -1,0 +1,1214 @@
+Info: Render API: 2
+mray_gstreamer_initialize
+Initializing GStreamer Engine
+Initializing GStreamer Engine - Done
+Initializing GStreamer
+GStreamerCore - Registering Elements!
+GStreamerCore - GStreamer inited
+Initializing GStreamer - Done
+Entering main loop
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=1 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.146 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=1 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=1 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=1 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=1 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : Pipeline State Changes:  GST_STATE_PLAYING--> GST_STATE_PAUSED
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : Pipeline State Changes:  GST_STATE_PLAYING--> GST_STATE_PAUSED
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! openh264enc bitrate=512000 enable-frame-skip=true ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.111 port=5000 sync=false
+Info: : GstPipelineHandler::CreatePipeline 
+Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
+Info: : Pausing
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
+Info: : Playing
+Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
+Info: : Pausing
+Info: : GstPipelineHandler::Stop 
+Info: : GstPipelineHandler::Close 
+Info: : GstPipelineHandler::Stop 
