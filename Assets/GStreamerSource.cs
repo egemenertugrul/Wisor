@@ -8,11 +8,17 @@ public class GStreamerSource : TextureSource
     //public RenderTexture renderTexture;
     public BaseVideoPlayer videoPlayer;
     private bool isReady;
+    private Texture2D texture2D;
+
 
     private Texture2D GetT2D(Texture tex)
     {
         Texture mainTexture = tex;
-        Texture2D texture2D = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGBA32, false);
+
+        if (!this.texture2D)
+        {
+            this.texture2D = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGBA32, false);
+        }
 
         RenderTexture currentRT = RenderTexture.active;
 

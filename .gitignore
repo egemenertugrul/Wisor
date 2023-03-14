@@ -90,4 +90,7 @@ crashlytics-build.properties
 !/[Aa]ssets/[Ss]treamingAssets/ORBSLAM/Custom.yaml
 !/[Aa]ssets/[Ss]treamingAssets/ORBSLAM/Custom.yaml.meta
 
+/[Aa]ssets/[Dd]emo[Mm]odels/*
+/[Aa]ssets/[Dd]emo[Mm]odels.meta
+
 !*.gitkeep
