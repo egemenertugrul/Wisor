@@ -30,6 +30,6 @@ public class SLAMTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

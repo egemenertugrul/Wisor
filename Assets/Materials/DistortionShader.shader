@@ -7,7 +7,8 @@ Shader"Hidden/Distortion Shader"
 		_MainTex("MainTex", 2D) = "white" {}
 		_distortion("distortion", range(-3, 3)) = -0.7
 		_isRight("isRight", range(0, 1)) = 0.0
-		_offsetX("offsetX", range(-0.5, 0.5)) = 0.0
+		_offsetX("offsetX", range(-1, 1)) = 0.0
+		_offsetY("offsetY", range(-1, 1)) = 0.0
 			_cubicDistortion("cubicDistortion", range(0, 3)) = 0.4
 			_scale("scale", range(0, 3)) = 1
         _OutOfBoundColour ("OutOfBoundColour", Color ) = (0,0,0,0)   
@@ -23,6 +24,7 @@ Cull off
 #pragma target 4.0 
 #include "UnityCG.cginc"
 float _offsetX;
+float _offsetY;
 
 float _distortion;
 float _cubicDistortion;
@@ -54,6 +56,7 @@ float2 barrel(float2 uv)
     float2 h = uv.xy - float2(0.5, 0.5);
     
     h.x += _offsetX.x;
+    h.y += _offsetY.x;
     
     float r2 = h.x * h.x; // + h.y * h.y;
 

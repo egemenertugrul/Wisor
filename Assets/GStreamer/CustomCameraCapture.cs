@@ -35,18 +35,13 @@ public class CustomCameraCapture : MonoBehaviour
         if (!camera)
             camera = GetComponent<Camera>();
 
-        camera.targetTexture = tempRT;
-    }
-
-    private void Start()
-    {
-        
+        //camera.targetTexture = tempRT;
     }
 
     private void OnEnable()
     {
         camera = GetComponent<Camera>();
-        camera.targetTexture = tempRT;
+        //camera.targetTexture = tempRT;
 
         previousCameraViewportRect = new Rect(camera.rect);
     }
@@ -66,7 +61,7 @@ public class CustomCameraCapture : MonoBehaviour
         if(rt)
             camera.rect = new Rect(0, 0, 1, 1);
 
-        camera.targetTexture = tempRT;
+        //camera.targetTexture = tempRT;
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -96,7 +91,7 @@ public class CustomCameraCapture : MonoBehaviour
     {
         camera.rect = previousCameraViewportRect;
 
-        camera.targetTexture = null;
+        //camera.targetTexture = null;
 
         OnPostRenderEvent.Invoke();
     }

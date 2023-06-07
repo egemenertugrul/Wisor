@@ -7,9 +7,8 @@ public class GStreamerSource : TextureSource
 {
     //public RenderTexture renderTexture;
     public BaseVideoPlayer videoPlayer;
-    private bool isReady;
     private Texture2D texture2D;
-
+    private RenderTexture renderTexture;
 
     private Texture2D GetT2D(Texture tex)
     {
@@ -17,15 +16,19 @@ public class GStreamerSource : TextureSource
 
         if (!this.texture2D)
         {
-            this.texture2D = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGBA32, false);
+            this.texture2D = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGB24, false);
         }
 
         RenderTexture currentRT = RenderTexture.active;
 
-        RenderTexture renderTexture = new RenderTexture(mainTexture.width, mainTexture.height, 32);
-        Graphics.Blit(mainTexture, renderTexture);
+        if (!this.renderTexture)
+        {
+            renderTexture = new RenderTexture(mainTexture.width, mainTexture.height, 32);
+        }
 
-        RenderTexture.active = renderTexture;
+        Graphics.Blit(mainTexture, this.renderTexture);
+
+        RenderTexture.active = this.renderTexture;
         texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
         texture2D.Apply();
 
@@ -47,10 +50,20 @@ public class GStreamerSource : TextureSource
         }
         var tex2d = GetT2D(videoPlayer.VideoTexture);
         Color32[] data = tex2d.GetPixels32();
-        Destroy(tex2d);
+        //Destroy(tex2d);
         texture = tex2d;
 
         return data;
+    }
+
+    public Texture2D GetTexture()
+    {
+        return GetT2D(videoPlayer.VideoTexture);
+    }
+
+    public byte[] GetTextureData()
+    {
+        return GetTexture().GetRawTextureData();
     }
 
     //public IntPtr GetDataPtr()
@@ -78,5 +91,10 @@ public class GStreamerSource : TextureSource
     void Update()
     {
         texture = videoPlayer.VideoTexture;
+        if(IsReady() != isReady)
+        {
+            isReady = true;
+            ReadyEvent.Invoke();
+        }
     }
 }
