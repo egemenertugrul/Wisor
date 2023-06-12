@@ -5,12 +5,11 @@ import json
 import time
 from pathlib import Path
 
-# os.environ['DISPLAY']
+os.environ['DISPLAY'] = ":0"
 # Start the renderer program as a child process
 renderer_path = Path(os.path.normpath("../OpenWiXR-Renderer/")).resolve()
 renderer_path_bin = renderer_path.joinpath("_bin/Debug/")
 renderer_process = subprocess.Popen(os.path.join(renderer_path_bin, "OpenWiXR-Renderer"), cwd=renderer_path)
-
 
 to_core_pipe_path = "/tmp/to_core"
 if os.path.exists(to_core_pipe_path):
@@ -31,17 +30,25 @@ while True:
 
     if read_ready:
         # Read the message from the renderer
-        message = os.read(to_core_pipe_fd, 128)
-        if message:
-            # Process the received message
-            print(message)
-            data = json.loads(message.decode())
-            # if data["author"] == os.getpid():
-            #     print("Got message from self.")
-            # else:
-            print("==CORE== Received message from Renderer:")
-            print("\tType:", data["type"])
-            print("\tData:", data["data"])
+        message = os.read(to_core_pipe_fd, 1024)
+        print(message)
+        messages = list(filter(lambda s: len(s) > 0, message.decode().split("\0")))
+        print(messages, len(messages))
+        for m in messages:
+            if m:
+                # Process the received message
+                try:
+                    data = json.loads(m)
+                except Exception as e:
+                    print(e)
+                    continue
+
+                # if data["author"] == os.getpid():
+                #     print("Got message from self.")
+                # else:
+                print("==CORE== Received message from Renderer:")
+                print("\tType:", data["type"])
+                print("\tData:", data["data"])
 
     if write_ready:
         # Send a message to the renderer
@@ -51,7 +58,7 @@ while True:
         }
         os.write(to_renderer_pipe_fd, json.dumps(message).encode())
 
-    time.sleep(10)
+    time.sleep(float(1/1))
     # Add any necessary synchronization mechanisms if needed
 
 # Close the pipe
