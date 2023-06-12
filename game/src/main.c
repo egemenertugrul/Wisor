@@ -23,7 +23,14 @@
 
 #include <stddef.h>
 
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/select.h>
 #include "raylib.h"
+#include "parson.h"
+
 #include "raymath.h"
 
 #define RLIGHTS_IMPLEMENTATION
@@ -92,6 +99,20 @@ Image LoadImageEx(Color* pixels, int width, int height)
 
 int main(void)
 {
+	// PIPE
+
+	int to_renderer_pipe_fd = open("/tmp/to_renderer", O_RDWR | O_NONBLOCK);
+	if (to_renderer_pipe_fd == -1)
+    {
+        fprintf(stderr, "Failed to open the named pipe\n");
+        return 1;
+    }
+	int to_core_pipe_fd = open("/tmp/to_core", O_RDWR | O_NONBLOCK);
+	if (to_core_pipe_fd == -1)
+    {
+        fprintf(stderr, "Failed to open the named pipe\n");
+        return 1;
+    }
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "raylib - test");
@@ -102,13 +123,13 @@ int main(void)
 	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
 	camera.fovy = 45.0f;
 	camera.projection = CAMERA_PERSPECTIVE;
-	SetCameraMode(camera, CAMERA_FIRST_PERSON);
-	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
+	//SetCameraMode(camera, CAMERA_FIRST_PERSON);
+	//SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 
 
 	// texture and shade a model
 	// UV's are mapped upside down for convienience
-	Model model = LoadModel("data/cube.glb");
+	Model model = LoadModel("resources/cube.glb");
 
 	// the models texture is rendered to...
 	RenderTexture2D target = LoadRenderTexture(512, 512);
@@ -118,7 +139,7 @@ int main(void)
 	model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = target.texture;
 
 	// lighting shader
-	Shader shader = LoadShader("data/simpleLight.vs", "data/simpleLight.fs");
+	Shader shader = LoadShader("resources/simpleLight.vs", "resources/simpleLight.fs");
 	shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 	shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
@@ -134,7 +155,7 @@ int main(void)
 
 	// as this moves over the texture it is always in the centre of
 	// the screen this is because we are using camera pov
-	Texture cursor = LoadTexture("data/cursor.png");
+	Texture cursor = LoadTexture("resources/cursor.png");
 
 
 	// frame counter
@@ -189,10 +210,85 @@ int main(void)
 
 	SetTargetFPS(60);               // Set  to run at 60 frames-per-second
 
+	bool shouldReply = false;
+
 	//--------------------------------------------------------------------------------------
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
+		// PIPE
+
+		{
+			fd_set read_fds, write_fds;
+			FD_ZERO(&read_fds);
+			FD_ZERO(&write_fds);
+			FD_SET(to_renderer_pipe_fd, &read_fds);
+			FD_SET(to_core_pipe_fd, &write_fds);
+
+			// Set the timeout to zero for non-blocking select
+			struct timeval timeout;
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 0;
+
+			int max_fd = (to_renderer_pipe_fd > to_core_pipe_fd) ? to_renderer_pipe_fd + 1 : to_core_pipe_fd + 1;
+			int ready = select(max_fd, &read_fds, &write_fds, NULL, &timeout);
+
+			if (ready > 0)
+			{
+				// Read the message from the pipe
+				if (FD_ISSET(to_renderer_pipe_fd, &read_fds))
+				{
+					char message[128];
+					ssize_t bytesRead = read(to_renderer_pipe_fd, message, sizeof(message) - 1);
+
+					if (bytesRead > 0)
+					{
+						// Null-terminate the received message
+						message[bytesRead] = '\0';
+
+						// Process the received message
+						JSON_Value* rootValue = json_parse_string(message);
+						JSON_Object* jsonObject = json_value_get_object(rootValue);
+						const char* type = json_object_dotget_string(jsonObject, "type");
+						const char* data = json_object_dotget_string(jsonObject, "data");
+
+						printf("==RENDERER== Received message from Python:\n");
+						printf("\tType: %s\n", type);
+						printf("\tData: %s\n", data);
+
+						// Cleanup JSON resources
+						json_value_free(rootValue);
+						shouldReply = true;
+					}
+				}
+
+				// Write a message to the pipe
+				if (FD_ISSET(to_core_pipe_fd, &write_fds))
+				{
+					if(shouldReply){
+						shouldReply = false;
+						JSON_Value* rootValue = json_value_init_object();
+						JSON_Object* jsonObject = json_value_get_object(rootValue);
+						json_object_dotset_string(jsonObject, "type", "Greeting");
+						json_object_dotset_string(jsonObject, "data", "Hello, Python!");
+
+						char* serializedMessage = json_serialize_to_string(rootValue);
+						ssize_t bytesWritten = write(to_core_pipe_fd, serializedMessage, strlen(serializedMessage));
+
+						if (bytesWritten > 0)
+						{
+							// Message sent successfully
+						}
+
+						// Cleanup JSON resources
+						json_free_serialized_string(serializedMessage);
+						json_value_free(rootValue);
+					}
+
+				}
+			}
+		}
+
 		// Update
 		//----------------------------------------------------------------------------------
 
@@ -201,15 +297,15 @@ int main(void)
 		// because the keyboard is used to move while any text editor
 		// gui element is active disable camera move
 		// click away from the gui element to regain movement control
-		if (editState & NK_EDIT_ACTIVE) {
-			SetCameraMoveControls(KEY_INVALID, KEY_INVALID, KEY_INVALID, KEY_INVALID,
-				KEY_INVALID, KEY_INVALID);
-		}
-		else {
-			SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
-		}
+		//if (editState & NK_EDIT_ACTIVE) {
+		//	SetCameraMoveControls(KEY_INVALID, KEY_INVALID, KEY_INVALID, KEY_INVALID,
+		//		KEY_INVALID, KEY_INVALID);
+		//}
+		//else {
+		//	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
+		//}
 
-		UpdateCamera(&camera);
+		UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
 		// position the light slightly above the camera
 		light.position = camera.position;
