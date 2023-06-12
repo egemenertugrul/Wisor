@@ -1,0 +1,54 @@
+#display_rotate=0x10000
+#dtoverlay=vc4-kms-v3d
+hdmi_force_hotplug=1
+#hdmi_timings=1440 0 50 10 35 2560 0 4 2 2 0 0 0 50 0 198000000 0
+hdmi_timings=1440 1 70 35 45 2560 1 12 2 2 0 0 0 60 0 245750400 3
+hdmi_group=2
+hdmi_mode=87
+#hdmi_pixel_freq_limit=245750400
+hdmi_pixel_freq_limit=252000000
+#hdmi_pixel_freq_limit=500000000
+hvs_priority=0x32ff
+max_framebuffer_width=1440
+max_framebuffer_height=2560
+framebuffer_width=720
+framebuffer_height=1280
+#framebuffer_depth=24
+#framebuffer_ignore_alpha=1
+#config_hdmi_boost=10
+gpu_mem=256
+arm_boost=1
+max_framebuffers=2
+disable_overscan=1
+dtparam=i2c_vc=on
+dtparam=i2c_vc_baudrate=50000
+dtparam=spi=on
+dtparam=i2c_arm=on
+
+#hdmi_drive=2
+#config_hdmi_boost=4
+
+# avoid_warnings=2
+
+#hdmi_cvt= 1440 2560 60
+#48.99
+
+#display_hdmi_rotate=3
+
+# dtoverlay=vc4-fkms-v3d
+
+#hdmi_cvt=2560 1440 60 3 0 0 1
+#max_framebuffer_width=2560
+#max_framebuffer_height=1440
+#hdmi_pixel_freq_limit=400000000
+#hdmi_timings=1440 0 112 160 272 2560 0 4 4 3 0 0 0 48 0 244940000 3
+
+hdmi_ignore_edid=0xa5000080
+#config_hdmi_boost=4
+force_turbo=1
+
+#camera_auto_detect=1
+#start_x=1
+
+dtoverlay=vc4-fkms-v3d
+dtoverlay=ov9281
