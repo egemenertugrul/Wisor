@@ -102,6 +102,15 @@ Image LoadImageEx(Color* pixels, int width, int height)
 int to_renderer_pipe_fd = -1;
 int to_core_pipe_fd = -1;
 
+typedef struct IMU_Data {
+	double accX, accY, accZ;
+	// double gyroX, gyroY, gyroZ;
+	double pitch, yaw, roll;
+	double time;
+} IMU_Data;
+
+IMU_Data lastSensorData;
+
 void processReceivedMessage() {
 	char message[1024];
 	ssize_t bytesRead = read_from_pipe(to_renderer_pipe_fd, message, sizeof(message) - 1);
@@ -113,21 +122,61 @@ void processReceivedMessage() {
 
 		// Process the received message
 		JSON_Value* rootValue = json_parse_string(message);
+		if (rootValue == NULL) {
+			// JSON parsing failed
+			printf("Error: Failed to parse JSON\n");
+			return;
+		}
+		
 		JSON_Object* jsonObject = json_value_get_object(rootValue);
 		const char* type = json_object_dotget_string(jsonObject, "type");
-		const char* data = json_object_dotget_string(jsonObject, "data");
+		// const char* data = json_object_dotget_string(jsonObject, "data");
 
 		printf("==RENDERER== Received message from Python:\n");
-		printf("\tType: %s\n", type);
-		printf("\tData: %s\n", data);
+		// printf("\tType: %s\n", type);
+		// printf("\tData: %s\n", data);
+		printf(message);
 
 		if (strcmp(type, "Greeting") == 0) {
 			printf("Processing Greeting message...\n");
 			// Perform actions specific to Greeting message
 			// sendMessageToCore("Greeting", "Response");
-		} else if (strcmp(type, "Update") == 0) {
-			printf("Processing Update message...\n");
+		} else if (strcmp(type, "Sensor") == 0) {
+			printf("Processing Sensor message...\n");
 			// Perform actions specific to Update message
+			// Get the 'data' object
+			JSON_Object* dataObject = json_object_get_object(jsonObject, "data");
+
+			// Get the 'acc' array
+			JSON_Array* accArray = json_object_get_array(dataObject, "acc");
+
+			// Get the 'gyro' array
+			JSON_Array* rotArray = json_object_get_array(dataObject, "rot");
+
+			// Get the 'time' value
+			double timeValue = json_object_get_number(dataObject, "time");
+
+			// Access the values of 'acc', 'gyro', and 'time'
+			double accX = json_array_get_number(accArray, 0);
+			double accY = json_array_get_number(accArray, 1);
+			double accZ = json_array_get_number(accArray, 2);
+
+			double pitch = json_array_get_number(rotArray, 0);
+			double yaw = json_array_get_number(rotArray, 1);
+			double roll = json_array_get_number(rotArray, 2);
+
+			// Print the values
+			printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
+			printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
+			printf("Time: %.2f\n", timeValue);
+
+			lastSensorData.accX = accX;
+			lastSensorData.accY = accY;
+			lastSensorData.accZ = accZ;
+
+			lastSensorData.pitch = pitch;
+			lastSensorData.yaw = yaw;
+			lastSensorData.roll = roll;
 		}
 		// Cleanup JSON resources
 		json_value_free(rootValue);
@@ -151,6 +200,10 @@ void sendMessageToCore(const char* type, const char* data) {
     json_free_serialized_string(serializedMessage);
     json_value_free(rootValue);
 }
+
+float viewAlpha = 1.0f;
+bool fadeIn = true;
+bool fadeOut = false;
 
 int main(void)
 {
@@ -181,6 +234,7 @@ int main(void)
 	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
 	camera.fovy = 45.0f;
 	camera.projection = CAMERA_PERSPECTIVE;
+
 	//SetCameraMode(camera, CAMERA_FIRST_PERSON);
 	//SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 
@@ -296,8 +350,15 @@ int main(void)
 		//else {
 		//	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 		//}
-
+		
+		// Vector3 direction;
+		// direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+		// direction.y = sinf(lastSensorData.pitch);
+		// direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+		// camera.target = Vector3Add(camera.position, direction);
 		UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		// Vector3 movement = { 0 }, rotation = {.x = lastSensorData.pitch, .y = lastSensorData.yaw, .z = lastSensorData.roll};
+		// UpdateCameraPro(&camera, movement, rotation, 1);
 
 		// position the light slightly above the camera
 		light.position = camera.position;
@@ -386,7 +447,8 @@ int main(void)
 
 			if (nk_button_label(ctx, "button")) {
 				button++;
-				sendMessageToCore("Greeting", "I pressed the button yo!");
+				// sendMessageToCore("Greeting", "I pressed the button yo!");
+				fadeOut = true;
 			}
 
 			nk_layout_row_static(ctx, 20, 80, 2);
@@ -456,8 +518,35 @@ int main(void)
 				40, 550, 48, WHITE);
 
 		}
+	
+		if (viewAlpha > 0){
+			BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
+			// Draw your view here with the alpha value
+			DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+			EndBlendMode(); // Disable alpha blending
+		}
+
 		EndDrawing();
 		//----------------------------------------------------------------------------------
+
+		// Fade-in effect
+		if (viewAlpha < 1.0f && fadeOut) {
+			viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
+			if (viewAlpha > 1.0f) { 
+				viewAlpha = 1.0f; 
+				fadeOut = false;
+			}// Clamp the value to 1 after reaching maximum transparency
+		}
+
+		// Fade-out effect
+		if (viewAlpha > 0.0f && fadeIn) {
+			viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
+			if (viewAlpha < 0.0f) {
+				 viewAlpha = 0.0f; 
+				 fadeIn = false;
+			}
+			// Clamp the value to 0 after reaching minimum transparency
+		}
 	}
 
 	// De-Initialization
