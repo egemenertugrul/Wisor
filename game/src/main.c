@@ -27,7 +27,8 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/select.h>
+
+#include "pipe_rw.h"
 #include "raylib.h"
 #include "parson.h"
 
@@ -97,22 +98,79 @@ Image LoadImageEx(Color* pixels, int width, int height)
 	return image;
 }
 
+
+int to_renderer_pipe_fd = -1;
+int to_core_pipe_fd = -1;
+
+void processReceivedMessage() {
+	char message[1024];
+	ssize_t bytesRead = read_from_pipe(to_renderer_pipe_fd, message, sizeof(message) - 1);
+
+	if (bytesRead > 0)
+	{
+		// Null-terminate the received message
+		message[bytesRead] = '\0';
+
+		// Process the received message
+		JSON_Value* rootValue = json_parse_string(message);
+		JSON_Object* jsonObject = json_value_get_object(rootValue);
+		const char* type = json_object_dotget_string(jsonObject, "type");
+		const char* data = json_object_dotget_string(jsonObject, "data");
+
+		printf("==RENDERER== Received message from Python:\n");
+		printf("\tType: %s\n", type);
+		printf("\tData: %s\n", data);
+
+		if (strcmp(type, "Greeting") == 0) {
+			printf("Processing Greeting message...\n");
+			// Perform actions specific to Greeting message
+			// sendMessageToCore("Greeting", "Response");
+		} else if (strcmp(type, "Update") == 0) {
+			printf("Processing Update message...\n");
+			// Perform actions specific to Update message
+		}
+		// Cleanup JSON resources
+		json_value_free(rootValue);
+	}
+}
+
+void sendMessageToCore(const char* type, const char* data) {
+    JSON_Value* rootValue = json_value_init_object();
+    JSON_Object* jsonObject = json_value_get_object(rootValue);
+    json_object_dotset_string(jsonObject, "type", type);
+    json_object_dotset_string(jsonObject, "data", data);
+
+    char* serializedMessage = json_serialize_to_string(rootValue);
+	serializedMessage[strlen(serializedMessage)] = '\0';
+    ssize_t bytesWritten = write_to_pipe(to_core_pipe_fd, serializedMessage);
+
+    if (bytesWritten > 0) {
+        // Message sent successfully
+    }
+    // Cleanup JSON resources
+    json_free_serialized_string(serializedMessage);
+    json_value_free(rootValue);
+}
+
 int main(void)
 {
 	// PIPE
 
-	int to_renderer_pipe_fd = open("/tmp/to_renderer", O_RDWR | O_NONBLOCK);
-	if (to_renderer_pipe_fd == -1)
-    {
-        fprintf(stderr, "Failed to open the named pipe\n");
+    const char* to_renderer_pipe_name = "/tmp/to_renderer";
+    const char* to_core_pipe_name = "/tmp/to_core";
+
+    to_renderer_pipe_fd = open_pipe(to_renderer_pipe_name);
+    if (to_renderer_pipe_fd == -1) {
+        close_pipe(to_renderer_pipe_fd);
         return 1;
     }
-	int to_core_pipe_fd = open("/tmp/to_core", O_RDWR | O_NONBLOCK);
-	if (to_core_pipe_fd == -1)
-    {
-        fprintf(stderr, "Failed to open the named pipe\n");
+
+    to_core_pipe_fd = open_pipe(to_core_pipe_name);
+    if (to_core_pipe_fd == -1) {
+        close_pipe(to_core_pipe_fd);
         return 1;
     }
+
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "raylib - test");
@@ -210,8 +268,6 @@ int main(void)
 
 	SetTargetFPS(60);               // Set  to run at 60 frames-per-second
 
-	bool shouldReply = false;
-
 	//--------------------------------------------------------------------------------------
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -219,73 +275,9 @@ int main(void)
 		// PIPE
 
 		{
-			fd_set read_fds, write_fds;
-			FD_ZERO(&read_fds);
-			FD_ZERO(&write_fds);
-			FD_SET(to_renderer_pipe_fd, &read_fds);
-			FD_SET(to_core_pipe_fd, &write_fds);
-
-			// Set the timeout to zero for non-blocking select
-			struct timeval timeout;
-			timeout.tv_sec = 0;
-			timeout.tv_usec = 0;
-
-			int max_fd = (to_renderer_pipe_fd > to_core_pipe_fd) ? to_renderer_pipe_fd + 1 : to_core_pipe_fd + 1;
-			int ready = select(max_fd, &read_fds, &write_fds, NULL, &timeout);
-
-			if (ready > 0)
+			// Read the message from the pipe
 			{
-				// Read the message from the pipe
-				if (FD_ISSET(to_renderer_pipe_fd, &read_fds))
-				{
-					char message[128];
-					ssize_t bytesRead = read(to_renderer_pipe_fd, message, sizeof(message) - 1);
-
-					if (bytesRead > 0)
-					{
-						// Null-terminate the received message
-						message[bytesRead] = '\0';
-
-						// Process the received message
-						JSON_Value* rootValue = json_parse_string(message);
-						JSON_Object* jsonObject = json_value_get_object(rootValue);
-						const char* type = json_object_dotget_string(jsonObject, "type");
-						const char* data = json_object_dotget_string(jsonObject, "data");
-
-						printf("==RENDERER== Received message from Python:\n");
-						printf("\tType: %s\n", type);
-						printf("\tData: %s\n", data);
-
-						// Cleanup JSON resources
-						json_value_free(rootValue);
-						shouldReply = true;
-					}
-				}
-
-				// Write a message to the pipe
-				if (FD_ISSET(to_core_pipe_fd, &write_fds))
-				{
-					if(shouldReply){
-						shouldReply = false;
-						JSON_Value* rootValue = json_value_init_object();
-						JSON_Object* jsonObject = json_value_get_object(rootValue);
-						json_object_dotset_string(jsonObject, "type", "Greeting");
-						json_object_dotset_string(jsonObject, "data", "Hello, Python!");
-
-						char* serializedMessage = json_serialize_to_string(rootValue);
-						ssize_t bytesWritten = write(to_core_pipe_fd, serializedMessage, strlen(serializedMessage));
-
-						if (bytesWritten > 0)
-						{
-							// Message sent successfully
-						}
-
-						// Cleanup JSON resources
-						json_free_serialized_string(serializedMessage);
-						json_value_free(rootValue);
-					}
-
-				}
+				processReceivedMessage();
 			}
 		}
 
@@ -394,6 +386,7 @@ int main(void)
 
 			if (nk_button_label(ctx, "button")) {
 				button++;
+				sendMessageToCore("Greeting", "I pressed the button yo!");
 			}
 
 			nk_layout_row_static(ctx, 20, 80, 2);
