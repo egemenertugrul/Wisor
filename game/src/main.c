@@ -53,6 +53,8 @@
 
 #include "hoverlib.h"
 
+#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
+
 // I need the barrycentre and uv coords of the hit triangle to
 // work out the uv coordinate of the hit
 // also which submesh of the model was hit
@@ -111,6 +113,15 @@ typedef struct IMU_Data {
 } IMU_Data;
 
 IMU_Data lastSensorData;
+
+
+#define MENU_ITEMS_LENGTH 3
+
+typedef struct MenuItem {
+	const char* text;
+	HoverElement element;
+	HoverCallback callback;
+} MenuItem;
 
 void processReceivedMessage() {
 	char message[1024];
@@ -204,13 +215,19 @@ float viewAlpha = 1.0f;
 bool fadeIn = true;
 bool fadeOut = false;
 
-void MyHoverCallback()
+void ConnectToWifi()
 {
     fadeOut = true;
 	// printf("HoverCallback");
 }
 
+void Shutdown(){
+	printf("Shutdown");
+}
+
 #define RADIUS 25
+#define UI_WIDTH 512
+#define UI_HEIGHT 512
 
 float CalculateFillAmount(float duration, float maxDuration)
 {
@@ -250,16 +267,20 @@ int main(void)
 
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	InitWindow(screenWidth, screenHeight, "raylib - test");
+	InitWindow(screenWidth, screenHeight, "OpenWiXR");
 
-	// Create hover elements
-    HoverElement element1;
-    HoverElement element2;
+    HoverElement elements[MENU_ITEMS_LENGTH];
 
-    // Initialize hover elements with required hover times
-    InitializeHoverElement(&element1, 2.0f);
-    InitializeHoverElement(&element2, 1.5f);
-
+MenuItem menuItems[] = {
+    { "Connect to WiFi", { false, 0.0f, 10.0f, false }, ConnectToWifi },
+    { "Open Settings", { false, 0.0f, 10.0f, false }, ConnectToWifi },
+    { "Launch Application", { false, 0.0f, 7.5f, false }, ConnectToWifi }
+};
+	int i;
+	for (i = 0; i < MENU_ITEMS_LENGTH; ++i){
+		InitializeHoverElement(&menuItems[i].element, 2.0f);
+	}
+    
 	// Define the camera to look into our 3d world
 	Camera camera = { 0 };
 	camera.position = (Vector3){ 0.0f, 2.5f, -3.0f };
@@ -276,7 +297,7 @@ int main(void)
 	Model model = LoadModel("resources/cube.glb");
 
 	// the models texture is rendered to...
-	RenderTexture2D target = LoadRenderTexture(512, 512);
+	RenderTexture2D target = LoadRenderTexture(UI_HEIGHT, UI_WIDTH);
 	SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
 	UnloadTexture(model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture);
@@ -321,36 +342,12 @@ int main(void)
 	// texture between different 3d shapes needing different gui's
 	// or different nuklear context's and render textures...
 	// (probably seperate context's)
-	int fontSize = 13;
-	Font font = LoadFontEx("resources/anonymous_pro_bold.ttf", fontSize, NULL, 0);
+	int fontSize = 32;
+	Font font = LoadFontEx("resources/DMSans-Medium.ttf", fontSize, NULL, 0);
 	struct nk_context* ctx = InitNuklearEx(font, fontSize);
 
 	const void* image;
 	int w, h;
-
-	// variables effected by the GUI
-	// track if the editor is in use
-	nk_flags editState = 0;
-
-	// option radio button
-	static int op = 1;
-	// slider
-	static float value = 0.6f;
-
-	// number of button clicks
-	int button = 0;
-
-	// text edited by the editor
-	char name[41];
-	int nameLen = 0;
-
-	// list of options in the dropdown
-	static const char* items[] = { "Apple","Bananna","Cherry","Date","Elderberry","Fig",
-		"Grape","Hawthorn","Ita Palm","Jackfruit","Kiwi","Lime","Mango","Nectarine",
-		"Olive","Pear","Quince","Raspberry","Strawberry","Tangerine","Ugli fruit",
-		"Vanilla","Watermelon","Xylocarp","Yumberry","Zucchini" };
-	static int selectedItem = 0;
-
 
 	SetTargetFPS(60);               // Set  to run at 60 frames-per-second
 
@@ -430,8 +427,8 @@ int main(void)
 		if (mhi.hit) { // if we have a hit then pump the input into the gui
 			nk_input_begin(ctx);
 			{
-				mx = 512 * u;
-				my = 512 - (512 * v);
+				mx = UI_WIDTH * u;
+				my = UI_HEIGHT - (UI_HEIGHT * v);
 
 				nk_input_motion(ctx, (int)mx, (int)my);
 
@@ -458,10 +455,10 @@ int main(void)
 		else {
 			// move the cursor out of the gui render area
 			// and release mouse button
-			nk_input_button(ctx, NK_BUTTON_LEFT, 513, 513, false);
-			nk_input_motion(ctx, 513, 513);
-			mx = 513;
-			my = 513;
+			nk_input_button(ctx, NK_BUTTON_LEFT, UI_WIDTH + 1, UI_HEIGHT + 1, false);
+			nk_input_motion(ctx, UI_WIDTH + 1, UI_HEIGHT + 1);
+			mx = UI_WIDTH + 1;
+			my = UI_HEIGHT + 1;
 		}
 
 
@@ -469,42 +466,25 @@ int main(void)
 		// it might be in view so we need to do this...
 		// could check to see if the model is in view frustrum to
 		// see if we need to do this...
-		if (nk_begin(ctx, "a window", nk_rect(10, 10, 440, 440),
-			NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_CLOSABLE))
+		if (nk_begin(ctx, "OpenWiXR Window", nk_rect(0, 0, UI_WIDTH, UI_HEIGHT),
+			NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR))
 		{
-			// see the fine nuklear manual....
-			nk_layout_row_static(ctx, 20, 80, 1);
+			/* 0.2 are a space skip on button's left and right, 0.6 - size of the button */
+			static const float ratio[] = {0.2f, 0.6f, 0.2f};  /* 0.2 + 0.6 + 0.2 = 1 */
+			const int ROW_HEIGHT = 30, VSPACE_SKIP = 60;
 
-			if (nk_button_label(ctx, "button")) {
-				button++;
-				fadeOut = true;
-			}
-			
-        	UpdateHoverElement(&element1, MyHoverCallback);
+			static const float pad = UI_WIDTH * 0.001;
+			static const float itemW = UI_WIDTH * 0.8;
+			nk_layout_row_static(ctx, (UI_HEIGHT - (ROW_HEIGHT + VSPACE_SKIP) * 3 ) / 2, itemW, 1);
 
-			nk_layout_row_static(ctx, 20, 80, 2);
-			if (nk_option_label(ctx, "easy", op == 1)) op = 1;
-			if (nk_option_label(ctx, "hard", op == 2)) op = 2;
-
-			nk_layout_row_static(ctx, 20, 120, 1);
-			nk_label(ctx, "Volume:", NK_TEXT_LEFT);
-			nk_slider_float(ctx, 0, &value, 1.0f, 0.01f);
-
-			nk_layout_row_dynamic(ctx, 20, 2);
-			if (nk_combo_begin_label(ctx, items[selectedItem], nk_vec2(nk_widget_width(ctx), 200))) {
-				nk_layout_row_dynamic(ctx, 10, 1);
-				for (int i = 0; i < 26; ++i) {
-					if (nk_combo_item_label(ctx, items[i], NK_TEXT_LEFT)) {
-						selectedItem = i;
-					}
-				}
-				nk_combo_end(ctx);
-			}
-
-			nk_layout_row_static(ctx, 24, 80, 2);
-			nk_label(ctx, "Text:", NK_TEXT_LEFT);
-			editState = nk_edit_string(ctx, NK_EDIT_FIELD, name, &nameLen, 40, nk_filter_ascii);
-
+			nk_layout_row(ctx, NK_DYNAMIC, ROW_HEIGHT, 3, ratio);
+			int i;
+			for(i=0; i<MENU_ITEMS_LENGTH; i++){
+				nk_spacing(ctx, 1); /* skip 0.2 left */
+				UpdateHoverElement(ctx, &menuItems[i].element, menuItems[i].callback);
+				nk_button_label(ctx, menuItems[i].text);
+				nk_spacing(ctx, 1); /* skip 0.2 right */
+			}        	
 		}
 		nk_end(ctx);
 
@@ -519,13 +499,21 @@ int main(void)
 			{
 				ClearBackground((Color) { 128, 128, 255, 255 });
 				// draw the gui
-				//device_draw(&dev, ctx, 512, 512, nk_vec2(1,1), NK_ANTI_ALIASING_ON);
 				DrawNuklear(ctx);
-				// put a mouse cursor on the texture
-				DrawTexture(cursor, mx, my, WHITE);
 
-	            float fillAmount = CalculateFillAmount(element1.hoverDuration, element1.requiredHoverTime);
+				int i = 0, maxVal = -1, ind = 0;
+				for (i = 0; i < 3; ++i){
+					if((&menuItems[i].element)->hoverDuration > maxVal){
+						maxVal = (&menuItems[i].element)->hoverDuration;
+						ind = i;
+					}
+				}
+
+	            float fillAmount = CalculateFillAmount((&menuItems[ind].element)->hoverDuration, (&menuItems[ind].element)->requiredHoverTime);
 				// printf("%f", element1.hoverDuration);
+				if (fillAmount == 0)
+					DrawTexture(cursor, mx, my, WHITE);
+
 				DrawFilledCircle(mx, my, RADIUS, fillAmount, RED);
 			}
 			EndTextureMode();
@@ -543,15 +531,6 @@ int main(void)
 			//DrawTextureEx(target.texture, (Vector2) { 0, 0 }, 0, 1, (Color) { 255, 255, 255, 128 });
 
 			DrawFPS(10, 10);
-
-			// show the values that are being changed by the GUI
-			name[nameLen] = 0;
-			DrawText(TextFormat("button presses %i  value %1.2f  op %i  Frame %i",
-				button, value, op, frame), 40, 600, 48, WHITE);
-			DrawText(TextFormat("ed state: %i  fruit: %s  name: %s",
-				editState, items[selectedItem], name),
-				40, 550, 48, WHITE);
-
 		}
 	
 		if (viewAlpha > 0){

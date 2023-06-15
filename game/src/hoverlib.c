@@ -9,9 +9,9 @@ void InitializeHoverElement(HoverElement *element, float requiredHoverTime)
     element->requiredHoverTime = requiredHoverTime;
 }
 
-void UpdateHoverElement(HoverElement *element, HoverCallback callback)
+void UpdateHoverElement(struct nk_context *ctx, HoverElement *element, HoverCallback callback)
 {
-    struct nk_context *ctx;  // You may need to modify this depending on your implementation
+    // struct nk_context *ctx;
 
     if (nk_widget_is_hovered(ctx))
     {
@@ -38,7 +38,7 @@ void UpdateHoverElement(HoverElement *element, HoverCallback callback)
         }
     }
     else
-    {
+    {   
         // Cursor is not hovering
         element->isHovered = false;
         element->hoverDuration = 0.0f;
