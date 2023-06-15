@@ -51,6 +51,7 @@
  // a key value of 0 causes GLFW to complain!
 #define KEY_INVALID 163 // something that isn't a key? but disables that function
 
+#include "hoverlib.h"
 
 // I need the barrycentre and uv coords of the hit triangle to
 // work out the uv coordinate of the hit
@@ -132,17 +133,15 @@ void processReceivedMessage() {
 		const char* type = json_object_dotget_string(jsonObject, "type");
 		// const char* data = json_object_dotget_string(jsonObject, "data");
 
-		printf("==RENDERER== Received message from Python:\n");
+		// printf("==RENDERER== Received message from Python:\n");
 		// printf("\tType: %s\n", type);
 		// printf("\tData: %s\n", data);
-		printf(message);
+		// printf(message);
 
 		if (strcmp(type, "Greeting") == 0) {
-			printf("Processing Greeting message...\n");
-			// Perform actions specific to Greeting message
-			// sendMessageToCore("Greeting", "Response");
+			// printf("Processing Greeting message...\n");
 		} else if (strcmp(type, "Sensor") == 0) {
-			printf("Processing Sensor message...\n");
+			// printf("Processing Sensor message...\n");
 			// Perform actions specific to Update message
 			// Get the 'data' object
 			JSON_Object* dataObject = json_object_get_object(jsonObject, "data");
@@ -166,9 +165,9 @@ void processReceivedMessage() {
 			double roll = json_array_get_number(rotArray, 2);
 
 			// Print the values
-			printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
-			printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
-			printf("Time: %.2f\n", timeValue);
+			// printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
+			// printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
+			// printf("Time: %.2f\n", timeValue);
 
 			lastSensorData.accX = accX;
 			lastSensorData.accY = accY;
@@ -205,6 +204,31 @@ float viewAlpha = 1.0f;
 bool fadeIn = true;
 bool fadeOut = false;
 
+void MyHoverCallback()
+{
+    fadeOut = true;
+	// printf("HoverCallback");
+}
+
+#define RADIUS 25
+
+float CalculateFillAmount(float duration, float maxDuration)
+{
+    if (duration >= maxDuration)
+        return 1.0f;
+    else
+        return duration / maxDuration;
+}
+
+void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color color)
+{
+	float angle = (float)(fillAmount * MAX_ANGLE);
+	float startAngle = angle;
+	float endAngle = 0;
+	int minSegments = (int)ceilf((endAngle - startAngle)/90);
+	DrawRing((Vector2) { x, y }, 25, 50, startAngle, endAngle, (int)minSegments, Fade(MAROON, 0.3f));
+}
+
 int main(void)
 {
 	// PIPE
@@ -227,6 +251,14 @@ int main(void)
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "raylib - test");
+
+	// Create hover elements
+    HoverElement element1;
+    HoverElement element2;
+
+    // Initialize hover elements with required hover times
+    InitializeHoverElement(&element1, 2.0f);
+    InitializeHoverElement(&element2, 1.5f);
 
 	// Define the camera to look into our 3d world
 	Camera camera = { 0 };
@@ -357,6 +389,7 @@ int main(void)
 		// direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
 		// camera.target = Vector3Add(camera.position, direction);
 		UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		
 		// Vector3 movement = { 0 }, rotation = {.x = lastSensorData.pitch, .y = lastSensorData.yaw, .z = lastSensorData.roll};
 		// UpdateCameraPro(&camera, movement, rotation, 1);
 
@@ -441,15 +474,13 @@ int main(void)
 		{
 			// see the fine nuklear manual....
 			nk_layout_row_static(ctx, 20, 80, 1);
-			
-			//if (nk_widget_is_hovered(ctx))
-			//	printf("Hovered\n");
 
 			if (nk_button_label(ctx, "button")) {
 				button++;
-				// sendMessageToCore("Greeting", "I pressed the button yo!");
 				fadeOut = true;
 			}
+			
+        	UpdateHoverElement(&element1, MyHoverCallback);
 
 			nk_layout_row_static(ctx, 20, 80, 2);
 			if (nk_option_label(ctx, "easy", op == 1)) op = 1;
@@ -492,6 +523,10 @@ int main(void)
 				DrawNuklear(ctx);
 				// put a mouse cursor on the texture
 				DrawTexture(cursor, mx, my, WHITE);
+
+	            float fillAmount = CalculateFillAmount(element1.hoverDuration, element1.requiredHoverTime);
+				// printf("%f", element1.hoverDuration);
+				DrawFilledCircle(mx, my, RADIUS, fillAmount, RED);
 			}
 			EndTextureMode();
 
