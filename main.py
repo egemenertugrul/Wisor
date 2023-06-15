@@ -37,9 +37,7 @@ while True:
     if read_ready:
         # Read the message from the renderer
         message = os.read(to_core_pipe_fd, 1024)
-        print(message)
         messages = list(filter(lambda s: len(s) > 0, message.decode().split("\0")))
-        print(messages, len(messages))
         for m in messages:
             if m:
                 # Process the received message
@@ -49,12 +47,9 @@ while True:
                     print(e)
                     continue
 
-                # if data["author"] == os.getpid():
-                #     print("Got message from self.")
-                # else:
-                print("==CORE== Received message from Renderer:")
-                print("\tType:", data["type"])
-                print("\tData:", data["data"])
+                # print("==CORE== Received message from Renderer:")
+                # print("\tType:", data["type"])
+                # print("\tData:", data["data"])
 
     if write_ready:
         # Send a message to the renderer
