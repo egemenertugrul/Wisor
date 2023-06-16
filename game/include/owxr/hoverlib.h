@@ -27,6 +27,6 @@ typedef void (*HoverCallback)(void);
 
 void InitializeHoverElement(HoverElement *element, float requiredHoverTime);
 
-// void UpdateHoverElement(HoverElement *element, HoverCallback callback);
+// void UpdateHoverElement(struct nk_context *ctx, HoverElement *element, HoverCallback callback);
 
 #endif  // HOVERLIB_H

@@ -1,26 +1,3 @@
-/*
- * Copyright (c) 2019 Chris Camacho (codifies -  http://bedroomcoders.co.uk/)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 #include <stddef.h>
 
 #include <stdio.h>
@@ -28,7 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "pipe_rw.h"
+#include "owxr/pipe_rw.h"
 #include "raylib.h"
 #include "parson.h"
 
@@ -40,90 +17,39 @@
 #define screenWidth 1280
 #define screenHeight 720
 
-#define halfWidth screenWidth/2
-#define halfHeight screenHeight/2
+#define halfWidth screenWidth / 2
+#define halfHeight screenHeight / 2
 
 #include "nukDefs.h"
 
 #define RAYLIB_NUKLEAR_IMPLEMENTATION
 #include "raylib-nuklear.h"
 
- // a key value of 0 causes GLFW to complain!
-#define KEY_INVALID 163 // something that isn't a key? but disables that function
-
-#include "hoverlib.h"
+#include "owxr/hoverlib.h"
+#include "owxr/utils.h"
+#include "raycast_helper.h"
 
 #define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
-
-// I need the barrycentre and uv coords of the hit triangle to
-// work out the uv coordinate of the hit
-// also which submesh of the model was hit
-// this would be a useful addition to raylib itself...
-
-// Raycast hit information
-typedef struct MyRayHitInfo {
-	bool hit;               // Did the ray hit something?
-	float distance;         // Distance to nearest hit
-	Vector3 position;       // Position of nearest hit
-	Vector3 normal;         // Surface normal of hit
-	Vector3 bazza;          // barrycentre - addition to raylib version
-	Vector2 uv1, uv2, uv3;    // uv coords of each corner of triangle - addition to raylib
-	int subMesh;            // which mesh in the model - additional to raylib
-} MyRayHitInfo;
-
-MyRayHitInfo MyGetCollisionRayTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3);
-MyRayHitInfo MyGetCollisionRayModel(Ray ray, Model* model);
-
-// Load image from Color array data (RGBA - 32bit)
-// NOTE: Creates a copy of pixels data array
-Image LoadImageEx(Color* pixels, int width, int height)
-{
-	Image image = { 0 };
-	image.data = NULL;
-	image.width = width;
-	image.height = height;
-	image.mipmaps = 1;
-	image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-
-	int k = 0;
-
-	image.data = (unsigned char*)RL_MALLOC(image.width * image.height * 4 * sizeof(unsigned char));
-
-	for (int i = 0; i < image.width * image.height * 4; i += 4)
-	{
-		((unsigned char*)image.data)[i] = pixels[k].r;
-		((unsigned char*)image.data)[i + 1] = pixels[k].g;
-		((unsigned char*)image.data)[i + 2] = pixels[k].b;
-		((unsigned char*)image.data)[i + 3] = pixels[k].a;
-		k++;
-	}
-
-	return image;
-}
-
 
 int to_renderer_pipe_fd = -1;
 int to_core_pipe_fd = -1;
 
-typedef struct IMU_Data {
-	double accX, accY, accZ;
-	// double gyroX, gyroY, gyroZ;
-	double pitch, yaw, roll;
-	double time;
-} IMU_Data;
-
 IMU_Data lastSensorData;
 
+#define STATUS_ITEMS_LENGTH 3
+Status statusItems[STATUS_ITEMS_LENGTH];
 
-#define MENU_ITEMS_LENGTH 3
+#define MENU_ITEMS_LENGTH 4
 
-typedef struct MenuItem {
-	const char* text;
+typedef struct MenuItem
+{
+	const char *text;
 	HoverElement element;
 	HoverCallback callback;
 } MenuItem;
 
-void processReceivedMessage() {
+void processReceivedMessage()
+{
 	char message[1024];
 	ssize_t bytesRead = read_from_pipe(to_renderer_pipe_fd, message, sizeof(message) - 1);
 
@@ -133,15 +59,16 @@ void processReceivedMessage() {
 		message[bytesRead] = '\0';
 
 		// Process the received message
-		JSON_Value* rootValue = json_parse_string(message);
-		if (rootValue == NULL) {
+		JSON_Value *rootValue = json_parse_string(message);
+		if (rootValue == NULL)
+		{
 			// JSON parsing failed
 			printf("Error: Failed to parse JSON\n");
 			return;
 		}
-		
-		JSON_Object* jsonObject = json_value_get_object(rootValue);
-		const char* type = json_object_dotget_string(jsonObject, "type");
+
+		JSON_Object *jsonObject = json_value_get_object(rootValue);
+		const char *type = json_object_dotget_string(jsonObject, "type");
 		// const char* data = json_object_dotget_string(jsonObject, "data");
 
 		// printf("==RENDERER== Received message from Python:\n");
@@ -149,19 +76,22 @@ void processReceivedMessage() {
 		// printf("\tData: %s\n", data);
 		// printf(message);
 
-		if (strcmp(type, "Greeting") == 0) {
+		if (strcmp(type, "Greeting") == 0)
+		{
 			// printf("Processing Greeting message...\n");
-		} else if (strcmp(type, "Sensor") == 0) {
+		}
+		else if (strcmp(type, "Sensor") == 0)
+		{
 			// printf("Processing Sensor message...\n");
 			// Perform actions specific to Update message
 			// Get the 'data' object
-			JSON_Object* dataObject = json_object_get_object(jsonObject, "data");
+			JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
 
 			// Get the 'acc' array
-			JSON_Array* accArray = json_object_get_array(dataObject, "acc");
+			JSON_Array *accArray = json_object_get_array(dataObject, "acc");
 
 			// Get the 'gyro' array
-			JSON_Array* rotArray = json_object_get_array(dataObject, "rot");
+			JSON_Array *rotArray = json_object_get_array(dataObject, "rot");
 
 			// Get the 'time' value
 			double timeValue = json_object_get_number(dataObject, "time");
@@ -188,42 +118,65 @@ void processReceivedMessage() {
 			lastSensorData.yaw = yaw;
 			lastSensorData.roll = roll;
 		}
+		else if (strcmp(type, "Status") == 0)
+		{
+			JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
+			bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
+			bool isIMUEnabled = json_object_get_boolean(dataObject, "imu");
+			bool isCameraEnabled = json_object_get_boolean(dataObject, "camera");
+
+			Status wifiStatus = { .name="WiFi", .state=isWiFiEnabled };
+			Status imuStatus = { .name="IMU", .state=isIMUEnabled };
+			Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
+			
+			statusItems[0] = wifiStatus;
+			statusItems[1] = imuStatus;
+			statusItems[2] = cameraStatus;
+			printf("%d %d %d", isWiFiEnabled, isWiFiEnabled, isWiFiEnabled);
+		}
+
 		// Cleanup JSON resources
 		json_value_free(rootValue);
 	}
 }
 
-void sendMessageToCore(const char* type, const char* data) {
-    JSON_Value* rootValue = json_value_init_object();
-    JSON_Object* jsonObject = json_value_get_object(rootValue);
-    json_object_dotset_string(jsonObject, "type", type);
-    json_object_dotset_string(jsonObject, "data", data);
+void sendMessageToCore(const char *type, const char *data)
+{
+	JSON_Value *rootValue = json_value_init_object();
+	JSON_Object *jsonObject = json_value_get_object(rootValue);
+	json_object_dotset_string(jsonObject, "type", type);
+	json_object_dotset_string(jsonObject, "data", data);
 
-    char* serializedMessage = json_serialize_to_string(rootValue);
+	char *serializedMessage = json_serialize_to_string(rootValue);
 	serializedMessage[strlen(serializedMessage)] = '\0';
-    ssize_t bytesWritten = write_to_pipe(to_core_pipe_fd, serializedMessage);
+	ssize_t bytesWritten = write_to_pipe(to_core_pipe_fd, serializedMessage);
 
-    if (bytesWritten > 0) {
-        // Message sent successfully
-    }
-    // Cleanup JSON resources
-    json_free_serialized_string(serializedMessage);
-    json_value_free(rootValue);
+	if (bytesWritten > 0)
+	{
+		// Message sent successfully
+	}
+	// Cleanup JSON resources
+	json_free_serialized_string(serializedMessage);
+	json_value_free(rootValue);
 }
 
 float viewAlpha = 1.0f;
 bool fadeIn = true;
 bool fadeOut = false;
 
-void ConnectToWifi()
+#pragma region Messages to core
+
+void C_ConnectToWifi()
 {
-    fadeOut = true;
-	// printf("HoverCallback");
+	sendMessageToCore("Command", "QRScan");
 }
 
-void Shutdown(){
+void C_Shutdown()
+{
 	printf("Shutdown");
 }
+
+#pragma endregion
 
 #define RADIUS 25
 #define UI_WIDTH 512
@@ -231,10 +184,10 @@ void Shutdown(){
 
 float CalculateFillAmount(float duration, float maxDuration)
 {
-    if (duration >= maxDuration)
-        return 1.0f;
-    else
-        return duration / maxDuration;
+	if (duration >= maxDuration)
+		return 1.0f;
+	else
+		return duration / maxDuration;
 }
 
 void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color color)
@@ -242,55 +195,60 @@ void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color co
 	float angle = (float)(fillAmount * MAX_ANGLE);
 	float startAngle = angle;
 	float endAngle = 0;
-	int minSegments = (int)ceilf((endAngle - startAngle)/90);
-	DrawRing((Vector2) { x, y }, 25, 50, startAngle, endAngle, (int)minSegments, Fade(MAROON, 0.3f));
+	int minSegments = (int)ceilf((endAngle - startAngle) / 90);
+	DrawRing((Vector2){x, y}, 25, 50, startAngle, endAngle, (int)minSegments, Fade(MAROON, 0.3f));
 }
 
 int main(void)
 {
 	// PIPE
 
-    const char* to_renderer_pipe_name = "/tmp/to_renderer";
-    const char* to_core_pipe_name = "/tmp/to_core";
+	const char *to_renderer_pipe_name = "/tmp/to_renderer";
+	const char *to_core_pipe_name = "/tmp/to_core";
 
-    to_renderer_pipe_fd = open_pipe(to_renderer_pipe_name);
-    if (to_renderer_pipe_fd == -1) {
-        close_pipe(to_renderer_pipe_fd);
-        return 1;
-    }
+	to_renderer_pipe_fd = open_pipe(to_renderer_pipe_name);
+	if (to_renderer_pipe_fd == -1)
+	{
+		close_pipe(to_renderer_pipe_fd);
+		return 1;
+	}
 
-    to_core_pipe_fd = open_pipe(to_core_pipe_name);
-    if (to_core_pipe_fd == -1) {
-        close_pipe(to_core_pipe_fd);
-        return 1;
-    }
+	to_core_pipe_fd = open_pipe(to_core_pipe_name);
+	if (to_core_pipe_fd == -1)
+	{
+		close_pipe(to_core_pipe_fd);
+		return 1;
+	}
 
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "OpenWiXR");
 
-    HoverElement elements[MENU_ITEMS_LENGTH];
+	HoverElement elements[MENU_ITEMS_LENGTH];
 
-MenuItem menuItems[] = {
-    { "Connect to WiFi", { false, 0.0f, 10.0f, false }, ConnectToWifi },
-    { "Open Settings", { false, 0.0f, 10.0f, false }, ConnectToWifi },
-    { "Launch Application", { false, 0.0f, 7.5f, false }, ConnectToWifi }
-};
+	MenuItem menuItems[] = {
+		{"Connect to WiFi", {false, 0.0f, 0.0f, false}, C_ConnectToWifi},
+		{"(N/A) Settings", {false, 0.0f, 0.0f, false}, NULL},
+		{"(N/A) Calibration", {false, 0.0f, 0.0f, false}, NULL},
+		{"(N/A) Shutdown", {false, 0.0f, 0.0f, false}, C_Shutdown}};
+
 	int i;
-	for (i = 0; i < MENU_ITEMS_LENGTH; ++i){
+	for (i = 0; i < MENU_ITEMS_LENGTH; ++i)
+	{
 		InitializeHoverElement(&menuItems[i].element, 2.0f);
 	}
-    
+
 	// Define the camera to look into our 3d world
-	Camera camera = { 0 };
-	camera.position = (Vector3){ 0.0f, 2.5f, -3.0f };
-	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+	Camera camera = {0};
+	camera.position = (Vector3){0.0f, 2.5f, -3.0f};
+	camera.up = (Vector3){0.0f, 1.0f, 0.0f};
 	camera.fovy = 45.0f;
 	camera.projection = CAMERA_PERSPECTIVE;
 
-	//SetCameraMode(camera, CAMERA_FIRST_PERSON);
-	//SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
+	// SetCameraMode(camera, CAMERA_FIRST_PERSON);
+	// SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 
+	Quaternion rotation = QuaternionIdentity();
 
 	// texture and shade a model
 	// UV's are mapped upside down for convienience
@@ -298,7 +256,7 @@ MenuItem menuItems[] = {
 
 	// the models texture is rendered to...
 	RenderTexture2D target = LoadRenderTexture(UI_HEIGHT, UI_WIDTH);
-	SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
+	SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
 
 	UnloadTexture(model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture);
 	model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = target.texture;
@@ -310,21 +268,17 @@ MenuItem menuItems[] = {
 
 	// ambient light level
 	int amb = GetShaderLocation(shader, "ambient");
-	SetShaderValue(shader, amb, (float[4]) { 0.2, 0.2, 0.2, 1.0 }, SHADER_UNIFORM_VEC4);
+	SetShaderValue(shader, amb, (float[4]){0.2, 0.2, 0.2, 1.0}, SHADER_UNIFORM_VEC4);
 
 	// set the models shader
 	model.materials[1].shader = shader;
 
 	// make a light (max 4 but we're only using 1)
-	Light light = CreateLight(LIGHT_POINT, (Vector3) { 2, 4, 1 }, Vector3Zero(), WHITE, shader);
+	Light light = CreateLight(LIGHT_POINT, (Vector3){2, 4, 1}, Vector3Zero(), WHITE, shader);
 
 	// as this moves over the texture it is always in the centre of
 	// the screen this is because we are using camera pov
 	Texture cursor = LoadTexture("resources/cursor.png");
-
-
-	// frame counter
-	int frame = 0;
 
 	// the render plane needs to be on the model XY plane
 	// so there is less movement distortion...
@@ -335,8 +289,8 @@ MenuItem menuItems[] = {
 	model.transform.m13 = 1.85f;
 
 	// the ray for the mouse and its hit info
-	Ray ray = { 0 };
-	MyRayHitInfo mhi = { 0 };
+	Ray ray = {0};
+	MyRayHitInfo mhi = {0};
 
 	// TODO not sure if its better to share a single large render
 	// texture between different 3d shapes needing different gui's
@@ -344,49 +298,46 @@ MenuItem menuItems[] = {
 	// (probably seperate context's)
 	int fontSize = 32;
 	Font font = LoadFontEx("resources/DMSans-Medium.ttf", fontSize, NULL, 0);
-	struct nk_context* ctx = InitNuklearEx(font, fontSize);
+	struct nk_context *ctx = InitNuklearEx(font, fontSize);
 
-	const void* image;
+	const void *image;
 	int w, h;
 
-	SetTargetFPS(60);               // Set  to run at 60 frames-per-second
+	SetTargetFPS(60); // Set  to run at 60 frames-per-second
 
 	//--------------------------------------------------------------------------------------
 	// Main game loop
-	while (!WindowShouldClose())    // Detect window close button or ESC key
+	while (!WindowShouldClose()) // Detect window close button or ESC key
 	{
 		// PIPE
-
-		{
-			// Read the message from the pipe
-			{
-				processReceivedMessage();
-			}
-		}
+		//----------------------------------------------------------------------------------
+		processReceivedMessage();
 
 		// Update
 		//----------------------------------------------------------------------------------
 
-		frame++;
-
 		// because the keyboard is used to move while any text editor
 		// gui element is active disable camera move
 		// click away from the gui element to regain movement control
-		//if (editState & NK_EDIT_ACTIVE) {
+		// if (editState & NK_EDIT_ACTIVE) {
 		//	SetCameraMoveControls(KEY_INVALID, KEY_INVALID, KEY_INVALID, KEY_INVALID,
 		//		KEY_INVALID, KEY_INVALID);
 		//}
-		//else {
+		// else {
 		//	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 		//}
-		
-		// Vector3 direction;
-		// direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
-		// direction.y = sinf(lastSensorData.pitch);
-		// direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
-		// camera.target = Vector3Add(camera.position, direction);
-		UpdateCamera(&camera, CAMERA_FIRST_PERSON);
-		
+
+		// {
+		// 	Vector3 direction;
+		// 	direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+		// 	direction.y = sinf(lastSensorData.pitch);
+		// 	direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+		// 	camera.target = Vector3Add(camera.position, direction);
+		// }
+		{
+			UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		}
+
 		// Vector3 movement = { 0 }, rotation = {.x = lastSensorData.pitch, .y = lastSensorData.yaw, .z = lastSensorData.roll};
 		// UpdateCameraPro(&camera, movement, rotation, 1);
 
@@ -399,32 +350,33 @@ MenuItem menuItems[] = {
 		UpdateLightValues(shader, light);
 
 		// the ray is always down the cameras point of view
-		ray = GetMouseRay((Vector2) { halfWidth, halfHeight }, camera);
+		ray = GetMouseRay((Vector2){halfWidth, halfHeight}, camera);
 
 		// Check ray collision against model
 		// NOTE: It considers model.transform matrix!
 		// but NOT position in DrawModel....
 		mhi = MyGetCollisionRayModel(ray, &model);
-		if (mhi.subMesh != 0) {
+		if (mhi.subMesh != 0)
+		{
 			mhi.hit = false; // we only want to hit the ui mesh
 		}
 
 		// convert barrycentre coordinate into uv coordinate based
 		// on the triangles uvs
 		float u = mhi.bazza.x * mhi.uv1.x +
-			mhi.bazza.y * mhi.uv2.x +
-			mhi.bazza.z * mhi.uv3.x;
+				  mhi.bazza.y * mhi.uv2.x +
+				  mhi.bazza.z * mhi.uv3.x;
 
 		float v = mhi.bazza.x * mhi.uv1.y +
-			mhi.bazza.y * mhi.uv2.y +
-			mhi.bazza.z * mhi.uv3.y;
-
+				  mhi.bazza.y * mhi.uv2.y +
+				  mhi.bazza.z * mhi.uv3.y;
 
 		// mouse position and wheel
 		float mx = 0, my = 0, mz = 0;
 
 		// inject input into the GUI
-		if (mhi.hit) { // if we have a hit then pump the input into the gui
+		if (mhi.hit)
+		{ // if we have a hit then pump the input into the gui
 			nk_input_begin(ctx);
 			{
 				mx = UI_WIDTH * u;
@@ -452,7 +404,8 @@ MenuItem menuItems[] = {
 			}
 			nk_input_end(ctx);
 		}
-		else {
+		else
+		{
 			// move the cursor out of the gui render area
 			// and release mouse button
 			nk_input_button(ctx, NK_BUTTON_LEFT, UI_WIDTH + 1, UI_HEIGHT + 1, false);
@@ -461,30 +414,39 @@ MenuItem menuItems[] = {
 			my = UI_HEIGHT + 1;
 		}
 
-
 		// update the gui, (even if we are not actually pointing at it
 		// it might be in view so we need to do this...
 		// could check to see if the model is in view frustrum to
 		// see if we need to do this...
 		if (nk_begin(ctx, "OpenWiXR Window", nk_rect(0, 0, UI_WIDTH, UI_HEIGHT),
-			NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR))
+					 NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR))
 		{
 			/* 0.2 are a space skip on button's left and right, 0.6 - size of the button */
-			static const float ratio[] = {0.2f, 0.6f, 0.2f};  /* 0.2 + 0.6 + 0.2 = 1 */
+			static const float ratio[] = {0.2f, 0.6f, 0.2f}; /* 0.2 + 0.6 + 0.2 = 1 */
 			const int ROW_HEIGHT = 30, VSPACE_SKIP = 60;
 
 			static const float pad = UI_WIDTH * 0.001;
 			static const float itemW = UI_WIDTH * 0.8;
-			nk_layout_row_static(ctx, (UI_HEIGHT - (ROW_HEIGHT + VSPACE_SKIP) * 3 ) / 2, itemW, 1);
-
+			nk_layout_row_static(ctx, (UI_HEIGHT - (ROW_HEIGHT + VSPACE_SKIP) * 3) / 2, itemW, 1);
 			nk_layout_row(ctx, NK_DYNAMIC, ROW_HEIGHT, 3, ratio);
 			int i;
-			for(i=0; i<MENU_ITEMS_LENGTH; i++){
+			for (i = 0; i < MENU_ITEMS_LENGTH; i++)
+			{
 				nk_spacing(ctx, 1); /* skip 0.2 left */
 				UpdateHoverElement(ctx, &menuItems[i].element, menuItems[i].callback);
 				nk_button_label(ctx, menuItems[i].text);
 				nk_spacing(ctx, 1); /* skip 0.2 right */
-			}        	
+			}
+			
+			nk_layout_row_static(ctx, (UI_HEIGHT - (ROW_HEIGHT + VSPACE_SKIP * 2) * 3) / 2, itemW, 1);
+			nk_layout_row(ctx, NK_DYNAMIC, ROW_HEIGHT, 3, ratio);
+			int j;
+			for (j = 0; j < STATUS_ITEMS_LENGTH; j++)
+			{
+				nk_spacing(ctx, 1); /* skip 0.2 left */
+				nk_label(ctx, TextFormat("%s:\t %s", statusItems[j].name, statusItems[j].state ? "Enabled" : "Disabled"), NK_TEXT_LEFT);
+				nk_spacing(ctx, 1); /* skip 0.2 right */
+			}
 		}
 		nk_end(ctx);
 
@@ -497,20 +459,21 @@ MenuItem menuItems[] = {
 			// render to the model's "screen" texture
 			BeginTextureMode(target);
 			{
-				ClearBackground((Color) { 128, 128, 255, 255 });
+				ClearBackground((Color){128, 128, 255, 255});
 				// draw the gui
 				DrawNuklear(ctx);
 
 				int i = 0, maxVal = -1, ind = 0;
-				for (i = 0; i < 3; ++i){
-					if((&menuItems[i].element)->hoverDuration > maxVal){
+				for (i = 0; i < MENU_ITEMS_LENGTH; ++i)
+				{
+					if ((&menuItems[i].element)->hoverDuration > maxVal)
+					{
 						maxVal = (&menuItems[i].element)->hoverDuration;
 						ind = i;
 					}
 				}
 
-	            float fillAmount = CalculateFillAmount((&menuItems[ind].element)->hoverDuration, (&menuItems[ind].element)->requiredHoverTime);
-				// printf("%f", element1.hoverDuration);
+				float fillAmount = CalculateFillAmount((&menuItems[ind].element)->hoverDuration, (&menuItems[ind].element)->requiredHoverTime);
 				if (fillAmount == 0)
 					DrawTexture(cursor, mx, my, WHITE);
 
@@ -521,19 +484,16 @@ MenuItem menuItems[] = {
 			BeginMode3D(camera);
 			{
 				// finally render the model
-				DrawModel(model, (Vector3) { 0, 0, 0 }, 1, WHITE);
-				DrawGrid(10, 1.0f);        // Draw a grid
+				DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
+				DrawGrid(10, 1.0f); // Draw a grid
 			}
 			EndMode3D();
 
-			// just out of curiosity...
-			//DrawTexture(txImg,0,0,WHITE);
-			//DrawTextureEx(target.texture, (Vector2) { 0, 0 }, 0, 1, (Color) { 255, 255, 255, 128 });
-
 			DrawFPS(10, 10);
 		}
-	
-		if (viewAlpha > 0){
+
+		if (viewAlpha > 0)
+		{
 			BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
 			// Draw your view here with the alpha value
 			DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
@@ -544,20 +504,24 @@ MenuItem menuItems[] = {
 		//----------------------------------------------------------------------------------
 
 		// Fade-in effect
-		if (viewAlpha < 1.0f && fadeOut) {
+		if (viewAlpha < 1.0f && fadeOut)
+		{
 			viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
-			if (viewAlpha > 1.0f) { 
-				viewAlpha = 1.0f; 
+			if (viewAlpha > 1.0f)
+			{
+				viewAlpha = 1.0f;
 				fadeOut = false;
-			}// Clamp the value to 1 after reaching maximum transparency
+			} // Clamp the value to 1 after reaching maximum transparency
 		}
 
 		// Fade-out effect
-		if (viewAlpha > 0.0f && fadeIn) {
+		if (viewAlpha > 0.0f && fadeIn)
+		{
 			viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
-			if (viewAlpha < 0.0f) {
-				 viewAlpha = 0.0f; 
-				 fadeIn = false;
+			if (viewAlpha < 0.0f)
+			{
+				viewAlpha = 0.0f;
+				fadeIn = false;
 			}
 			// Clamp the value to 0 after reaching minimum transparency
 		}
@@ -571,148 +535,8 @@ MenuItem menuItems[] = {
 	UnloadRenderTexture(target);
 	UnloadShader(shader);
 	UnloadNuklear(ctx);
-	CloseWindow();        // Close window and OpenGL context
+	CloseWindow(); // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 
 	return 0;
 }
-
-/*
- * modified ray/triangle and ray/model to additionally report back
- * barycentre and uv coords of selected triangle and sub mesh
- * (original source raylib!)
- */
-
- // Get collision info between ray and triangle
- // NOTE: Based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-MyRayHitInfo MyGetCollisionRayTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3)
-{
-#define EPSILON 0.000001        // A small number
-
-	Vector3 edge1, edge2;
-	Vector3 p, q, tv;
-	float det, invDet, u, v, t;
-	MyRayHitInfo result = { 0 };
-
-	// Find vectors for two edges sharing V1
-	edge1 = Vector3Subtract(p2, p1);
-	edge2 = Vector3Subtract(p3, p1);
-
-	// Begin calculating determinant - also used to calculate u parameter
-	p = Vector3CrossProduct(ray.direction, edge2);
-
-	// If determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
-	det = Vector3DotProduct(edge1, p);
-
-	// Avoid culling!
-	if ((det > -EPSILON) && (det < EPSILON)) return result;
-
-	invDet = 1.0f / det;
-
-	// Calculate distance from V1 to ray origin
-	tv = Vector3Subtract(ray.position, p1);
-
-	// Calculate u parameter and test bound
-	u = Vector3DotProduct(tv, p) * invDet;
-
-	// The intersection lies outside of the triangle
-	if ((u < 0.0f) || (u > 1.0f)) return result;
-
-	// Prepare to test v parameter
-	q = Vector3CrossProduct(tv, edge1);
-
-	// Calculate V parameter and test bound
-	v = Vector3DotProduct(ray.direction, q) * invDet;
-
-	// The intersection lies outside of the triangle
-	if ((v < 0.0f) || ((u + v) > 1.0f)) return result;
-
-	t = Vector3DotProduct(edge2, q) * invDet;
-
-	if (t > EPSILON)
-	{
-		// Ray hit, get hit point and normal
-		result.hit = true;
-		result.distance = t;
-		result.hit = true;
-		result.normal = Vector3Normalize(Vector3CrossProduct(edge1, edge2));
-		result.position = Vector3Add(ray.position, Vector3Scale(ray.direction, t));
-	}
-
-	// additional barycentre info
-	result.bazza = Vector3Barycenter(result.position, p1, p2, p3);
-
-	return result;
-}
-
-// Get collision info between ray and model
-MyRayHitInfo MyGetCollisionRayModel(Ray ray, Model* model)
-{
-	MyRayHitInfo result = { 0 };
-
-	for (int m = 0; m < model->meshCount; m++)
-	{
-		// Check if meshhas vertex data on CPU for testing
-		if (model->meshes[m].vertices != NULL)
-		{
-			// model->mesh.triangleCount may not be set, vertexCount is more reliable
-			int triangleCount = model->meshes[m].vertexCount / 3;
-
-			// Test against all triangles in mesh
-			for (int i = 0; i < triangleCount; i++)
-			{
-				Vector3 a, b, c;
-				Vector2 u1, u2, u3;
-				Vector3* vertdata = (Vector3*)model->meshes[m].vertices;
-				Vector2* uvdata = (Vector2*)model->meshes[m].texcoords;
-
-				if (model->meshes[m].indices)
-				{
-					a = vertdata[model->meshes[m].indices[i * 3 + 0]];
-					b = vertdata[model->meshes[m].indices[i * 3 + 1]];
-					c = vertdata[model->meshes[m].indices[i * 3 + 2]];
-
-					// additional uv data
-					u1 = uvdata[model->meshes[m].indices[i * 3 + 0]];
-					u2 = uvdata[model->meshes[m].indices[i * 3 + 1]];
-					u3 = uvdata[model->meshes[m].indices[i * 3 + 2]];
-				}
-				else
-				{
-					a = vertdata[i * 3 + 0];
-					b = vertdata[i * 3 + 1];
-					c = vertdata[i * 3 + 2];
-
-					// additional uv data
-					u1 = uvdata[i * 3 + 0];
-					u2 = uvdata[i * 3 + 1];
-					u3 = uvdata[i * 3 + 2];
-				}
-
-				a = Vector3Transform(a, model->transform);
-				b = Vector3Transform(b, model->transform);
-				c = Vector3Transform(c, model->transform);
-
-				MyRayHitInfo triHitInfo = MyGetCollisionRayTriangle(ray, a, b, c);
-				triHitInfo.uv1 = u1;
-				triHitInfo.uv2 = u2;
-				triHitInfo.uv3 = u3;
-
-				// there could be multiple hits so we
-				// need to test all the tri's and find the closest
-				if (triHitInfo.hit)
-				{
-					// Save the closest hit triangle
-					if ((!result.hit) || (result.distance > triHitInfo.distance)) {
-						result = triHitInfo;
-						result.subMesh = m;
-					}
-
-				}
-			}
-		}
-	}
-
-	return result;
-}
-
