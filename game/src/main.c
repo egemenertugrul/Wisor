@@ -35,8 +35,9 @@ int to_renderer_pipe_fd = -1;
 int to_core_pipe_fd = -1;
 
 IMU_Data lastSensorData;
+char* ssidName;
 
-#define STATUS_ITEMS_LENGTH 3
+#define STATUS_ITEMS_LENGTH 4
 Status statusItems[STATUS_ITEMS_LENGTH];
 
 #define MENU_ITEMS_LENGTH 4
@@ -123,16 +124,25 @@ void processReceivedMessage()
 			JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
 			bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
 			bool isIMUEnabled = json_object_get_boolean(dataObject, "imu");
+			const char* ssid = json_object_get_string(dataObject, "ssid");
 			bool isCameraEnabled = json_object_get_boolean(dataObject, "camera");
 
 			Status wifiStatus = { .name="WiFi", .state=isWiFiEnabled };
+			if(ssidName)
+				free(ssidName);
+			ssidName = (char*)malloc(strlen(ssid) + 1);
+
+			Status ssidStatus = { .name="SSID", .state=isWiFiEnabled, .text=strcpy(ssidName, ssid) };
 			Status imuStatus = { .name="IMU", .state=isIMUEnabled };
 			Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
+			// printf("GOT SSID \n");
+			printf("%d\n", strlen(ssid));
+			// printf("2 GOT SSID \n");
 			
 			statusItems[0] = wifiStatus;
-			statusItems[1] = imuStatus;
-			statusItems[2] = cameraStatus;
-			printf("%d %d %d", isWiFiEnabled, isWiFiEnabled, isWiFiEnabled);
+			statusItems[1] = ssidStatus;
+			statusItems[2] = imuStatus;
+			statusItems[3] = cameraStatus;
 		}
 
 		// Cleanup JSON resources
@@ -444,7 +454,13 @@ int main(void)
 			for (j = 0; j < STATUS_ITEMS_LENGTH; j++)
 			{
 				nk_spacing(ctx, 1); /* skip 0.2 left */
-				nk_label(ctx, TextFormat("%s:\t %s", statusItems[j].name, statusItems[j].state ? "Enabled" : "Disabled"), NK_TEXT_LEFT);
+				const char* text = NULL;
+				if(statusItems[j].text){
+					text = statusItems[j].text;
+				} else {
+					text = statusItems[j].state ? "Enabled" : "Disabled";
+				} 
+				nk_label(ctx, TextFormat("%s:\t %s", statusItems[j].name, text), NK_TEXT_LEFT);
 				nk_spacing(ctx, 1); /* skip 0.2 right */
 			}
 		}

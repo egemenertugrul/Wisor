@@ -14,6 +14,7 @@ typedef struct
 {
     bool state;
 	const char* name;
+	const char* text;
 } Status;
 
 typedef struct IMU_Data {
