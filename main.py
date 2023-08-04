@@ -12,8 +12,11 @@ from sensor import IMU_Sensor
 import multiprocessing as mp
 from pyzbar import pyzbar
 import numpy as np
+from datetime import datetime
 
 os.environ['DISPLAY'] = ":0"
+
+QR_SCAN_DURATION = 10
 
 class QRHelper:
     def __init__(self):
@@ -23,7 +26,13 @@ class QRHelper:
     def scan_qr_code(self):
         cap = cv2.VideoCapture(0)
 
+        start_t = datetime.now()
         while True:
+            current_t = datetime.now()
+            diff_t = (current_t - start_t).total_seconds()
+            if diff_t > QR_SCAN_DURATION:
+                break
+
             ret, frame = cap.read()
 
             if not ret:
