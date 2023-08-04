@@ -135,9 +135,6 @@ void processReceivedMessage()
 			Status ssidStatus = { .name="SSID", .state=isWiFiEnabled, .text=strcpy(ssidName, ssid) };
 			Status imuStatus = { .name="IMU", .state=isIMUEnabled };
 			Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
-			// printf("GOT SSID \n");
-			printf("%d\n", strlen(ssid));
-			// printf("2 GOT SSID \n");
 			
 			statusItems[0] = wifiStatus;
 			statusItems[1] = ssidStatus;
@@ -455,7 +452,7 @@ int main(void)
 			{
 				nk_spacing(ctx, 1); /* skip 0.2 left */
 				const char* text = NULL;
-				if(statusItems[j].text){
+				if(statusItems[j].text && strlen(statusItems[j].text) > 0){
 					text = statusItems[j].text;
 				} else {
 					text = statusItems[j].state ? "Enabled" : "Disabled";
