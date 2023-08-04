@@ -19,6 +19,15 @@
 #define GLSL_VERSION        100
 #endif
 
+#include "nukDefs.h"
+
+#define RAYLIB_NUKLEAR_IMPLEMENTATION
+#include "raylib-nuklear.h"
+
+#include "owxr/hoverlib.h"
+#include "owxr/utils.h"
+#include "raycast_helper.h"
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -100,7 +109,7 @@ int main(void)
 
     Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
 
-    SetCameraMode(camera, CAMERA_FIRST_PERSON);         // Set first person camera mode
+    // SetCameraMode(camera, CAMERA_FIRST_PERSON);         // Set first person camera mode
 
     SetTargetFPS(90);                   // Set our game to run at 90 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -110,7 +119,7 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
-        UpdateCamera(&camera);
+        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
         //----------------------------------------------------------------------------------
 
         // Draw

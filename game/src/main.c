@@ -259,7 +259,7 @@ int main(void)
 
 	// texture and shade a model
 	// UV's are mapped upside down for convienience
-	Model model = LoadModel("resources/cube.glb");
+	Model model = LoadModel("resources/ui.glb");
 
 	// the models texture is rendered to...
 	RenderTexture2D target = LoadRenderTexture(UI_HEIGHT, UI_WIDTH);
@@ -455,7 +455,7 @@ int main(void)
 				if(statusItems[j].text && strlen(statusItems[j].text) > 0){
 					text = statusItems[j].text;
 				} else {
-					text = statusItems[j].state ? "Enabled" : "Disabled";
+					text = statusItems[j].state ? "<Enabled>" : ">Disabled<";
 				} 
 				nk_label(ctx, TextFormat("%s:\t %s", statusItems[j].name, text), NK_TEXT_LEFT);
 				nk_spacing(ctx, 1); /* skip 0.2 right */
