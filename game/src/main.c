@@ -17,6 +17,12 @@
 #define screenWidth 1280
 #define screenHeight 720
 
+#if defined(PLATFORM_DESKTOP)
+#define GLSL_VERSION        330
+#else   // PLATFORM_RPI, PLATFORM_ANDROID, PLATFORM_WEB
+#define GLSL_VERSION        100
+#endif
+
 #define halfWidth screenWidth / 2
 #define halfHeight screenHeight / 2
 
@@ -231,6 +237,80 @@ int main(void)
 	//--------------------------------------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "OpenWiXR");
 
+	// VR device parameters definition
+    VrDeviceInfo device = {
+        .hResolution = 2560,                 // Horizontal resolution in pixels
+        .vResolution = 1440,                 // Vertical resolution in pixels
+        .hScreenSize = 0.133793f,            // Horizontal size in meters
+        .vScreenSize = 0.0669f,              // Vertical size in meters
+        .vScreenCenter = 0.04678f,           // Screen center in meters
+        .eyeToScreenDistance = 0.041f,       // Distance between eye and display in meters
+        .lensSeparationDistance = 0.07f,     // Lens separation distance in meters
+        .interpupillaryDistance = 0.07f,     // IPD (distance between pupils) in meters
+
+        // NOTE: CV1 uses fresnel-hybrid-asymmetric lenses with specific compute shaders
+        // Following parameters are just an approximation to CV1 distortion stereo rendering
+        .lensDistortionValues[0] = 1.0f,     // Lens distortion constant parameter 0
+        .lensDistortionValues[1] = 0.0f,    // Lens distortion constant parameter 1
+        .lensDistortionValues[2] = 0.0f,    // Lens distortion constant parameter 2
+        .lensDistortionValues[3] = 0.0f,     // Lens distortion constant parameter 3
+        .chromaAbCorrection[0] = 1.0f,     // Chromatic aberration correction parameter 0
+        .chromaAbCorrection[1] = 0.0f,    // Chromatic aberration correction parameter 1
+        .chromaAbCorrection[2] = 1.0f,     // Chromatic aberration correction parameter 2
+        .chromaAbCorrection[3] = 0.0f,       // Chromatic aberration correction parameter 3
+    };
+
+	// Load VR stereo config for VR device parameteres (Oculus Rift CV1 parameters)
+    VrStereoConfig config = LoadVrStereoConfig(device);
+
+	// Distortion shader (uses device lens distortion and chroma)
+    //Shader distortion = LoadShader(0, TextFormat("resources/distortion%i.fs", GLSL_VERSION));
+    Shader distortion = LoadShader(0, "resources/distortion_openwixr.fs");
+    
+    const float _offset[] = { 0.0565f, 0.0f };
+    const float _distortion[] = { 0.3f };
+    const float _cubicDistortion[] = { 0 };
+    const int _isRight[] = { 0 };
+    const float _scale[] = { 1.0f };
+    const float _OutOfBoundColour[] = { 0,0,0,1 };
+
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_offset"),
+        _offset, SHADER_UNIFORM_VEC2);
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_distortion"),
+        _distortion, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_cubicDistortion"),
+        _cubicDistortion, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_isRight"),
+        _isRight, SHADER_UNIFORM_INT);
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_scale"),
+        _scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(distortion, GetShaderLocation(distortion, "_OutOfBoundColour"),
+        _OutOfBoundColour, SHADER_UNIFORM_VEC4);
+
+    // Initialize framebuffer for stereo rendering
+    // NOTE: Screen size should match HMD aspect ratio
+    RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
+
+    // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+    Rectangle destRec = { 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
+
+	// // Define the camera to look into our 3d world
+	// Camera camera = {0};
+	// camera.position = (Vector3){0.0f, 2.5f, -3.0f};
+	// camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+	// camera.fovy = 45.0f;
+	// camera.projection = CAMERA_PERSPECTIVE;
+
+	// Define the camera to look into our 3d world (VR)
+    Camera camera = { 0 };
+    camera.position = (Vector3){0.0f, 2.5f, -3.0f};    // Camera position
+	camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    camera.fovy = 90.0f;                                // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;             // Camera type
+
+
 	HoverElement elements[MENU_ITEMS_LENGTH];
 
 	MenuItem menuItems[] = {
@@ -245,13 +325,6 @@ int main(void)
 		InitializeHoverElement(&menuItems[i].element, 2.0f);
 	}
 
-	// Define the camera to look into our 3d world
-	Camera camera = {0};
-	camera.position = (Vector3){0.0f, 2.5f, -3.0f};
-	camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-	camera.fovy = 45.0f;
-	camera.projection = CAMERA_PERSPECTIVE;
-
 	// SetCameraMode(camera, CAMERA_FIRST_PERSON);
 	// SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 
@@ -262,11 +335,11 @@ int main(void)
 	Model model = LoadModel("resources/ui.glb");
 
 	// the models texture is rendered to...
-	RenderTexture2D target = LoadRenderTexture(UI_HEIGHT, UI_WIDTH);
-	SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
+	RenderTexture2D ui_target = LoadRenderTexture(UI_HEIGHT, UI_WIDTH);
+	SetTextureFilter(ui_target.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
 
 	UnloadTexture(model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture);
-	model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = target.texture;
+	model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = ui_target.texture;
 
 	// lighting shader
 	Shader shader = LoadShader("resources/simpleLight.vs", "resources/simpleLight.fs");
@@ -310,7 +383,7 @@ int main(void)
 	const void *image;
 	int w, h;
 
-	SetTargetFPS(60); // Set  to run at 60 frames-per-second
+	SetTargetFPS(90); // Set  to run at 60 frames-per-second
 
 	//--------------------------------------------------------------------------------------
 	// Main game loop
@@ -465,12 +538,12 @@ int main(void)
 
 		// Draw
 		//----------------------------------------------------------------------------------
-		BeginDrawing();
-		{
-			ClearBackground(BLACK);
+		// BeginDrawing();
+		// {
+			// ClearBackground(WHITE);
 
 			// render to the model's "screen" texture
-			BeginTextureMode(target);
+			BeginTextureMode(ui_target);
 			{
 				ClearBackground((Color){128, 128, 255, 255});
 				// draw the gui
@@ -494,58 +567,96 @@ int main(void)
 			}
 			EndTextureMode();
 
-			BeginMode3D(camera);
-			{
-				// finally render the model
-				DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
-				DrawGrid(10, 1.0f); // Draw a grid
-			}
-			EndMode3D();
+        	// BeginTextureMode(target);
+			// {
+			// 	BeginVrStereoMode(config);
+			// 	BeginMode3D(camera);
+			// 	{
+			// 		// finally render the model
+			// 		DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
+			// 		DrawGrid(10, 1.0f); // Draw a grid
+			// 	}
+			// 	EndMode3D();
+			// 	EndVrStereoMode();
+			// }
+			// EndTextureMode();
+			// // ClearBackground(WHITE);
 
-			DrawFPS(10, 10);
-		}
+			// BeginShaderMode(distortion);
+			// DrawTexturePro(target.texture, sourceRec, destRec, (Vector2) { 0.0f, 0.0f }, 0.0, WHITE);
+			// EndShaderMode();
 
-		if (viewAlpha > 0)
-		{
-			BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
-			// Draw your view here with the alpha value
-			DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
-			EndBlendMode(); // Disable alpha blending
-		}
+			// DrawFPS(10, 10);
+		// }
+
+		// if (viewAlpha > 0)
+		// {
+		// 	BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
+		// 	// Draw your view here with the alpha value
+		// 	DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+		// 	EndBlendMode(); // Disable alpha blending
+		// }
 
 		EndDrawing();
+
+		BeginTextureMode(target);
+            ClearBackground(RAYWHITE);
+            BeginVrStereoMode(config);
+                BeginMode3D(camera);
+					DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
+
+                    DrawCube((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+                    DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, MAROON);
+                    DrawGrid(40, 1.0f);
+
+                EndMode3D();
+            EndVrStereoMode();
+        EndTextureMode();
+        
+        BeginDrawing();
+            ClearBackground(RAYWHITE);
+            BeginShaderMode(distortion);
+                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+            EndShaderMode();
+            DrawFPS(10, 10);
+        EndDrawing();
+
 		//----------------------------------------------------------------------------------
 
 		// Fade-in effect
-		if (viewAlpha < 1.0f && fadeOut)
-		{
-			viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
-			if (viewAlpha > 1.0f)
-			{
-				viewAlpha = 1.0f;
-				fadeOut = false;
-			} // Clamp the value to 1 after reaching maximum transparency
-		}
+		// if (viewAlpha < 1.0f && fadeOut)
+		// {
+		// 	viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
+		// 	if (viewAlpha > 1.0f)
+		// 	{
+		// 		viewAlpha = 1.0f;
+		// 		fadeOut = false;
+		// 	} // Clamp the value to 1 after reaching maximum transparency
+		// }
 
-		// Fade-out effect
-		if (viewAlpha > 0.0f && fadeIn)
-		{
-			viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
-			if (viewAlpha < 0.0f)
-			{
-				viewAlpha = 0.0f;
-				fadeIn = false;
-			}
-			// Clamp the value to 0 after reaching minimum transparency
-		}
+		// // Fade-out effect
+		// if (viewAlpha > 0.0f && fadeIn)
+		// {
+		// 	viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
+		// 	if (viewAlpha < 0.0f)
+		// 	{
+		// 		viewAlpha = 0.0f;
+		// 		fadeIn = false;
+		// 	}
+		// 	// Clamp the value to 0 after reaching minimum transparency
+		// }
 	}
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
 
+    UnloadVrStereoConfig(config);   // Unload stereo config
+    UnloadShader(distortion);       // Unload distortion shader
+
 	UnloadModel(model);
 	UnloadTexture(cursor);
 	UnloadRenderTexture(target);
+	UnloadRenderTexture(ui_target);
 	UnloadShader(shader);
 	UnloadNuklear(ctx);
 	CloseWindow(); // Close window and OpenGL context
