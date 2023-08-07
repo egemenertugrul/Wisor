@@ -383,7 +383,7 @@ int main(void)
 	const void *image;
 	int w, h;
 
-	SetTargetFPS(90); // Set  to run at 60 frames-per-second
+	SetTargetFPS(90);
 
 	//--------------------------------------------------------------------------------------
 	// Main game loop
@@ -407,16 +407,16 @@ int main(void)
 		//	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 		//}
 
-		// {
-		// 	Vector3 direction;
-		// 	direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
-		// 	direction.y = sinf(lastSensorData.pitch);
-		// 	direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
-		// 	camera.target = Vector3Add(camera.position, direction);
-		// }
-		{
-			UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		{ // Get input from sensors
+			Vector3 direction;
+			direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+			direction.y = sinf(lastSensorData.pitch);
+			direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
+			camera.target = Vector3Add(camera.position, direction);
 		}
+		// { Get input from keyboard
+		// 	UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		// }
 
 		// Vector3 movement = { 0 }, rotation = {.x = lastSensorData.pitch, .y = lastSensorData.yaw, .z = lastSensorData.roll};
 		// UpdateCameraPro(&camera, movement, rotation, 1);
@@ -470,17 +470,17 @@ int main(void)
 				mz += (float)GetMouseWheelMove();
 				nk_input_scroll(ctx, nk_vec2(0, mz));
 
-				nk_input_key(ctx, NK_KEY_DEL, IsKeyPressed(KEY_DELETE));
-				nk_input_key(ctx, NK_KEY_ENTER, IsKeyPressed(KEY_ENTER));
-				nk_input_key(ctx, NK_KEY_TAB, IsKeyPressed(KEY_TAB));
-				nk_input_key(ctx, NK_KEY_BACKSPACE, IsKeyPressed(KEY_BACKSPACE));
-				nk_input_key(ctx, NK_KEY_LEFT, IsKeyPressed(KEY_LEFT));
-				nk_input_key(ctx, NK_KEY_RIGHT, IsKeyPressed(KEY_RIGHT));
-				nk_input_key(ctx, NK_KEY_UP, IsKeyPressed(KEY_UP));
-				nk_input_key(ctx, NK_KEY_DOWN, IsKeyPressed(KEY_DOWN));
-				// TODO add copy paste key combos...
+				// nk_input_key(ctx, NK_KEY_DEL, IsKeyPressed(KEY_DELETE));
+				// nk_input_key(ctx, NK_KEY_ENTER, IsKeyPressed(KEY_ENTER));
+				// nk_input_key(ctx, NK_KEY_TAB, IsKeyPressed(KEY_TAB));
+				// nk_input_key(ctx, NK_KEY_BACKSPACE, IsKeyPressed(KEY_BACKSPACE));
+				// nk_input_key(ctx, NK_KEY_LEFT, IsKeyPressed(KEY_LEFT));
+				// nk_input_key(ctx, NK_KEY_RIGHT, IsKeyPressed(KEY_RIGHT));
+				// nk_input_key(ctx, NK_KEY_UP, IsKeyPressed(KEY_UP));
+				// nk_input_key(ctx, NK_KEY_DOWN, IsKeyPressed(KEY_DOWN));
+				// // TODO add copy paste key combos...
 
-				nk_input_char(ctx, GetKeyPressed());
+				// nk_input_char(ctx, GetKeyPressed());
 			}
 			nk_input_end(ctx);
 		}
@@ -566,37 +566,6 @@ int main(void)
 				DrawFilledCircle(mx, my, RADIUS, fillAmount, RED);
 			}
 			EndTextureMode();
-
-        	// BeginTextureMode(target);
-			// {
-			// 	BeginVrStereoMode(config);
-			// 	BeginMode3D(camera);
-			// 	{
-			// 		// finally render the model
-			// 		DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
-			// 		DrawGrid(10, 1.0f); // Draw a grid
-			// 	}
-			// 	EndMode3D();
-			// 	EndVrStereoMode();
-			// }
-			// EndTextureMode();
-			// // ClearBackground(WHITE);
-
-			// BeginShaderMode(distortion);
-			// DrawTexturePro(target.texture, sourceRec, destRec, (Vector2) { 0.0f, 0.0f }, 0.0, WHITE);
-			// EndShaderMode();
-
-			// DrawFPS(10, 10);
-		// }
-
-		// if (viewAlpha > 0)
-		// {
-		// 	BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
-		// 	// Draw your view here with the alpha value
-		// 	DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
-		// 	EndBlendMode(); // Disable alpha blending
-		// }
-
 		EndDrawing();
 
 		BeginTextureMode(target);
@@ -619,32 +588,40 @@ int main(void)
                 DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
             EndShaderMode();
             DrawFPS(10, 10);
+			
+			if (viewAlpha > 0)
+			{
+				BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
+				// Draw your view here with the alpha value
+				DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+				EndBlendMode(); // Disable alpha blending
+			}
         EndDrawing();
 
 		//----------------------------------------------------------------------------------
 
 		// Fade-in effect
-		// if (viewAlpha < 1.0f && fadeOut)
-		// {
-		// 	viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
-		// 	if (viewAlpha > 1.0f)
-		// 	{
-		// 		viewAlpha = 1.0f;
-		// 		fadeOut = false;
-		// 	} // Clamp the value to 1 after reaching maximum transparency
-		// }
+		if (viewAlpha < 1.0f && fadeOut)
+		{
+			viewAlpha += 0.01f; // Adjust the increment value as per your desired speed
+			if (viewAlpha > 1.0f)
+			{
+				viewAlpha = 1.0f;
+				fadeOut = false;
+			} // Clamp the value to 1 after reaching maximum transparency
+		}
 
-		// // Fade-out effect
-		// if (viewAlpha > 0.0f && fadeIn)
-		// {
-		// 	viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
-		// 	if (viewAlpha < 0.0f)
-		// 	{
-		// 		viewAlpha = 0.0f;
-		// 		fadeIn = false;
-		// 	}
-		// 	// Clamp the value to 0 after reaching minimum transparency
-		// }
+		// Fade-out effect
+		if (viewAlpha > 0.0f && fadeIn)
+		{
+			viewAlpha -= 0.01f; // Adjust the decrement value as per your desired speed
+			if (viewAlpha < 0.0f)
+			{
+				viewAlpha = 0.0f;
+				fadeIn = false;
+			}
+			// Clamp the value to 0 after reaching minimum transparency
+		}
 	}
 
 	// De-Initialization
