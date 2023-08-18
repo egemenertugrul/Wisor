@@ -1,4 +1,4 @@
-<center><h1>OpenWiXR-Renderer</h1></center>
+<center><h1 align=center>OpenWiXR-Renderer</h1></center>
 
 **OpenWiXR-Renderer** is the standalone rendering engine of OpenWiXR, built using raylib, designed to provide basic rendering, UI, and input capabilities for your standalone XR applications. It works in conjunction with OpenWiXR-Core.
 
