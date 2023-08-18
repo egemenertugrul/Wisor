@@ -92,9 +92,13 @@ class Core:
 
         # region Setup pipes and renderer
         # Start the renderer program as a child process
-        # renderer_path = Path(os.path.normpath("../raylib/")).resolve()
-        # renderer_path_bin = renderer_path.joinpath("examples/")
-        # self.renderer_process = subprocess.Popen(os.path.join(renderer_path_bin, "exec"), cwd=renderer_path)
+        renderer_path_bin = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
+        renderer_filepath = renderer_path_bin.joinpath("openwixr_renderer")
+        if not renderer_filepath.is_file():
+            logging.error(f"Renderer executable at {renderer_filepath} does not seem to exist.\nMake sure to build the renderer.")
+            return
+            
+        self.renderer_process = subprocess.Popen(renderer_filepath, cwd=renderer_path_bin)
 
         self.out_message_queue.put(self.update_status())
         time.sleep(1)
@@ -147,7 +151,7 @@ class Core:
 
                 if not self.out_message_queue.empty():
                     message = self.out_message_queue.get(block=False)
-                    print(f"Sending: {message}")
+                    # print(f"Sending: {message}")
                     if message["data"] is not None and self.isRendererReady:
                         os.write(self.to_renderer_pipe_fd, json.dumps(message).encode())
 
