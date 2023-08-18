@@ -16,9 +16,10 @@ class Core:
     status = None
 
     def __init__(self):
-        # os.environ['DISPLAY'] = ":0"
+        os.environ['DISPLAY'] = ":0"
 
         self.isRunning = False
+        self.isRendererReady = False
 
         self.imu_sensor = IMU_Sensor()
 
@@ -33,9 +34,13 @@ class Core:
         self.qrScanner = QRScanner(duration=10)
 
         self.commands_dict = {
+            "Begin": self.set_renderer_ready,
             "QRScan": self.qrScanner.start_scanning,
             "Shutdown": self.shutdown
         }
+
+    def set_renderer_ready(self):
+        self.isRendererReady = True
 
     def get_wifi_state(self):
         return len(self.wifi.get_wifi_networks()) > 0
@@ -45,10 +50,10 @@ class Core:
         return res if res is not None else ""
 
     def get_imu_state(self):
-        return self.imu_sensor.get_data() != None
-
+        return self.imu_sensor.is_initialized != None
+        
     def get_camera_state(self):  # TODO: Get camera state from camera.py?
-        return self.imu_sensor.get_data() != None
+        return self.imu_sensor.is_initialized != None
 
     def update_status(self):
         self.status = status = {
@@ -72,12 +77,6 @@ class Core:
             logging.log("Is already running!")
             return
 
-        # region Setup pipes and renderer
-        # Start the renderer program as a child process
-        renderer_path = Path(os.path.normpath("../OpenWiXR-Renderer/")).resolve()
-        renderer_path_bin = renderer_path.joinpath("_bin/Debug/")
-        self.renderer_process = subprocess.Popen(os.path.join(renderer_path_bin, "OpenWiXR-Renderer"), cwd=renderer_path)
-
         to_core_pipe_path = "/tmp/to_core"
         if os.path.exists(to_core_pipe_path):
             os.remove(to_core_pipe_path)
@@ -91,8 +90,14 @@ class Core:
         self.to_renderer_pipe_fd = os.open(to_renderer_pipe_path, os.O_RDWR | os.O_NONBLOCK)
         # endregion
 
+        # region Setup pipes and renderer
+        # Start the renderer program as a child process
+        # renderer_path = Path(os.path.normpath("../raylib/")).resolve()
+        # renderer_path_bin = renderer_path.joinpath("examples/")
+        # self.renderer_process = subprocess.Popen(os.path.join(renderer_path_bin, "exec"), cwd=renderer_path)
+
         self.out_message_queue.put(self.update_status())
-        # time.sleep(1)
+        time.sleep(1)
 
         self.isRunning = True
 
@@ -142,8 +147,9 @@ class Core:
 
                 if not self.out_message_queue.empty():
                     message = self.out_message_queue.get(block=False)
-                    # print(f"Sending: {message}")
-                    os.write(self.to_renderer_pipe_fd, json.dumps(message).encode())
+                    print(f"Sending: {message}")
+                    if message["data"] is not None and self.isRendererReady:
+                        os.write(self.to_renderer_pipe_fd, json.dumps(message).encode())
 
             data = self.imu_sensor.get_data()
             message = {
@@ -152,7 +158,7 @@ class Core:
             }
             self.out_message_queue.put(message)
 
-            time.sleep(float(1/60))
+            time.sleep(float(1/15))
             # Add any necessary synchronization mechanisms if needed
 
         # Close the pipe
