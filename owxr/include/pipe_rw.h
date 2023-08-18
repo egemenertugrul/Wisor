@@ -1,12 +1,7 @@
 #ifndef _PIPE_RW
 #define _PIPE_RW
 #include <unistd.h>
-
-#ifndef __BOOL
-typedef unsigned char bool;
-static const bool False = 0;
-static const bool True = 1;
-#endif
+#include <stdbool.h>
 
 #define SENSOR_ITEMS_LENGTH 3
 

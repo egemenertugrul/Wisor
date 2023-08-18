@@ -1,39 +1,42 @@
 #include <stddef.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdbool.h>
 
-#include "owxr/pipe_rw.h"
 #include "raylib.h"
-#include "parson.h"
-
 #include "raymath.h"
 
 #define RLIGHTS_IMPLEMENTATION
 #include "rlights.h"
 
-#define screenWidth 1280
-#define screenHeight 720
-
 #if defined(PLATFORM_DESKTOP)
-#define GLSL_VERSION        330
+#define GLSL_VERSION        120
 #else   // PLATFORM_RPI, PLATFORM_ANDROID, PLATFORM_WEB
 #define GLSL_VERSION        100
 #endif
 
+#include "nukDefs.h"
+#define RAYLIB_NUKLEAR_IMPLEMENTATION
+#include "raylib-nuklear.h"
+#include "raycast_helper.h"
+
+#include "parson.h"
+
+#include "pipe_rw.h"
+#include "hoverlib.h"
+#include "utils.h"
+
+#define screenWidth 1280
+#define screenHeight 720
+
 #define halfWidth screenWidth / 2
 #define halfHeight screenHeight / 2
 
-#include "nukDefs.h"
-
-#define RAYLIB_NUKLEAR_IMPLEMENTATION
-#include "raylib-nuklear.h"
-
-#include "owxr/hoverlib.h"
-#include "owxr/utils.h"
-#include "raycast_helper.h"
+#define GAZE_CIRCLE_RADIUS 25
+#define UI_WIDTH 512
+#define UI_HEIGHT 512
 
 #define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -78,10 +81,10 @@ void processReceivedMessage()
 		const char *type = json_object_dotget_string(jsonObject, "type");
 		// const char* data = json_object_dotget_string(jsonObject, "data");
 
-		// printf("==RENDERER== Received message from Python:\n");
-		// printf("\tType: %s\n", type);
+		printf("==RENDERER== Received message from Python:\n");
+		printf("\tType: %s\n", type);
 		// printf("\tData: %s\n", data);
-		// printf(message);
+		printf(message);
 
 		if (strcmp(type, "Greeting") == 0)
 		{
@@ -113,9 +116,9 @@ void processReceivedMessage()
 			double roll = json_array_get_number(rotArray, 2);
 
 			// Print the values
-			// printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
-			// printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
-			// printf("Time: %.2f\n", timeValue);
+			printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
+			printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
+			printf("Time: %.2f\n", timeValue);
 
 			lastSensorData.accX = accX;
 			lastSensorData.accY = accY;
@@ -191,10 +194,6 @@ void C_Shutdown()
 
 #pragma endregion
 
-#define RADIUS 25
-#define UI_WIDTH 512
-#define UI_HEIGHT 512
-
 float CalculateFillAmount(float duration, float maxDuration)
 {
 	if (duration >= maxDuration)
@@ -235,12 +234,12 @@ int main(void)
 
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	InitWindow(screenWidth, screenHeight, "OpenWiXR");
+	InitWindow(screenHeight, screenWidth, "OpenWiXR");
 
 	// VR device parameters definition
     VrDeviceInfo device = {
-        .hResolution = 2560,                 // Horizontal resolution in pixels
-        .vResolution = 1440,                 // Vertical resolution in pixels
+        .hResolution = screenWidth,                 // Horizontal resolution in pixels
+        .vResolution = screenHeight,                 // Vertical resolution in pixels
         .hScreenSize = 0.133793f,            // Horizontal size in meters
         .vScreenSize = 0.0669f,              // Vertical size in meters
         .vScreenCenter = 0.04678f,           // Screen center in meters
@@ -265,7 +264,7 @@ int main(void)
 
 	// Distortion shader (uses device lens distortion and chroma)
     //Shader distortion = LoadShader(0, TextFormat("resources/distortion%i.fs", GLSL_VERSION));
-    Shader distortion = LoadShader(0, "resources/distortion_openwixr.fs");
+    Shader distortion = LoadShader(0, "resources/distortion_openwixr_120.fs");
     
     const float _offset[] = { 0.0565f, 0.0f };
     const float _distortion[] = { 0.3f };
@@ -273,6 +272,15 @@ int main(void)
     const int _isRight[] = { 0 };
     const float _scale[] = { 1.0f };
     const float _OutOfBoundColour[] = { 0,0,0,1 };
+
+    const float leftScreenCenter[] = { 0.25f, 0.5f };
+    const float rightScreenCenter[] = { 0.75, 0.5 };
+
+
+    SetShaderValue(distortion, GetShaderLocation(distortion, "leftScreenCenter"),
+        leftScreenCenter, SHADER_UNIFORM_VEC2);
+	SetShaderValue(distortion, GetShaderLocation(distortion, "rightScreenCenter"),
+        rightScreenCenter, SHADER_UNIFORM_VEC2);
 
     SetShaderValue(distortion, GetShaderLocation(distortion, "_offset"),
         _offset, SHADER_UNIFORM_VEC2);
@@ -293,7 +301,7 @@ int main(void)
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
     Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
-    Rectangle destRec = { 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
+    Rectangle destRec = { (float)GetScreenWidth(), 0.0f, (float)GetScreenHeight(), (float)GetScreenWidth() };
 
 	// // Define the camera to look into our 3d world
 	// Camera camera = {0};
@@ -341,20 +349,20 @@ int main(void)
 	UnloadTexture(model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture);
 	model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = ui_target.texture;
 
-	// lighting shader
-	Shader shader = LoadShader("resources/simpleLight.vs", "resources/simpleLight.fs");
-	shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
-	shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
+	// // lighting shader
+	// Shader shader = LoadShader("resources/simpleLight.vs", "resources/simpleLight.fs");
+	// shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
+	// shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
-	// ambient light level
-	int amb = GetShaderLocation(shader, "ambient");
-	SetShaderValue(shader, amb, (float[4]){0.2, 0.2, 0.2, 1.0}, SHADER_UNIFORM_VEC4);
+	// // ambient light level
+	// int amb = GetShaderLocation(shader, "ambient");
+	// SetShaderValue(shader, amb, (float[4]){0.2, 0.2, 0.2, 1.0}, SHADER_UNIFORM_VEC4);
 
-	// set the models shader
-	model.materials[1].shader = shader;
+	// // set the models shader
+	// model.materials[1].shader = shader;
 
-	// make a light (max 4 but we're only using 1)
-	Light light = CreateLight(LIGHT_POINT, (Vector3){2, 4, 1}, Vector3Zero(), WHITE, shader);
+	// // make a light (max 4 but we're only using 1)
+	// Light light = CreateLight(LIGHT_POINT, (Vector3){2, 4, 1}, Vector3Zero(), WHITE, shader);
 
 	// as this moves over the texture it is always in the centre of
 	// the screen this is because we are using camera pov
@@ -385,6 +393,12 @@ int main(void)
 
 	SetTargetFPS(90);
 
+	// int display = GetCurrentMonitor();
+	// SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display));
+	ToggleFullscreen();
+
+	sendMessageToCore("Command", "Begin");
+
 	//--------------------------------------------------------------------------------------
 	// Main game loop
 	while (!WindowShouldClose()) // Detect window close button or ESC key
@@ -414,7 +428,7 @@ int main(void)
 			direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
 			camera.target = Vector3Add(camera.position, direction);
 		}
-		// { Get input from keyboard
+		// { // Get input from keyboard
 		// 	UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 		// }
 
@@ -422,15 +436,15 @@ int main(void)
 		// UpdateCameraPro(&camera, movement, rotation, 1);
 
 		// position the light slightly above the camera
-		light.position = camera.position;
-		light.position.y += 0.1f;
+		// light.position = camera.position;
+		// light.position.y += 0.1f;
 
-		// update the light shader with the camera view position
-		SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &camera.position.x, SHADER_UNIFORM_VEC3);
-		UpdateLightValues(shader, light);
+		// // update the light shader with the camera view position
+		// SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &camera.position.x, SHADER_UNIFORM_VEC3);
+		// UpdateLightValues(shader, light);
 
 		// the ray is always down the cameras point of view
-		ray = GetMouseRay((Vector2){halfWidth, halfHeight}, camera);
+		ray = GetMouseRay((Vector2){halfHeight, halfWidth}, camera);
 
 		// Check ray collision against model
 		// NOTE: It considers model.transform matrix!
@@ -563,7 +577,7 @@ int main(void)
 				if (fillAmount == 0)
 					DrawTexture(cursor, mx, my, WHITE);
 
-				DrawFilledCircle(mx, my, RADIUS, fillAmount, RED);
+				DrawFilledCircle(mx, my, GAZE_CIRCLE_RADIUS, fillAmount, RED);
 			}
 			EndTextureMode();
 		EndDrawing();
@@ -585,7 +599,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(RAYWHITE);
             BeginShaderMode(distortion);
-                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 90.0f, WHITE);
             EndShaderMode();
             DrawFPS(10, 10);
 			
@@ -593,7 +607,7 @@ int main(void)
 			{
 				BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
 				// Draw your view here with the alpha value
-				DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+				DrawRectangle(0, 0, screenHeight, screenWidth, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
 				EndBlendMode(); // Disable alpha blending
 			}
         EndDrawing();
@@ -634,7 +648,7 @@ int main(void)
 	UnloadTexture(cursor);
 	UnloadRenderTexture(target);
 	UnloadRenderTexture(ui_target);
-	UnloadShader(shader);
+	// UnloadShader(shader);
 	UnloadNuklear(ctx);
 	CloseWindow(); // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
