@@ -583,7 +583,7 @@ int main(void)
 		EndDrawing();
 
 		BeginTextureMode(target);
-            ClearBackground(RAYWHITE);
+            ClearBackground(BLACK);
             BeginVrStereoMode(config);
                 BeginMode3D(camera);
 					DrawModel(model, (Vector3){0, 0, 0}, 1, WHITE);
@@ -597,11 +597,11 @@ int main(void)
         EndTextureMode();
         
         BeginDrawing();
-            ClearBackground(RAYWHITE);
+            ClearBackground(BLACK);
             BeginShaderMode(distortion);
-                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 90.0f, WHITE);
+                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 90.0f, BLACK);
             EndShaderMode();
-            DrawFPS(10, 10);
+            // DrawFPS(10, 10);
 			
 			if (viewAlpha > 0)
 			{
