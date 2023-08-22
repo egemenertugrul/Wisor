@@ -8,15 +8,19 @@ import numpy as np
 from pathlib import Path
 from queue import Queue
 
-from owxr.modules.sensor import IMU_Sensor
+# from owxr.modules.sensor_mpu9250 import IMU_Sensor
+from owxr.modules.sensor_sensehat import IMU_Sensor
 from owxr.modules.qr import QRScanner
 from owxr.modules.wifi import Wifi
+
 
 class Core:
     status = None
 
-    def __init__(self):
-        os.environ['DISPLAY'] = ":0"
+    def __init__(self, args):
+        self.args = args
+        self.FPS = self.args.fps
+        os.environ["DISPLAY"] = self.args.display
 
         self.isRunning = False
         self.isRendererReady = False
@@ -36,7 +40,7 @@ class Core:
         self.commands_dict = {
             "Begin": self.set_renderer_ready,
             "QRScan": self.qrScanner.start_scanning,
-            "Shutdown": self.shutdown
+            "Shutdown": self.shutdown,
         }
 
     def set_renderer_ready(self):
@@ -51,7 +55,7 @@ class Core:
 
     def get_imu_state(self):
         return self.imu_sensor.is_initialized != None
-        
+
     def get_camera_state(self):  # TODO: Get camera state from camera.py?
         return self.imu_sensor.is_initialized != None
 
@@ -60,7 +64,7 @@ class Core:
             "is_wifi_connected": self.get_wifi_state(),
             "ssid": self.get_wifi_ssid(),
             "is_imu_connected": self.get_imu_state(),
-            "is_camera_connected": self.get_camera_state()
+            "is_camera_connected": self.get_camera_state(),
         }
         return {
             "type": "Status",
@@ -69,13 +73,15 @@ class Core:
                 "ssid": status["ssid"],
                 "imu": status["is_imu_connected"],
                 "camera": status["is_camera_connected"],
-            }
+            },
         }
 
     def start(self):
         if self.isRunning:
             logging.log("Is already running!")
             return
+
+        # region Setup pipes and renderer
 
         to_core_pipe_path = "/tmp/to_core"
         if os.path.exists(to_core_pipe_path):
@@ -87,18 +93,25 @@ class Core:
         if os.path.exists(to_renderer_pipe_path):
             os.remove(to_renderer_pipe_path)
         os.mkfifo(to_renderer_pipe_path)
-        self.to_renderer_pipe_fd = os.open(to_renderer_pipe_path, os.O_RDWR | os.O_NONBLOCK)
-        # endregion
+        self.to_renderer_pipe_fd = os.open(
+            to_renderer_pipe_path, os.O_RDWR | os.O_NONBLOCK
+        )
 
-        # region Setup pipes and renderer
         # Start the renderer program as a child process
-        renderer_path_bin = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
-        renderer_filepath = renderer_path_bin.joinpath("openwixr_renderer")
-        if not renderer_filepath.is_file():
-            logging.error(f"Renderer executable at {renderer_filepath} does not seem to exist.\nMake sure to build the renderer.")
-            return
-            
-        self.renderer_process = subprocess.Popen(renderer_filepath, cwd=renderer_path_bin)
+        if not self.args.disable_renderer:
+            renderer_path_bin = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
+            renderer_filepath = renderer_path_bin.joinpath("openwixr_renderer")
+            if not renderer_filepath.is_file():
+                logging.error(
+                    f"Renderer executable at {renderer_filepath} does not seem to exist.\nMake sure to build the renderer."
+                )
+                return
+
+            self.renderer_process = subprocess.Popen(
+                renderer_filepath, cwd=renderer_path_bin
+            )
+
+        # endregion
 
         self.out_message_queue.put(self.update_status())
         time.sleep(1)
@@ -108,12 +121,16 @@ class Core:
         # Run the raylib loop
         while self.isRunning:
             # Check if the pipe is ready for reading or writing
-            read_ready, write_ready, _ = select.select([self.to_core_pipe_fd], [self.to_renderer_pipe_fd], [], 0)
+            read_ready, write_ready, _ = select.select(
+                [self.to_core_pipe_fd], [self.to_renderer_pipe_fd], [], 0
+            )
 
             if read_ready:
                 # Read the message from the renderer
                 message = os.read(self.to_core_pipe_fd, 1024)
-                messages = list(filter(lambda s: len(s) > 0, message.decode().split("\0")))
+                messages = list(
+                    filter(lambda s: len(s) > 0, message.decode().split("\0"))
+                )
                 for m in messages:
                     if m:
                         # Process the received message
@@ -122,7 +139,7 @@ class Core:
                         except Exception as e:
                             logging.error(e)
                             continue
-                        
+
                         if message["type"] == "Command":
                             try:
                                 cmd = self.commands_dict[message["data"]]
@@ -156,13 +173,10 @@ class Core:
                         os.write(self.to_renderer_pipe_fd, json.dumps(message).encode())
 
             data = self.imu_sensor.get_data()
-            message = {
-                "type": "Sensor",
-                "data": data
-            }
+            message = {"type": "Sensor", "data": data}
             self.out_message_queue.put(message)
 
-            time.sleep(float(1/15))
+            time.sleep(float(1 / self.FPS))
             # Add any necessary synchronization mechanisms if needed
 
         # Close the pipe

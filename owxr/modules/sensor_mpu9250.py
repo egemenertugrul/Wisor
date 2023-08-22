@@ -74,7 +74,7 @@ class IMU_Sensor:
 
     def get_data(self) -> dict:
         while not self.is_initialized:
-            self.initialize_imu()
+            self.is_initialized = self.initialize_imu()
 
         imu = self._imu
         sensorfusion = self._sensorfusion
