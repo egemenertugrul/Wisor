@@ -1,6 +1,5 @@
 from owxr.core import Core
 import argparse
-from tabulate import tabulate
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="OpenWiXR", description="OpenWirelessXR-Core")
@@ -10,14 +9,10 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", action="store_true")
 
     args = parser.parse_args()
-    # if args.verbose:
-    #     for key, value in vars(args).items():
-    #         print(
-    #             tabulate(
-    #                 list(map(lambda key, value: [key, value], vars(args).items())),
-    #                 tablefmt="grid",
-    #             )
-    #         )
+    if args.verbose:
+        print("Arguments: ")
+        for key, value in vars(args).items():
+            print(f"\t{key}: {value}")
 
     core = Core(args=args)
     core.start()

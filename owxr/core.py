@@ -8,8 +8,10 @@ import numpy as np
 from pathlib import Path
 from queue import Queue
 
-# from owxr.modules.sensor_mpu9250 import IMU_Sensor
-from owxr.modules.sensor_sensehat import IMU_Sensor
+from owxr.modules.clock import Clock
+
+# from owxr.modules.sensor_mpu9250 import MPU9250
+from owxr.modules.sensor_sensehat import SenseHat
 from owxr.modules.qr import QRScanner
 from owxr.modules.wifi import Wifi
 
@@ -22,10 +24,12 @@ class Core:
         self.FPS = self.args.fps
         os.environ["DISPLAY"] = self.args.display
 
+        self.clock = Clock(self.FPS)
+
         self.isRunning = False
         self.isRendererReady = False
 
-        self.imu_sensor = IMU_Sensor()
+        self.imu_sensor = SenseHat()
 
         self.renderer_process = None
         self.to_core_pipe_fd = None
@@ -133,7 +137,6 @@ class Core:
                 )
                 for m in messages:
                     if m:
-                        # Process the received message
                         try:
                             message = json.loads(m)
                         except Exception as e:
@@ -153,37 +156,39 @@ class Core:
                         logging.debug("\tData:", message["data"])
 
             if write_ready:
-                # Send a message to the renderer
-                # message = {
-                #     "type": "Greeting",
-                #     "data": "Hello, Renderer!"
-                # }
-                if self.qrScanner.process is not None:
-                    data = self.qrScanner.get_qr_data()
-                    if data is not None:
-                        print(data)
-                        connect_res, log = self.wifi.connect_to(data["S"], data["P"])
-                        self.qrScanner.stop_scanning()
-                        self.out_message_queue.put(self.update_status())
-
                 if not self.out_message_queue.empty():
                     message = self.out_message_queue.get(block=False)
-                    # print(f"Sending: {message}")
                     if message["data"] is not None and self.isRendererReady:
-                        os.write(self.to_renderer_pipe_fd, json.dumps(message).encode())
+                        msg = json.dumps(message) + "\n"
+                        encoded_msg = msg.encode()
+                        # print(f"Sending:{encoded_msg}")
+                        os.write(
+                            self.to_renderer_pipe_fd,
+                            encoded_msg,
+                        )
 
-            data = self.imu_sensor.get_data()
-            message = {"type": "Sensor", "data": data}
-            self.out_message_queue.put(message)
-
+            self.update()
             time.sleep(float(1 / self.FPS))
-            # Add any necessary synchronization mechanisms if needed
+            # self.clock.sleep()
 
         # Close the pipe
+        os.close(self.to_core_pipe_fd)
         os.close(self.to_renderer_pipe_fd)
+        self.renderer_process.wait()
 
-        # Wait for the renderer process to finish
-        renderer_process.wait()
+    def update(self):
+        if self.qrScanner.process:
+            data = self.qrScanner.get_qr_data()
+            if data is not None:
+                print(data)
+                connect_res, log = self.wifi.connect_to(data["S"], data["P"])
+                self.qrScanner.stop_scanning()
+                self.out_message_queue.put(self.update_status())
+
+        if self.imu_sensor:
+            self.out_message_queue.put(
+                {"type": "Sensor", "data": self.imu_sensor.get_data()}
+            )
 
     def shutdown(self):
         logging.log("Shutting down..")
