@@ -58,101 +58,107 @@ typedef struct MenuItem
 	HoverCallback callback;
 } MenuItem;
 
+void processJSON(const char *message) {
+	JSON_Value *rootValue = json_parse_string(message);
+	if (rootValue == NULL)
+	{
+		// JSON parsing failed
+		printf("Error: Failed to parse JSON\n");
+		return;
+	}
+
+	JSON_Object *jsonObject = json_value_get_object(rootValue);
+	const char *type = json_object_dotget_string(jsonObject, "type");
+	// const char* data = json_object_dotget_string(jsonObject, "data");
+
+	// printf("==RENDERER== Received message from Python:\n");
+	// printf("\tType: %s\n", type);
+	// printf("\tData: %s\n", data);
+
+	if (strcmp(type, "Sensor") == 0)
+	{
+		// printf("Processing Sensor message...\n");
+
+		JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
+
+		// JSON_Array *accArray = json_object_get_array(dataObject, "acceleration");
+		
+		// JSON_Array *gyroArray = json_object_get_array(dataObject, "gyroscope");
+
+		JSON_Array *orientationArray = json_object_get_array(dataObject, "orientation");
+
+		double timeValue = json_object_get_number(dataObject, "time");
+
+		// double accX = json_array_get_number(accArray, 0);
+		// double accY = json_array_get_number(accArray, 1);
+		// double accZ = json_array_get_number(accArray, 2);
+
+		double pitch = json_array_get_number(orientationArray, 0);
+		double yaw = json_array_get_number(orientationArray, 1);
+		double roll = json_array_get_number(orientationArray, 2);
+
+		// printf("Acceleration: %.2f, %.2f, %.2f\n", accX, accY, accZ);
+		// printf("Orientation: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
+		// printf("Time: %.2f\n", timeValue);
+
+		// lastSensorData.accX = accX;
+		// lastSensorData.accY = accY;
+		// lastSensorData.accZ = accZ;
+
+		lastSensorData.pitch = pitch;
+		lastSensorData.yaw = yaw;
+		lastSensorData.roll = roll;
+	}
+
+	if (strcmp(type, "Status") == 0)
+	{
+		JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
+		bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
+		bool isIMUEnabled = json_object_get_boolean(dataObject, "imu");
+		const char* ssid = json_object_get_string(dataObject, "ssid");
+		bool isCameraEnabled = json_object_get_boolean(dataObject, "camera");
+
+		Status wifiStatus = { .name="WiFi", .state=isWiFiEnabled };
+		if(ssidName)
+			free(ssidName);
+		ssidName = (char*)malloc(strlen(ssid) + 1);
+
+		Status ssidStatus = { .name="SSID", .state=isWiFiEnabled, .text=strcpy(ssidName, ssid) };
+		Status imuStatus = { .name="IMU", .state=isIMUEnabled };
+		Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
+		
+		statusItems[0] = wifiStatus;
+		statusItems[1] = ssidStatus;
+		statusItems[2] = imuStatus;
+		statusItems[3] = cameraStatus;
+	}
+
+	// Cleanup JSON resources
+	json_value_free(rootValue);
+}
+
 void processReceivedMessage()
 {
-	char message[1024];
+	char message[4096], buffer[4096];
 	ssize_t bytesRead = read_from_pipe(to_renderer_pipe_fd, message, sizeof(message) - 1);
-
+	size_t bufferLength = 0;
+	char *delimiterPos;
+	
 	if (bytesRead > 0)
 	{
-		// Null-terminate the received message
-		message[bytesRead] = '\0';
+		bufferLength += bytesRead;
 
-		// Process the received message
-		JSON_Value *rootValue = json_parse_string(message);
-		if (rootValue == NULL)
-		{
-			// JSON parsing failed
-			printf("Error: Failed to parse JSON\n");
-			return;
-		}
+		memcpy(buffer + bufferLength - bytesRead, message, bytesRead);
 
-		JSON_Object *jsonObject = json_value_get_object(rootValue);
-		const char *type = json_object_dotget_string(jsonObject, "type");
-		// const char* data = json_object_dotget_string(jsonObject, "data");
-
-		printf("==RENDERER== Received message from Python:\n");
-		printf("\tType: %s\n", type);
-		// printf("\tData: %s\n", data);
-		printf(message);
-
-		if (strcmp(type, "Greeting") == 0)
-		{
-			// printf("Processing Greeting message...\n");
-		}
-		else if (strcmp(type, "Sensor") == 0)
-		{
-			// printf("Processing Sensor message...\n");
-			// Perform actions specific to Update message
-			// Get the 'data' object
-			JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
-
-			// Get the 'acc' array
-			JSON_Array *accArray = json_object_get_array(dataObject, "acc");
-
-			// Get the 'gyro' array
-			JSON_Array *rotArray = json_object_get_array(dataObject, "rot");
-
-			// Get the 'time' value
-			double timeValue = json_object_get_number(dataObject, "time");
-
-			// Access the values of 'acc', 'gyro', and 'time'
-			double accX = json_array_get_number(accArray, 0);
-			double accY = json_array_get_number(accArray, 1);
-			double accZ = json_array_get_number(accArray, 2);
-
-			double pitch = json_array_get_number(rotArray, 0);
-			double yaw = json_array_get_number(rotArray, 1);
-			double roll = json_array_get_number(rotArray, 2);
-
-			// Print the values
-			printf("Acc: %.2f, %.2f, %.2f\n", accX, accY, accZ);
-			printf("Rot: %.2f, %.2f, %.2f\n", pitch, yaw, roll);
-			printf("Time: %.2f\n", timeValue);
-
-			lastSensorData.accX = accX;
-			lastSensorData.accY = accY;
-			lastSensorData.accZ = accZ;
-
-			lastSensorData.pitch = pitch;
-			lastSensorData.yaw = yaw;
-			lastSensorData.roll = roll;
-		}
-		else if (strcmp(type, "Status") == 0)
-		{
-			JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
-			bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
-			bool isIMUEnabled = json_object_get_boolean(dataObject, "imu");
-			const char* ssid = json_object_get_string(dataObject, "ssid");
-			bool isCameraEnabled = json_object_get_boolean(dataObject, "camera");
-
-			Status wifiStatus = { .name="WiFi", .state=isWiFiEnabled };
-			if(ssidName)
-				free(ssidName);
-			ssidName = (char*)malloc(strlen(ssid) + 1);
-
-			Status ssidStatus = { .name="SSID", .state=isWiFiEnabled, .text=strcpy(ssidName, ssid) };
-			Status imuStatus = { .name="IMU", .state=isIMUEnabled };
-			Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
+		while ((delimiterPos = strchr(buffer, '\n')) != NULL) {
+			*delimiterPos = '\0';  // Null-terminate the JSON message
+			processJSON(buffer);
 			
-			statusItems[0] = wifiStatus;
-			statusItems[1] = ssidStatus;
-			statusItems[2] = imuStatus;
-			statusItems[3] = cameraStatus;
+			// Move the remaining data to the beginning of the buffer
+			size_t remainingLength = bufferLength - (delimiterPos - buffer) - 1;
+			memmove(buffer, delimiterPos + 1, remainingLength);
+			bufferLength = remainingLength;
 		}
-
-		// Cleanup JSON resources
-		json_value_free(rootValue);
 	}
 }
 

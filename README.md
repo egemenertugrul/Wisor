@@ -29,10 +29,12 @@ You can also use the following commands to build and clean the project:
 - `make owxr`: Build OpenWiXR-Renderer.
 - `make clean`: Clean build artifacts.
 
-If you want to rebuild/clean a specific module, use the `rebuild` target along with the `module` parameter:
+If you want to rebuild/clean a specific module, use the `rebuild` target along with the `module` parameter. Here are some examples:
 
 ```bash
 make rebuild module=raylib/src PLATFORM=PLATFORM_DESKTOP
+make rebuild module=owxr PLATFORM=PLATFORM_DESKTOP
+make clean module=raylib/src
 make clean module=owxr
 ```
 
