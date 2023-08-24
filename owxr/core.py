@@ -7,6 +7,7 @@ import logging
 import numpy as np
 from pathlib import Path
 from queue import Queue
+from enum import Enum
 
 # from owxr.modules.clock import Clock
 
@@ -15,26 +16,37 @@ from owxr.modules.sensor_sensehat import SenseHat
 from owxr.modules.qr import QRScanner
 from owxr.modules.wifi import Wifi
 
+from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
+
+from owxr.utils.process_helper import ProcessHelper
+
+
+class OpMode(Enum):
+    STANDALONE = 1
+    REMOTE = 2
+
 
 class Core:
     status = None
+    isRunning = False
+    isRendererReady = False
+    renderer_process = None
+    socket_process = None
+    to_core_pipe_fd = None
+    to_renderer_pipe_fd = None
+
     heartbeat_timeout_secs = 2
+    omx_cmd = "omxplayer -o hdmi udp://127.0.0.1:5000 --timeout 0 --no-keys --fps 60 --aspect-mode stretch --live"
+    omx_player_process = None
 
     def __init__(self, args):
         self.args = args
         self.FPS = self.args.fps
         os.environ["DISPLAY"] = self.args.display
+        self.opMode = OpMode.STANDALONE
 
         # self.clock = Clock(self.FPS)
-
-        self.isRunning = False
-        self.isRendererReady = False
-
         self.imu_sensor = SenseHat()
-
-        self.renderer_process = None
-        self.to_core_pipe_fd = None
-        self.to_renderer_pipe_fd = None
 
         self.in_message_queue = Queue()
         self.out_message_queue = Queue()
@@ -59,8 +71,9 @@ class Core:
         self.heartbeat_remaining = self.heartbeat_timeout_secs
 
     def update_fps(self, new_fps):
-        logging.debug(f"Updating FPS to: {new_fps}")
-        self.FPS = int(new_fps)
+        if self.args.dynamic_fps:
+            logging.debug(f"Updating FPS to: {new_fps}")
+            self.FPS = int(new_fps)
 
     def set_renderer_ready(self):
         self.isRendererReady = True
@@ -96,26 +109,37 @@ class Core:
             },
         }
 
+    def open_pipe(self, path):
+        if os.path.exists(path):
+            os.remove(path)
+        os.mkfifo(path)
+        return os.open(path, os.O_RDWR | os.O_NONBLOCK)
+
+    def on_remote_connection(self):
+        logging.debug("RemoteConnection received.")
+        if self.omx_player_process:
+            if self.omx_player_process and isinstance(
+                self.omx_player_process, subprocess.Popen
+            ):
+                logging.debug("Stopping existing omxplayer process..")
+                self.omx_player_process.kill()
+
+        logging.debug("Starting omxplayer..")
+        self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
+
     def start(self):
         if self.isRunning:
             logging.log("Is already running!")
             return
 
+        self.socket_process = DuplexWebsocketsServerProcess(daemon=False)
+        self.socket_process.on("RemoteConnection", self.on_remote_connection)
+        self.socket_process.start()
+
         # region Setup pipes and renderer
 
-        to_core_pipe_path = "/tmp/to_core"
-        if os.path.exists(to_core_pipe_path):
-            os.remove(to_core_pipe_path)
-        os.mkfifo(to_core_pipe_path)
-        self.to_core_pipe_fd = os.open(to_core_pipe_path, os.O_RDWR | os.O_NONBLOCK)
-
-        to_renderer_pipe_path = "/tmp/to_renderer"
-        if os.path.exists(to_renderer_pipe_path):
-            os.remove(to_renderer_pipe_path)
-        os.mkfifo(to_renderer_pipe_path)
-        self.to_renderer_pipe_fd = os.open(
-            to_renderer_pipe_path, os.O_RDWR | os.O_NONBLOCK
-        )
+        self.to_core_pipe_fd = self.open_pipe("/tmp/to_core")
+        self.to_renderer_pipe_fd = self.open_pipe("/tmp/to_renderer")
 
         # Start the renderer program as a child process
 
@@ -126,7 +150,7 @@ class Core:
                 f"Renderer executable at {self.renderer_full_filepath} does not seem to exist.\nMake sure to build the renderer."
             )
             return
-        
+
         self.start_renderer()
 
         # endregion
@@ -210,23 +234,16 @@ class Core:
         os.close(self.to_core_pipe_fd)
         os.close(self.to_renderer_pipe_fd)
 
-        if self.renderer_process:
-            self.renderer_process.wait()
-
-    def start_process(self, wd, executable_full_filepath):
-        process = subprocess.Popen(executable_full_filepath, cwd=wd)
-        return process
+        ProcessHelper.stop_process(self.renderer_process)
+        ProcessHelper.stop_process(self.socket_process)
+        ProcessHelper.stop_process(self.omx_player_process)
 
     def start_renderer(self):
-        if self.renderer_process:
-            if self.renderer_process and isinstance(
-                self.renderer_process, subprocess.Popen
-            ):
-                self.renderer_process.kill()
+        ProcessHelper.stop_process(self.renderer_process)
 
         if not self.args.disable_renderer:
-            self.renderer_process = self.start_process(
-                self.renderer_wd, self.renderer_full_filepath
+            self.renderer_process = ProcessHelper.start_process(
+                self.renderer_full_filepath, self.renderer_wd
             )
 
     def update(self):
@@ -245,4 +262,5 @@ class Core:
 
     def shutdown(self):
         logging.info("Shutting down..")
+        time.sleep(0.5)
         self.isRunning = False
