@@ -63,19 +63,19 @@ void processJSON(const char *message) {
 	if (rootValue == NULL)
 	{
 		// JSON parsing failed
-		printf("Error: Failed to parse JSON\n");
+		printf("Error: Failed to parse JSON\n\tString:%s\n", message);
 		return;
 	}
 
 	JSON_Object *jsonObject = json_value_get_object(rootValue);
-	const char *type = json_object_dotget_string(jsonObject, "type");
+	const char *topic = json_object_dotget_string(jsonObject, "topic");
 	// const char* data = json_object_dotget_string(jsonObject, "data");
 
 	// printf("==RENDERER== Received message from Python:\n");
-	// printf("\tType: %s\n", type);
+	// printf("\Topic: %s\n", topic);
 	// printf("\tData: %s\n", data);
 
-	if (strcmp(type, "Sensor") == 0)
+	if (strcmp(topic, "Sensor") == 0)
 	{
 		// printf("Processing Sensor message...\n");
 
@@ -110,7 +110,7 @@ void processJSON(const char *message) {
 		lastSensorData.roll = roll;
 	}
 
-	if (strcmp(type, "Status") == 0)
+	if (strcmp(topic, "Status") == 0)
 	{
 		JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
 		bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
@@ -162,11 +162,11 @@ void processReceivedMessage()
 	}
 }
 
-void sendMessageToCore(const char *type, const char *data)
+void sendMessageToCore(const char *topic, const char *data)
 {
 	JSON_Value *rootValue = json_value_init_object();
 	JSON_Object *jsonObject = json_value_get_object(rootValue);
-	json_object_dotset_string(jsonObject, "type", type);
+	json_object_dotset_string(jsonObject, "topic", topic);
 	json_object_dotset_string(jsonObject, "data", data);
 
 	char *serializedMessage = json_serialize_to_string(rootValue);
@@ -413,6 +413,10 @@ int main(void)
 	const void *image;
 	int w, h;
 
+	lastSensorData.pitch = 0;
+	lastSensorData.yaw = 0;
+	lastSensorData.roll = 0;
+
 	SetTargetFPS(90);
 
 	// int display = GetCurrentMonitor();
@@ -573,7 +577,7 @@ int main(void)
 				if(statusItems[j].text && strlen(statusItems[j].text) > 0){
 					text = statusItems[j].text;
 				} else {
-					text = statusItems[j].state ? "<Enabled>" : ">Disabled<";
+					text = statusItems[j].state ? "Enabled" : "Disabled";
 				} 
 				nk_label(ctx, TextFormat("%s:\t %s", statusItems[j].name, text), NK_TEXT_LEFT);
 				nk_spacing(ctx, 1); /* skip 0.2 right */
