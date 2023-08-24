@@ -2,13 +2,21 @@ import subprocess
 import logging
 import multiprocessing as mp
 from typing import Union
+import psutil
 
 
 class ProcessHelper:
     @staticmethod
     def _log_subprocess_output(pipe):
         for line in iter(pipe.readline, b""):  # b'\n'-separated lines
-            logging.info("got line from subprocess: %r", line)
+            logging.info("SHELL: %r", line)
+
+    @staticmethod
+    def _kill(proc_pid):
+        process = psutil.Process(proc_pid)
+        for proc in process.children(recursive=True):
+            proc.kill()
+        process.kill()
 
     @staticmethod
     def _launch_command(command: str):
@@ -37,5 +45,5 @@ class ProcessHelper:
             process.terminate()
             process.wait()
         elif isinstance(process, mp.Process):
-            process.terminate()
+            ProcessHelper._kill(process.pid)
             process.join()

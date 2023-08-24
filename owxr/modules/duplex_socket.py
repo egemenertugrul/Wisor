@@ -2,7 +2,7 @@ import asyncio
 import multiprocessing as mp
 import logging
 from websockets.server import serve
-from websockets.exceptions import ConnectionClosedOK
+from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 import json
 import time
 from pyee import EventEmitter
@@ -41,17 +41,28 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
             try:
                 await websocket.send(message)
             except ConnectionClosedOK:
-                logging.debug("Connection closed..")
+                self.on_disconnect()
                 break
 
+    def on_disconnect(self):
+        self.emit("Disconnect")
+        logging.info("Connection closed..")
+
     async def handler(self, websocket):
+        self.emit("Connect")
+        logging.info("Connection established..")
+
+        closed = asyncio.ensure_future(websocket.wait_closed())
+        closed.add_done_callback(lambda task: self.on_disconnect())
         await asyncio.gather(
             self.consumer_handler(websocket), self.producer_handler(websocket)
         )
 
     async def main(self):
         self._loop = asyncio.get_event_loop()
-        async with serve(self.handler, "0.0.0.0", 8765) as server:
+        async with serve(
+            self.handler, "0.0.0.0", 8765, ping_interval=1, ping_timeout=1
+        ) as server:
             await asyncio.Future()
 
 

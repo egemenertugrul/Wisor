@@ -19,11 +19,13 @@ from owxr.modules.wifi import Wifi
 from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
 
 from owxr.utils.process_helper import ProcessHelper
+from owxr.utils.evalue import EValue
 
 
 class OpMode(Enum):
-    STANDALONE = 1
-    REMOTE = 2
+    NONE = 1
+    STANDALONE = 2
+    REMOTE = 3
 
 
 class Core:
@@ -41,9 +43,10 @@ class Core:
 
     def __init__(self, args):
         self.args = args
-        self.FPS = self.args.fps
-        os.environ["DISPLAY"] = self.args.display
-        self.opMode = OpMode.STANDALONE
+        self.FPS = self.args.fps or 90
+        os.environ["DISPLAY"] = self.args.display or ":0"
+        self.opMode = EValue(OpMode.STANDALONE)
+        self.opMode.on("change", self.on_opmode_change)
 
         # self.clock = Clock(self.FPS)
         self.imu_sensor = SenseHat()
@@ -65,6 +68,16 @@ class Core:
         self.heartbeat_remaining = (
             self.heartbeat_timeout_secs * 5
         )  # Give some time to launch
+
+    def on_opmode_change(self, mode: OpMode):
+        logging.info(f"OpMode changed: {mode}")
+        if mode == OpMode.REMOTE:
+            ProcessHelper.stop_process(self.omx_player_process)
+            logging.debug("Starting omxplayer..")
+            self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
+        elif mode == OpMode.STANDALONE:
+            ProcessHelper.stop_process(self.omx_player_process)
+            logging.debug("Stopping omxplayer..")
 
     def heartbeat(self):
         logging.debug(f"Heartbeat received from renderer.")
@@ -115,17 +128,11 @@ class Core:
         os.mkfifo(path)
         return os.open(path, os.O_RDWR | os.O_NONBLOCK)
 
-    def on_remote_connection(self):
-        logging.debug("RemoteConnection received.")
-        if self.omx_player_process:
-            if self.omx_player_process and isinstance(
-                self.omx_player_process, subprocess.Popen
-            ):
-                logging.debug("Stopping existing omxplayer process..")
-                self.omx_player_process.kill()
+    def on_remote_connection_begin(self):
+        self.opMode.value = OpMode.REMOTE
 
-        logging.debug("Starting omxplayer..")
-        self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
+    def on_remote_connection_end(self):
+        self.opMode.value = OpMode.STANDALONE
 
     def start(self):
         if self.isRunning:
@@ -133,7 +140,8 @@ class Core:
             return
 
         self.socket_process = DuplexWebsocketsServerProcess(daemon=False)
-        self.socket_process.on("RemoteConnection", self.on_remote_connection)
+        self.socket_process.on("Connect", self.on_remote_connection_begin)
+        self.socket_process.on("Disconnect", self.on_remote_connection_end)
         self.socket_process.start()
 
         # region Setup pipes and renderer

@@ -1,6 +1,7 @@
 from owxr.core import Core
 import argparse
 import logging
+import atexit
 
 from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
 
@@ -25,4 +26,5 @@ if __name__ == "__main__":
     )
 
     core = Core(args=args)
+    atexit.register(core.shutdown)
     core.start()
