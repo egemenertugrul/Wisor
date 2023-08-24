@@ -20,6 +20,11 @@ from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
 
 from owxr.utils.process_helper import ProcessHelper
 from owxr.utils.evalue import EValue
+from owxr.utils.math import clamp
+
+MIN_FPS = 1
+MAX_FPS = 100
+STALE_DATA_THRESHOLD_SEC = 0.2
 
 
 class OpMode(Enum):
@@ -30,12 +35,16 @@ class OpMode(Enum):
 
 class Core:
     status = None
+    update = None
     isRunning = False
     isRendererReady = False
     renderer_process = None
     socket_process = None
     to_core_pipe_fd = None
     to_renderer_pipe_fd = None
+
+    renderer_full_filepath = ""
+    renderer_wd = ""
 
     heartbeat_timeout_secs = 2
     omx_cmd = "omxplayer -o hdmi udp://127.0.0.1:5000 --timeout 0 --no-keys --fps 60 --aspect-mode stretch --live"
@@ -44,6 +53,7 @@ class Core:
     def __init__(self, args):
         self.args = args
         self.FPS = self.args.fps or 90
+        self.FPS = clamp(self.FPS, MIN_FPS, MAX_FPS)
         os.environ["DISPLAY"] = self.args.display or ":0"
         self.opMode = EValue(OpMode.STANDALONE)
         self.opMode.on("change", self.on_opmode_change)
@@ -65,28 +75,39 @@ class Core:
             "Shutdown": self.shutdown,
         }
 
-        self.heartbeat_remaining = (
-            self.heartbeat_timeout_secs * 5
-        )  # Give some time to launch
+        self.reset_remaining_heartbeat()
+
+    def reset_remaining_heartbeat(self):
+        self.heartbeat_remaining = self.heartbeat_timeout_secs
 
     def on_opmode_change(self, mode: OpMode):
         logging.info(f"OpMode changed: {mode}")
-        if mode == OpMode.REMOTE:
-            ProcessHelper.stop_process(self.omx_player_process)
-            logging.debug("Starting omxplayer..")
-            self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
-        elif mode == OpMode.STANDALONE:
+        if mode == OpMode.STANDALONE:
             ProcessHelper.stop_process(self.omx_player_process)
             logging.debug("Stopping omxplayer..")
 
+            self.update = self.standalone_update
+            self.start_renderer()
+
+        elif mode == OpMode.REMOTE:
+            self.stop_renderer()
+
+            self.update = self.remote_update
+            ProcessHelper.stop_process(self.omx_player_process)
+            logging.debug("Starting omxplayer..")
+            self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
+
+        time.sleep(2)
+
     def heartbeat(self):
         logging.debug(f"Heartbeat received from renderer.")
-        self.heartbeat_remaining = self.heartbeat_timeout_secs
+        self.reset_remaining_heartbeat()
 
     def update_fps(self, new_fps):
         if self.args.dynamic_fps:
+            new_fps = clamp(int(new_fps), MIN_FPS, MAX_FPS)
             logging.debug(f"Updating FPS to: {new_fps}")
-            self.FPS = int(new_fps)
+            self.FPS = new_fps
 
     def set_renderer_ready(self):
         self.isRendererReady = True
@@ -113,7 +134,7 @@ class Core:
             "is_camera_connected": self.get_camera_state(),
         }
         return {
-            "type": "Status",
+            "topic": "Status",
             "data": {
                 "wifi": status["is_wifi_connected"],
                 "ssid": status["ssid"],
@@ -127,6 +148,10 @@ class Core:
             os.remove(path)
         os.mkfifo(path)
         return os.open(path, os.O_RDWR | os.O_NONBLOCK)
+
+    def setup_pipes(self):
+        self.to_core_pipe_fd = self.open_pipe("/tmp/to_core")
+        self.to_renderer_pipe_fd = self.open_pipe("/tmp/to_renderer")
 
     def on_remote_connection_begin(self):
         self.opMode.value = OpMode.REMOTE
@@ -144,13 +169,6 @@ class Core:
         self.socket_process.on("Disconnect", self.on_remote_connection_end)
         self.socket_process.start()
 
-        # region Setup pipes and renderer
-
-        self.to_core_pipe_fd = self.open_pipe("/tmp/to_core")
-        self.to_renderer_pipe_fd = self.open_pipe("/tmp/to_renderer")
-
-        # Start the renderer program as a child process
-
         self.renderer_wd = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
         self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
         if not self.renderer_full_filepath.is_file():
@@ -159,83 +177,21 @@ class Core:
             )
             return
 
-        self.start_renderer()
-
         # endregion
+
+        self.start_renderer()
+        self.update = self.standalone_update
+        self.sleepTime = float(1 / self.FPS)
 
         self.isRunning = True
 
         # Run the raylib loop
         while self.isRunning:
-            if self.heartbeat_remaining <= 0 and not self.args.disable_renderer:
-                logging.warn(
-                    f"No heartbeat from the renderer process for the last {self.heartbeat_timeout_secs} seconds."
-                )
-                self.isRendererReady = False
-                self.heartbeat_remaining = self.heartbeat_timeout_secs * 5
-                self.start_renderer()
-                logging.warn(f"Restarting..")
-
-            # Check if the pipe is ready for reading or writing
-            read_ready, write_ready, _ = select.select(
-                [self.to_core_pipe_fd], [self.to_renderer_pipe_fd], [], 0
-            )
-
-            if read_ready:
-                # Read the message from the renderer
-                message = os.read(self.to_core_pipe_fd, 4096)
-                try:
-                    messages = list(
-                        filter(lambda s: len(s) > 0, message.decode().split("\n"))
-                    )
-                except Exception as e:
-                    logging.exception(e)
-                else:
-                    for m in messages:
-                        if m:
-                            try:
-                                message = json.loads(m)
-                            except Exception as e:
-                                logging.exception(e)
-                                continue
-
-                        try:
-                            logging.info("==CORE== Received message from Renderer:")
-                            message_type = message["type"]
-                            logging.info(f"\tType: {message_type}")
-
-                            cmd = self.commands_dict.get(message_type)
-
-                            if cmd:
-                                logging.info(f"\tData: {message.get('data')}")
-                                data = message.get("data")
-                        except KeyError as err:
-                            logging.exception(err)
-                        finally:
-                            if cmd:
-                                if data:
-                                    cmd(data)
-                                else:
-                                    cmd()
-
-            if write_ready:
-                if not self.out_message_queue.empty():
-                    message = self.out_message_queue.get(block=False)
-                    if message["data"] is not None and self.isRendererReady:
-                        msg = json.dumps(message) + "\n"
-                        encoded_msg = msg.encode()
-                        # print(f"Sending:{encoded_msg}")
-                        os.write(
-                            self.to_renderer_pipe_fd,
-                            encoded_msg,
-                        )
-
             self.update()
-            sleepTime = float(1 / self.FPS)
-            if self.isRendererReady:
-                self.heartbeat_remaining -= sleepTime
+            self.common_update()
 
-            time.sleep(sleepTime)
+            self.sleepTime = float(1 / self.FPS)
+            time.sleep(self.sleepTime)
             # self.clock.sleep()
 
         # Close the pipe
@@ -246,26 +202,118 @@ class Core:
         ProcessHelper.stop_process(self.socket_process)
         ProcessHelper.stop_process(self.omx_player_process)
 
-    def start_renderer(self):
-        ProcessHelper.stop_process(self.renderer_process)
+    def standalone_update(self):
+        if self.heartbeat_remaining <= 0 and not self.args.disable_renderer:
+            logging.warn(
+                f"No heartbeat from the renderer process for the last {self.heartbeat_timeout_secs} seconds."
+            )
+            logging.warn(f"Restarting renderer..")
+            self.start_renderer()
 
+        # Check if the pipe is ready for reading or writing
+        read_ready, write_ready, _ = select.select(
+            [self.to_core_pipe_fd], [self.to_renderer_pipe_fd], [], 0
+        )
+
+        if read_ready:
+            # Read the message from the renderer
+            message = os.read(self.to_core_pipe_fd, 4096)
+            try:
+                messages = list(
+                    filter(lambda s: len(s) > 0, message.decode().split("\n"))
+                )
+            except Exception as e:
+                logging.exception(e)
+            else:
+                for m in messages:
+                    if m:
+                        try:
+                            message = json.loads(m)
+                        except Exception as e:
+                            logging.exception(e)
+                            continue
+
+                    try:
+                        logging.debug("Received message from Renderer:")
+                        message_topic = message["topic"]
+                        logging.debug(f"\Topic: {message_topic}")
+
+                        cmd = self.commands_dict.get(message_topic)
+
+                        if cmd:
+                            logging.debug(f"\tData: {message.get('data')}")
+                            data = message.get("data")
+                    except KeyError as err:
+                        logging.exception(err)
+                    finally:
+                        if cmd:
+                            if data:
+                                cmd(data)
+                            else:
+                                cmd()
+
+        if write_ready:
+            if not self.out_message_queue.empty():
+                message = self.out_message_queue.get(block=False)
+                topic = message["topic"]
+                data = message["data"]
+                is_stale_data = False
+                ts = data.get("time")
+                if ts:
+                    diff = time.time() - ts
+                    is_stale_data = diff > STALE_DATA_THRESHOLD_SEC
+                    logging.debug(f"Skipping stale data.. {-diff}")
+
+                if data is not None and self.isRendererReady and not is_stale_data:
+                    msg = json.dumps(message) + "\n"
+                    encoded_msg = msg.encode()
+                    # print(f"Sending:{encoded_msg}")
+                    os.write(
+                        self.to_renderer_pipe_fd,
+                        encoded_msg,
+                    )
+
+        if self.isRendererReady:
+            self.heartbeat_remaining -= self.sleepTime
+
+    def remote_update(self):
+        pass
+
+    def start_renderer(self):
+        self.stop_renderer()
         if not self.args.disable_renderer:
+            self.setup_pipes()
+            self.reset_remaining_heartbeat()
             self.renderer_process = ProcessHelper.start_process(
                 self.renderer_full_filepath, self.renderer_wd
             )
 
-    def update(self):
+    def stop_renderer(self):
+        self.isRendererReady = False
+        ProcessHelper.stop_process(self.renderer_process)
+
+    def common_update(self):
+        if self.socket_process:
+            if not self.socket_process.message_queue.empty():
+                msg = self.socket_process.message_queue.get()
+                topic = msg.get("topic")
+                data = msg.get("data")
+                if data:
+                    self.socket_process.emit(topic, data)
+                else:
+                    self.socket_process.emit(topic)
+
         if self.qrScanner.process:
             data = self.qrScanner.get_qr_data()
             if data is not None:
-                print(data)
+                logging.debug(f"QRData: {data}")
                 connect_res, log = self.wifi.connect_to(data["S"], data["P"])
                 self.qrScanner.stop_scanning()
                 self.out_message_queue.put(self.update_status())
 
         if self.imu_sensor:
             self.out_message_queue.put(
-                {"type": "Sensor", "data": self.imu_sensor.get_data()}
+                {"topic": "Sensor", "data": self.imu_sensor.get_data()}
             )
 
     def shutdown(self):

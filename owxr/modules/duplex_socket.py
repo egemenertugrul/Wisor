@@ -13,7 +13,7 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
         mp.Process.__init__(self, *args, **kwargs)  # Call the constructor of mp.Process
         EventEmitter.__init__(self)
         self._send_queue = mp.Queue()
-        self._emit_queue = mp.Queue()
+        self.message_queue = mp.Queue()
 
     def run(self):
         asyncio.run(self.main())
@@ -24,13 +24,7 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
     async def consumer_handler(self, websocket):
         async for message in websocket:
             msg = json.loads(message)
-            logging.debug(f"Received: {msg}")
-            topic = msg.get("topic")
-            data = msg.get("data")
-            if data:
-                self.emit(topic, data)
-            else:
-                self.emit(topic)
+            self.message_queue.put(msg)
 
     async def producer_handler(self, websocket):
         while True:
@@ -44,13 +38,16 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
                 self.on_disconnect()
                 break
 
+    def on_connect(self):
+        self.message_queue.put({"topic": "Connect"})
+        logging.info("Connection established..")
+
     def on_disconnect(self):
-        self.emit("Disconnect")
+        self.message_queue.put({"topic": "Disconnect"})
         logging.info("Connection closed..")
 
     async def handler(self, websocket):
-        self.emit("Connect")
-        logging.info("Connection established..")
+        self.on_connect()
 
         closed = asyncio.ensure_future(websocket.wait_closed())
         closed.add_done_callback(lambda task: self.on_disconnect())

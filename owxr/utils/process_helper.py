@@ -13,10 +13,15 @@ class ProcessHelper:
 
     @staticmethod
     def _kill(proc_pid):
-        process = psutil.Process(proc_pid)
-        for proc in process.children(recursive=True):
-            proc.kill()
-        process.kill()
+        try:
+            process = psutil.Process(proc_pid)
+        except psutil.NoSuchProcess as e:
+            logging.error(e)
+            return
+        else:
+            for proc in process.children(recursive=True):
+                proc.kill()
+            process.kill()
 
     @staticmethod
     def _launch_command(command: str):

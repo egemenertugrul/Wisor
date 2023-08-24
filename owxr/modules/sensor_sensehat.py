@@ -11,8 +11,15 @@ class SenseHat(IMU_Sensor):
 
     def initialize_imu(self) -> bool:
         try:
-            self.imu = SenseHatLib()
-            self.imu.set_imu_config(True, True, True)
+            self.sensehat = SenseHatLib()
+            self.sensehat.set_imu_config(True, True, True)
+
+            self.sensehat.show_message(
+                "OpenWiXR",
+                text_colour=(255, 255, 255),
+                back_colour=(0, 0, 0),
+                scroll_speed=0.05,
+            )
         except Exception as e:
             logging.error(e)
             return False
@@ -22,11 +29,11 @@ class SenseHat(IMU_Sensor):
     def get_data(self) -> dict:
         while not self.is_initialized:
             self.is_initialized = self.initialize_imu()
-        imu = self.imu
+        sensehat = self.sensehat
 
-        acc = imu.get_accelerometer_raw()
-        gyro = imu.get_gyroscope_raw()
-        orientation = imu.get_orientation_radians()
+        acc = sensehat.get_accelerometer_raw()
+        gyro = sensehat.get_gyroscope_raw()
+        orientation = sensehat.get_orientation_radians()
 
         self.accelVals = [acc["x"], acc["y"], acc["z"]]
         self.gyroVals = [gyro["x"], gyro["y"], gyro["z"]]
