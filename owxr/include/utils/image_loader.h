@@ -1,5 +1,5 @@
-#ifndef _UTILS
-#define _UTILS
+#ifndef _UTIL_IMAGE_LOADER
+#define _UTIL_IMAGE_LOADER
 
 // Load image from Color array data (RGBA - 32bit)
 // Creates a copy of pixels data array

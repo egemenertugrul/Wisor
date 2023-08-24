@@ -26,7 +26,7 @@
 
 #include "pipe_rw.h"
 #include "hoverlib.h"
-#include "utils.h"
+#include "utils/timer.h"
 
 #define screenWidth 1280
 #define screenHeight 720
@@ -170,7 +170,10 @@ void sendMessageToCore(const char *type, const char *data)
 	json_object_dotset_string(jsonObject, "data", data);
 
 	char *serializedMessage = json_serialize_to_string(rootValue);
-	serializedMessage[strlen(serializedMessage)] = '\0';
+	strcat(serializedMessage, "\n");
+	// int msg_len = strlen(serializedMessage);
+	// serializedMessage[msg_len] = '\0';
+	// serializedMessage[msg_len + 1] = '\n';
 	ssize_t bytesWritten = write_to_pipe(to_core_pipe_fd, serializedMessage);
 
 	if (bytesWritten > 0)
@@ -188,14 +191,27 @@ bool fadeOut = false;
 
 #pragma region Messages to core
 
+void C_Heartbeat()
+{
+	sendMessageToCore("Heartbeat", NULL);
+}
+
+void C_FPSUpdate()
+{
+	int FPS = GetFPS();
+	char fpsStr[10];
+	sprintf(fpsStr, "%d", FPS);
+	sendMessageToCore("FPSUpdate", fpsStr);
+}
+
 void C_ConnectToWifi()
 {
-	sendMessageToCore("Command", "QRScan");
+	sendMessageToCore("QRScan", NULL);
 }
 
 void C_Shutdown()
 {
-	printf("Shutdown");
+	sendMessageToCore("Shutdown", NULL);
 }
 
 #pragma endregion
@@ -220,7 +236,7 @@ void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color co
 int main(void)
 {
 	// PIPE
-
+	//--------------------------------------------------------------------------------------
 	const char *to_renderer_pipe_name = "/tmp/to_renderer";
 	const char *to_core_pipe_name = "/tmp/to_core";
 
@@ -403,12 +419,24 @@ int main(void)
 	// SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display));
 	ToggleFullscreen();
 
-	sendMessageToCore("Command", "Begin");
+	Timer syncTimer = { 0 }, heartbeatTimer = { 0 };
+	Timer timers[] = {syncTimer, heartbeatTimer};
+	float timerDuration = 1.0f;
+	
+	StartTimer(&syncTimer, timerDuration, true, C_FPSUpdate);
+	StartTimer(&heartbeatTimer, timerDuration, true, C_Heartbeat);
+
+	sendMessageToCore("Begin", NULL);
 
 	//--------------------------------------------------------------------------------------
 	// Main game loop
 	while (!WindowShouldClose()) // Detect window close button or ESC key
 	{
+		CheckTimerDone(&syncTimer);
+		CheckTimerDone(&heartbeatTimer);
+		// CheckTimersDone(timers, ARRAY_LENGTH(timers));
+
+
 		// PIPE
 		//----------------------------------------------------------------------------------
 		processReceivedMessage();
@@ -437,9 +465,6 @@ int main(void)
 		// { // Get input from keyboard
 		// 	UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 		// }
-
-		// Vector3 movement = { 0 }, rotation = {.x = lastSensorData.pitch, .y = lastSensorData.yaw, .z = lastSensorData.roll};
-		// UpdateCameraPro(&camera, movement, rotation, 1);
 
 		// position the light slightly above the camera
 		// light.position = camera.position;

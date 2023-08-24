@@ -399,6 +399,7 @@ endif
 
 INCLUDE_PATHS += -I./external
 INCLUDE_PATHS += -I./include
+INCLUDE_PATHS += -I./include
 
 BUILD_DIR = ..
 EXECUTABLE_NAME = openwixr_renderer
