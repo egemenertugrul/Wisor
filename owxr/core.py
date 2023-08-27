@@ -27,6 +27,14 @@ MAX_FPS = 100
 STALE_DATA_THRESHOLD_SEC = 0.2
 
 
+def clear_queue(queue):
+    while not queue.empty():
+        queue.get()
+
+
+Queue.clear = clear_queue
+
+
 class OpMode(Enum):
     NONE = 1
     STANDALONE = 2
@@ -37,14 +45,18 @@ class Core:
     status = None
     update = None
     isRunning = False
-    isRendererReady = False
-    renderer_process = None
-    socket_process = None
     to_core_pipe_fd = None
     to_renderer_pipe_fd = None
 
+    send_method = None
+
+    renderer_process = None
+    isRendererReady = False
     renderer_full_filepath = ""
     renderer_wd = ""
+
+    socket_process = None
+    requested_imu_topics = None
 
     heartbeat_timeout_secs = 2
     omx_cmd = "omxplayer -o hdmi udp://127.0.0.1:5000 --timeout 0 --no-keys --fps 60 --aspect-mode stretch --live"
@@ -80,24 +92,29 @@ class Core:
     def reset_remaining_heartbeat(self):
         self.heartbeat_remaining = self.heartbeat_timeout_secs
 
-    def on_opmode_change(self, mode: OpMode):
-        logging.info(f"OpMode changed: {mode}")
+    def update_opmode(self, mode: OpMode):
+        self.out_message_queue.clear()
+
         if mode == OpMode.STANDALONE:
             ProcessHelper.stop_process(self.omx_player_process)
             logging.debug("Stopping omxplayer..")
 
-            self.update = self.standalone_update
+            self.update = self.update_standalone
+            self.send_method = self.send_standalone
             self.start_renderer()
 
         elif mode == OpMode.REMOTE:
             self.stop_renderer()
 
-            self.update = self.remote_update
+            self.update = self.update_remote
+            self.send_method = self.send_remote
             ProcessHelper.stop_process(self.omx_player_process)
             logging.debug("Starting omxplayer..")
             self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
 
-        time.sleep(2)
+    def on_opmode_change(self, mode: OpMode):
+        logging.info(f"OpMode changed: {mode}")
+        self.update_opmode(mode)
 
     def heartbeat(self):
         logging.debug(f"Heartbeat received from renderer.")
@@ -110,6 +127,7 @@ class Core:
             self.FPS = new_fps
 
     def set_renderer_ready(self):
+        time.sleep(5)
         self.isRendererReady = True
         self.out_message_queue.put(self.update_status())
 
@@ -156,8 +174,12 @@ class Core:
     def on_remote_connection_begin(self):
         self.opMode.value = OpMode.REMOTE
 
+    def on_set_imu_topics(self, topics):
+        self.requested_imu_topics = topics
+
     def on_remote_connection_end(self):
         self.opMode.value = OpMode.STANDALONE
+        self.requested_imu_topics = None
 
     def start(self):
         if self.isRunning:
@@ -166,6 +188,7 @@ class Core:
 
         self.socket_process = DuplexWebsocketsServerProcess(daemon=False)
         self.socket_process.on("Connect", self.on_remote_connection_begin)
+        self.socket_process.on("SetIMUTopics", self.on_set_imu_topics)
         self.socket_process.on("Disconnect", self.on_remote_connection_end)
         self.socket_process.start()
 
@@ -179,19 +202,22 @@ class Core:
 
         # endregion
 
-        self.start_renderer()
-        self.update = self.standalone_update
-        self.sleepTime = float(1 / self.FPS)
+        # self.sleepTime = float(1 / self.FPS)
+        self.sleepTime = float(1 / 100.0)
+
+        self.update_opmode(self.opMode)
 
         self.isRunning = True
 
         # Run the raylib loop
         while self.isRunning:
             self.update()
-            self.common_update()
+            self.update_common()
 
-            self.sleepTime = float(1 / self.FPS)
-            time.sleep(self.sleepTime)
+            # self.sleepTime = float(1 / self.FPS)
+            # time.sleep(self.sleepTime)
+            time.sleep(float(1 / 100))
+
             # self.clock.sleep()
 
         # Close the pipe
@@ -202,7 +228,7 @@ class Core:
         ProcessHelper.stop_process(self.socket_process)
         ProcessHelper.stop_process(self.omx_player_process)
 
-    def standalone_update(self):
+    def update_standalone(self):
         if self.heartbeat_remaining <= 0 and not self.args.disable_renderer:
             logging.warn(
                 f"No heartbeat from the renderer process for the last {self.heartbeat_timeout_secs} seconds."
@@ -236,7 +262,7 @@ class Core:
                     try:
                         logging.debug("Received message from Renderer:")
                         message_topic = message["topic"]
-                        logging.debug(f"\Topic: {message_topic}")
+                        logging.debug(f"\tTopic: {message_topic}")
 
                         cmd = self.commands_dict.get(message_topic)
 
@@ -253,31 +279,51 @@ class Core:
                                 cmd()
 
         if write_ready:
-            if not self.out_message_queue.empty():
-                message = self.out_message_queue.get(block=False)
-                topic = message["topic"]
-                data = message["data"]
-                is_stale_data = False
-                ts = data.get("time")
-                if ts:
-                    diff = time.time() - ts
-                    is_stale_data = diff > STALE_DATA_THRESHOLD_SEC
-                    logging.debug(f"Skipping stale data.. {-diff}")
-
-                if data is not None and self.isRendererReady and not is_stale_data:
-                    msg = json.dumps(message) + "\n"
-                    encoded_msg = msg.encode()
-                    # print(f"Sending:{encoded_msg}")
-                    os.write(
-                        self.to_renderer_pipe_fd,
-                        encoded_msg,
-                    )
+            self.send()
 
         if self.isRendererReady:
             self.heartbeat_remaining -= self.sleepTime
 
-    def remote_update(self):
-        pass
+    def send_standalone(self, message):
+        topic = message["topic"]
+        data = message["data"]
+        is_stale_data = False
+        ts = data.get("time")
+        if ts:
+            diff = time.time() - ts
+            is_stale_data = diff > STALE_DATA_THRESHOLD_SEC
+            if is_stale_data:
+                logging.debug(f"Skipping stale data.. {-diff}")
+
+        if data is not None and self.isRendererReady and not is_stale_data:
+            msg = json.dumps(message) + "\n"
+            encoded_msg = msg.encode()
+            # print(f"Sending:{encoded_msg}")
+            os.write(
+                self.to_renderer_pipe_fd,
+                encoded_msg,
+            )
+
+    def send_remote(self, message):
+        self.socket_process.send(message)
+
+    def send(self):
+        if not self.out_message_queue.empty():
+            message = self.out_message_queue.get(block=False)
+            self.send_method(message)
+
+    def update_remote(self):
+        topics = self.requested_imu_topics
+        if topics and len(topics) > 0:
+            imu_data = self.imu_sensor.get_data()
+            try:
+                updated_imu_data = {t: imu_data[t] for t in topics}
+            except KeyError as e:
+                logging.error(f"{e}\n IMU does not have the requested data")
+            else:
+                self.out_message_queue.put({"topic": "IMU", "data": updated_imu_data})
+                
+        self.send()
 
     def start_renderer(self):
         self.stop_renderer()
@@ -292,16 +338,9 @@ class Core:
         self.isRendererReady = False
         ProcessHelper.stop_process(self.renderer_process)
 
-    def common_update(self):
+    def update_common(self):
         if self.socket_process:
-            if not self.socket_process.message_queue.empty():
-                msg = self.socket_process.message_queue.get()
-                topic = msg.get("topic")
-                data = msg.get("data")
-                if data:
-                    self.socket_process.emit(topic, data)
-                else:
-                    self.socket_process.emit(topic)
+            self.socket_process.process_messages()
 
         if self.qrScanner.process:
             data = self.qrScanner.get_qr_data()
@@ -311,10 +350,10 @@ class Core:
                 self.qrScanner.stop_scanning()
                 self.out_message_queue.put(self.update_status())
 
-        if self.imu_sensor:
-            self.out_message_queue.put(
-                {"topic": "Sensor", "data": self.imu_sensor.get_data()}
-            )
+        # if self.imu_sensor:
+        #     self.out_message_queue.put(
+        #         {"topic": "Sensor", "data": self.imu_sensor.get_data()}
+        #     )
 
     def shutdown(self):
         logging.info("Shutting down..")

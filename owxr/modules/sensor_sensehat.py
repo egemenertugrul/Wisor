@@ -3,6 +3,7 @@ import time
 from sense_hat import SenseHat as SenseHatLib
 from owxr.modules.sensor import IMU_Sensor, IMU_Data
 import logging
+import threading
 
 
 class SenseHat(IMU_Sensor):
@@ -11,15 +12,19 @@ class SenseHat(IMU_Sensor):
 
     def initialize_imu(self) -> bool:
         try:
-            self.sensehat = SenseHatLib()
-            self.sensehat.set_imu_config(True, True, True)
+            sensehat = self.sensehat = SenseHatLib()
+            sensehat.set_imu_config(True, True, True)
 
-            self.sensehat.show_message(
-                "OpenWiXR",
-                text_colour=(255, 255, 255),
-                back_colour=(0, 0, 0),
-                scroll_speed=0.05,
-            )
+            display_thread = threading.Thread(
+                target=lambda: self.sensehat.show_message(
+                    "OWXR",
+                    text_colour=(255, 255, 255),
+                    back_colour=(0, 0, 0),
+                    scroll_speed=0.5,
+                ),
+                daemon=True,
+            ).start()
+
         except Exception as e:
             logging.error(e)
             return False
@@ -43,7 +48,7 @@ class SenseHat(IMU_Sensor):
             orientation["roll"],
         ]
 
-        now = float(time.time())
+        now = time.time()
         data = IMU_Data(
             self.accelVals, self.gyroVals, self.orientationVals, now
         ).to_dict()

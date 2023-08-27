@@ -15,6 +15,17 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
         self._send_queue = mp.Queue()
         self.message_queue = mp.Queue()
 
+    # This method is designed to handle messages in processes other than the main process.
+    def process_messages(self):
+        if not self.message_queue.empty():
+            msg = self.message_queue.get()
+            topic = msg.get("topic")
+            data = msg.get("data")
+            if data:
+                self.emit(topic, data)
+            else:
+                self.emit(topic)
+
     def run(self):
         asyncio.run(self.main())
 

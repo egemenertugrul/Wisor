@@ -1,4 +1,5 @@
 from pyee import EventEmitter
+from enum import Enum
 
 
 class EValue(EventEmitter):
@@ -16,3 +17,8 @@ class EValue(EventEmitter):
         if value != self._value:
             self._value = value
             self.emit("change", self._value)
+
+    def __eq__(self, other):
+        if isinstance(other, type(self._value)):
+            return self._value == other
+        return False
