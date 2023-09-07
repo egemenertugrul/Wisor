@@ -3,12 +3,12 @@ import logging
 from typing import Tuple
 
 class Wifi:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, interface = "wlan0") -> None:
+        self.interface = interface
 
     def get_wifi_networks(self):
         try:
-            output = subprocess.check_output(["iwlist", "wlan0", "scan"])
+            output = subprocess.check_output(["iwlist", self.interface, "scan"])
             output = output.decode("utf-8")
             
             ssids = []
@@ -34,6 +34,28 @@ class Wifi:
             return ssid
         except subprocess.CalledProcessError:
             # Handle the case when the 'iwgetid' command fails or no Wi-Fi connection is available
+            return None
+        
+    def get_ip(self):
+        try:
+            # Execute the 'ip' command to get the connected Wi-Fi information
+            command = ["/sbin/ip", "-o", "-4", "addr", "list", self.interface]
+            ip_output = subprocess.check_output(command)
+            
+            # Now, you can process the output using Python
+            ip_lines = ip_output.decode("utf-8").splitlines()
+            for line in ip_lines:
+                parts = line.split()
+                if "inet" in parts:
+                    index = parts.index("inet")
+                    if index + 1 < len(parts):
+                        ip = parts[index + 1].split('/')[0]
+                        return ip
+
+            # If no IP address is found, return None
+            return None
+        except subprocess.CalledProcessError:
+            # Handle the case when the 'ip' command fails or no IP address is available
             return None
 
         

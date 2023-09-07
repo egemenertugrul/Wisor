@@ -7,6 +7,8 @@ import threading
 
 
 class SenseHat(IMU_Sensor):
+    sensehat: SenseHatLib
+    
     def __init__(self) -> None:
         super().__init__()
 
@@ -20,7 +22,7 @@ class SenseHat(IMU_Sensor):
                     "OWXR",
                     text_colour=(255, 255, 255),
                     back_colour=(0, 0, 0),
-                    scroll_speed=0.5,
+                    scroll_speed=0.1,
                 ),
                 daemon=True,
             ).start()
@@ -54,6 +56,8 @@ class SenseHat(IMU_Sensor):
         ).to_dict()
         return data
 
+    def __del__(self):
+        self.sensehat.clear()
 
 if __name__ == "__main__":
     imu_sensor = SenseHat()

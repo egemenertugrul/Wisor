@@ -25,7 +25,7 @@ from owxr.utils.math import clamp
 MIN_FPS = 1
 MAX_FPS = 100
 STALE_DATA_THRESHOLD_SEC = 0.2
-
+REMOTE_SLEEP_TIME = 1 / 1000.0
 
 def clear_queue(queue):
     while not queue.empty():
@@ -98,7 +98,8 @@ class Core:
         if mode == OpMode.STANDALONE:
             ProcessHelper.stop_process(self.omx_player_process)
             logging.debug("Stopping omxplayer..")
-
+            
+            self.sleepTime = float(1 / self.FPS)
             self.update = self.update_standalone
             self.send_method = self.send_standalone
             self.start_renderer()
@@ -106,6 +107,7 @@ class Core:
         elif mode == OpMode.REMOTE:
             self.stop_renderer()
 
+            self.sleepTime = float(REMOTE_SLEEP_TIME)
             self.update = self.update_remote
             self.send_method = self.send_remote
             ProcessHelper.stop_process(self.omx_player_process)
@@ -129,7 +131,9 @@ class Core:
     def set_renderer_ready(self):
         time.sleep(5)
         self.isRendererReady = True
-        self.out_message_queue.put(self.update_status())
+
+        status = self.update_status()
+        self.out_message_queue.put(status)
 
     def get_wifi_state(self):
         return len(self.wifi.get_wifi_networks()) > 0
@@ -137,17 +141,22 @@ class Core:
     def get_wifi_ssid(self):
         res = self.wifi.get_connected_wifi_ssid()
         return res if res is not None else ""
+    
+    def get_wifi_ip(self):
+        res = self.wifi.get_ip()
+        return res if res is not None else ""
 
     def get_imu_state(self):
         return self.imu_sensor.is_initialized != None
 
-    def get_camera_state(self):  # TODO: Get camera state from camera.py?
+    def get_camera_state(self):  # TODO: Get camera state from camera.py
         return self.imu_sensor.is_initialized != None
 
     def update_status(self):
         self.status = status = {
             "is_wifi_connected": self.get_wifi_state(),
             "ssid": self.get_wifi_ssid(),
+            "ip": self.get_wifi_ip(),
             "is_imu_connected": self.get_imu_state(),
             "is_camera_connected": self.get_camera_state(),
         }
@@ -156,6 +165,7 @@ class Core:
             "data": {
                 "wifi": status["is_wifi_connected"],
                 "ssid": status["ssid"],
+                "ip": status["ip"],
                 "imu": status["is_imu_connected"],
                 "camera": status["is_camera_connected"],
             },
@@ -175,6 +185,11 @@ class Core:
         self.opMode.value = OpMode.REMOTE
 
     def on_set_imu_topics(self, topics):
+        if topics is None or len(topics) == 0:
+            logging.error("Requested IMU topics are not valid.")
+            self.requested_imu_topics = None
+            return
+
         self.requested_imu_topics = topics
 
     def on_remote_connection_end(self):
@@ -192,18 +207,9 @@ class Core:
         self.socket_process.on("Disconnect", self.on_remote_connection_end)
         self.socket_process.start()
 
-        self.renderer_wd = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
-        self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
-        if not self.renderer_full_filepath.is_file():
-            logging.error(
-                f"Renderer executable at {self.renderer_full_filepath} does not seem to exist.\nMake sure to build the renderer."
-            )
-            return
-
         # endregion
 
-        # self.sleepTime = float(1 / self.FPS)
-        self.sleepTime = float(1 / 100.0)
+        self.sleepTime = float(1 / self.FPS)
 
         self.update_opmode(self.opMode)
 
@@ -215,8 +221,8 @@ class Core:
             self.update_common()
 
             # self.sleepTime = float(1 / self.FPS)
-            # time.sleep(self.sleepTime)
-            time.sleep(float(1 / 100))
+            time.sleep(self.sleepTime)
+            # time.sleep(float(1 / 100))
 
             # self.clock.sleep()
 
@@ -229,6 +235,9 @@ class Core:
         ProcessHelper.stop_process(self.omx_player_process)
 
     def update_standalone(self):
+        if self.args.disable_renderer:
+            return
+
         if self.heartbeat_remaining <= 0 and not self.args.disable_renderer:
             logging.warn(
                 f"No heartbeat from the renderer process for the last {self.heartbeat_timeout_secs} seconds."
@@ -284,6 +293,11 @@ class Core:
         if self.isRendererReady:
             self.heartbeat_remaining -= self.sleepTime
 
+            if self.imu_sensor:
+                self.out_message_queue.put(
+                    {"topic": "Sensor", "data": self.imu_sensor.get_data()}
+                )
+
     def send_standalone(self, message):
         topic = message["topic"]
         data = message["data"]
@@ -313,21 +327,32 @@ class Core:
             self.send_method(message)
 
     def update_remote(self):
-        topics = self.requested_imu_topics
-        if topics and len(topics) > 0:
-            imu_data = self.imu_sensor.get_data()
+        imu_data = self.imu_sensor.get_data()
+        updated_imu_data = imu_data
+
+        requested_topics = self.requested_imu_topics
+
+        if requested_topics:
             try:
-                updated_imu_data = {t: imu_data[t] for t in topics}
+                updated_imu_data = {t: imu_data[t] for t in requested_topics}
             except KeyError as e:
-                logging.error(f"{e}\n IMU does not have the requested data")
-            else:
-                self.out_message_queue.put({"topic": "IMU", "data": updated_imu_data})
-                
+                logging.error(f"IMU does not have the requested key: {e}")
+                return
+            
+        self.out_message_queue.put({"topic": "IMU", "data": updated_imu_data})
         self.send()
 
     def start_renderer(self):
         self.stop_renderer()
         if not self.args.disable_renderer:
+            self.renderer_wd = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
+            self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
+            if not self.renderer_full_filepath.is_file():
+                logging.error(
+                    f"Renderer executable at {self.renderer_full_filepath} does not seem to exist.\nMake sure to build the renderer."
+                )
+                return
+
             self.setup_pipes()
             self.reset_remaining_heartbeat()
             self.renderer_process = ProcessHelper.start_process(

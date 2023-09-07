@@ -12,10 +12,11 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
     def __init__(self, *args, **kwargs):
         mp.Process.__init__(self, *args, **kwargs)  # Call the constructor of mp.Process
         EventEmitter.__init__(self)
+        self.port = kwargs.get("port") or 8765
         self._send_queue = mp.Queue()
         self.message_queue = mp.Queue()
 
-    # This method is designed to handle messages in processes other than the main process.
+    # This method is designed to handle messages coming from processes other than the main process.
     def process_messages(self):
         if not self.message_queue.empty():
             msg = self.message_queue.get()
@@ -42,6 +43,9 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
             message = await asyncio.get_event_loop().run_in_executor(
                 None, self._send_queue.get
             )
+            if type(message) is dict:
+                message = json.dumps(message)
+
             logging.debug(f"Sending: {message}")
             try:
                 await websocket.send(message)
@@ -69,7 +73,7 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
     async def main(self):
         self._loop = asyncio.get_event_loop()
         async with serve(
-            self.handler, "0.0.0.0", 8765, ping_interval=1, ping_timeout=1
+            self.handler, "0.0.0.0", self.port, ping_interval=1, ping_timeout=1
         ) as server:
             await asyncio.Future()
 
