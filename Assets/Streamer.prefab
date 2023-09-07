@@ -132,6 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6546870033973281645}
   - component: {fileID: 1304215671}
+  - component: {fileID: 6327401650571146990}
   - component: {fileID: 1304215673}
   - component: {fileID: 6275398228283032611}
   m_Layer: 0
@@ -173,7 +174,7 @@ MonoBehaviour:
   Distance: 0.063
   OffsetX: 0.0565
   IsAuto: 1
---- !u!114 &1304215673
+--- !u!114 &6327401650571146990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,8 +188,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Width: 1280
   Height: 720
+  Pipeline: videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1
+    ! mpegtsmux ! udpsink host=192.168.144.167 port=5000 sync=false
+  fps: 60
+  _created: 0
+  _tempRenderTarget: {fileID: 0}
+  TempTex: {fileID: 0}
+--- !u!114 &1304215673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546870033973281644}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6213a43739d87b542815b36b8cd9c842, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Width: 1280
+  Height: 720
   Pipeline: videoflip method=3 ! nvh264enc zerolatency=true ! h264parse ! rtph264pay
-    config-interval=1 pt=96 ! udpsink host=127.0.0.1 port=5000 sync=false
+    config-interval=1 pt=96 ! udpsink host=192.168.144.167 port=5000 sync=false
   fps: 60
   _created: 0
   _tempRenderTarget: {fileID: 0}
@@ -207,9 +228,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Width: 1280
   Height: 720
-  Pipeline: videoflip method=5 ! openh264enc bitrate=512000 rate-control=bitrate
-    ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=127.0.0.1 port=5000
-    sync=false
+  Pipeline: videoflip method=3 ! openh264enc bitrate=512000 rate-control=bitrate
+    ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.144.167
+    port=5000 sync=false
   fps: 60
   _created: 0
   _tempRenderTarget: {fileID: 0}

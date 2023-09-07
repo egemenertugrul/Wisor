@@ -7,12 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DistortionMaterial_Right
+  m_Name: DistortionMaterial_RightEye
   m_Shader: {fileID: 4800000, guid: d18bdeff23931ce4d8f5c94e9328c62e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _ISRIGHT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -92,7 +93,7 @@ Material:
     - _distortion: 0.3
     - _isRight: 1
     - _offsetX: 0.0565
-    - _offsetY: 0.529
+    - _offsetY: 0
     - _scale: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

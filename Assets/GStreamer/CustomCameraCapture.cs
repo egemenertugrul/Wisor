@@ -58,8 +58,8 @@ public class CustomCameraCapture : MonoBehaviour
     {
         previousCameraViewportRect = new Rect(camera.rect);
 
-        if(rt)
-            camera.rect = new Rect(0, 0, 1, 1);
+        //if(rt)
+        //    camera.rect = new Rect(0, 0, 1, 1);
 
         //camera.targetTexture = tempRT;
     }
@@ -84,12 +84,15 @@ public class CustomCameraCapture : MonoBehaviour
             Graphics.CopyTexture(tempRT, 0, 0, 0, 0,
                 tempRT.width, tempRT.height, rt, 0, 0, offsetX, 0);
         }
-        Graphics.Blit(tempRT, destination);
+
+        //Graphics.Blit(tempRT, destination);
+        Graphics.Blit(source, destination);
+
     }
 
     private void OnPostRender()
     {
-        camera.rect = previousCameraViewportRect;
+        //camera.rect = previousCameraViewportRect;
 
         //camera.targetTexture = null;
 

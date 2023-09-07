@@ -89,8 +89,6 @@ public class VideoStreamer : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		Debug.Log("start");
-
 		_streamer = new GstCustomVideoStreamer();
 		_grabber = new GstUnityImageGrabber();
 

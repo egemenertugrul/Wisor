@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace KVisor.Utils
+namespace OpenWiXR.Utils
 {
     public static class Utils
     {
+        public const double DEG_TO_RAD_PER_SECOND = 0.017453;
 
         public unsafe static float[] GetArrayFromPointer(float* pointer, int length)
         {

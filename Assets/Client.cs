@@ -1,27 +1,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Newtonsoft.Json;
-using KVisor.Utils;
+using OpenWiXR.Utils;
 
-namespace KVisor.ZMQ
+namespace OpenWiXR.ZMQ
 {
-    public class IMU_Data {
-        [JsonProperty("topic")]
-        public string Topic;
+    public class Communications
+    {
 
-        [JsonProperty("acc")]
-        public double[] Acc;
-
-        [JsonProperty("gyro")]
-        public double[] Gyro;
-
-        [JsonProperty("time")]
-        public double Time;
-
-        public override string ToString()
-        {
-            return $"Topic: {Topic}\t Acc: {Acc.ToDelimitedString()}\t Gyro: {Gyro.ToDelimitedString()}\t Time: {Time}";
-        }
     }
 
     public class Client : Singleton<Client>

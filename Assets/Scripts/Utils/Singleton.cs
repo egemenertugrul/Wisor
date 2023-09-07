@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KVisor.Utils
+namespace OpenWiXR.Utils
 {
 
     /// <summary>

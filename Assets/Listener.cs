@@ -4,7 +4,7 @@ using System.Threading;
 using NetMQ;
 using NetMQ.Sockets;
 
-namespace KVisor.ZMQ
+namespace OpenWiXR.ZMQ
 {
     public class Listener
     {
