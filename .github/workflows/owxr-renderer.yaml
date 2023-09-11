@@ -5,12 +5,12 @@ on:
   push:
     paths:
       - 'owxr/**'
-      - '.github/workflows/owxr.yml'
+      - '.github/workflows/owxr-renderer.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'owxr/**'
-      - '.github/workflows/owxr.yml'
+      - '.github/workflows/owxr-renderer.yml'
 
 permissions:
   contents: read
