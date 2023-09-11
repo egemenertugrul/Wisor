@@ -27,6 +27,7 @@ MAX_FPS = 100
 STALE_DATA_THRESHOLD_SEC = 0.2
 REMOTE_SLEEP_TIME = 1 / 1000.0
 
+
 def clear_queue(queue):
     while not queue.empty():
         queue.get()
@@ -98,7 +99,7 @@ class Core:
         if mode == OpMode.STANDALONE:
             ProcessHelper.stop_process(self.omx_player_process)
             logging.debug("Stopping omxplayer..")
-            
+
             self.sleepTime = float(1 / self.FPS)
             self.update = self.update_standalone
             self.send_method = self.send_standalone
@@ -141,7 +142,7 @@ class Core:
     def get_wifi_ssid(self):
         res = self.wifi.get_connected_wifi_ssid()
         return res if res is not None else ""
-    
+
     def get_wifi_ip(self):
         res = self.wifi.get_ip()
         return res if res is not None else ""
@@ -293,7 +294,7 @@ class Core:
         if self.isRendererReady:
             self.heartbeat_remaining -= self.sleepTime
 
-            if self.imu_sensor:
+            if self.imu_sensor and not self.args.stdctl:
                 self.out_message_queue.put(
                     {"topic": "Sensor", "data": self.imu_sensor.get_data()}
                 )
@@ -338,7 +339,7 @@ class Core:
             except KeyError as e:
                 logging.error(f"IMU does not have the requested key: {e}")
                 return
-            
+
         self.out_message_queue.put({"topic": "IMU", "data": updated_imu_data})
         self.send()
 
@@ -355,8 +356,15 @@ class Core:
 
             self.setup_pipes()
             self.reset_remaining_heartbeat()
+
+            args = []
+            if self.args.desktop:
+                args.append("--desktop")
+            if self.args.stdctl:
+                args.append("--stdctl")
+
             self.renderer_process = ProcessHelper.start_process(
-                self.renderer_full_filepath, self.renderer_wd
+                self.renderer_full_filepath, self.renderer_wd, args
             )
 
     def stop_renderer(self):
@@ -374,11 +382,6 @@ class Core:
                 connect_res, log = self.wifi.connect_to(data["S"], data["P"])
                 self.qrScanner.stop_scanning()
                 self.out_message_queue.put(self.update_status())
-
-        # if self.imu_sensor:
-        #     self.out_message_queue.put(
-        #         {"topic": "Sensor", "data": self.imu_sensor.get_data()}
-        #     )
 
     def shutdown(self):
         logging.info("Shutting down..")

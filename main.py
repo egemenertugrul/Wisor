@@ -11,8 +11,20 @@ if __name__ == "__main__":
     group.add_argument("--fps", type=int, default=90, help="Set a fixed FPS")
     group.add_argument("--dynamic-fps", action="store_true", help="Use dynamic FPS")
 
-    parser.add_argument("--disable-renderer", action="store_true")
+    group2 = parser.add_mutually_exclusive_group()
+    group2.add_argument(
+        "--desktop",
+        action="store_true",
+        help="To disable rotating and flipping the screen",
+    )
+    group2.add_argument("--disable-renderer", action="store_true")
+
     parser.add_argument("-d", "--display", type=str, default=":0")
+    parser.add_argument(
+        "--stdctl",
+        action="store_true",
+        help="Uses keyboard/mouse rather than IMU orientation to control the camera.",
+    )
     parser.add_argument("--verbose", "-v", action="count", default=1)
 
     args = parser.parse_args()
