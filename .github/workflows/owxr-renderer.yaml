@@ -1,4 +1,4 @@
-name: OpenWiXR
+name: OpenWiXR-Renderer
 
 on:
   workflow_dispatch:
