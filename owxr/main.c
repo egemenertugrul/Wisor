@@ -7,6 +7,7 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "rcamera.h"
 
 #define RLIGHTS_IMPLEMENTATION
 #include "rlights.h"
@@ -45,11 +46,14 @@ int to_core_pipe_fd = -1;
 
 IMU_Data lastSensorData;
 char* ssidName;
+char* ipAddress;
+bool isDesktop = false;
+bool isStandardControls = false;
 
-#define STATUS_ITEMS_LENGTH 4
+#define STATUS_ITEMS_LENGTH 5
 Status statusItems[STATUS_ITEMS_LENGTH];
 
-#define MENU_ITEMS_LENGTH 4
+#define MENU_ITEMS_LENGTH 2
 
 typedef struct MenuItem
 {
@@ -113,9 +117,11 @@ void processJSON(const char *message) {
 	if (strcmp(topic, "Status") == 0)
 	{
 		JSON_Object *dataObject = json_object_get_object(jsonObject, "data");
+		
 		bool isWiFiEnabled = json_object_get_boolean(dataObject, "wifi");
 		bool isIMUEnabled = json_object_get_boolean(dataObject, "imu");
 		const char* ssid = json_object_get_string(dataObject, "ssid");
+		const char* ip = json_object_get_string(dataObject, "ip");
 		bool isCameraEnabled = json_object_get_boolean(dataObject, "camera");
 
 		Status wifiStatus = { .name="WiFi", .state=isWiFiEnabled };
@@ -123,14 +129,20 @@ void processJSON(const char *message) {
 			free(ssidName);
 		ssidName = (char*)malloc(strlen(ssid) + 1);
 
+		if(ipAddress)
+			free(ipAddress);
+		ipAddress = (char*)malloc(strlen(ip) + 1);
+
 		Status ssidStatus = { .name="SSID", .state=isWiFiEnabled, .text=strcpy(ssidName, ssid) };
+		Status ipStatus = { .name="IP", .state=isWiFiEnabled, .text=strcpy(ipAddress, ip) };
 		Status imuStatus = { .name="IMU", .state=isIMUEnabled };
 		Status cameraStatus = { .name="Camera", .state=isCameraEnabled };
 		
 		statusItems[0] = wifiStatus;
 		statusItems[1] = ssidStatus;
-		statusItems[2] = imuStatus;
-		statusItems[3] = cameraStatus;
+		statusItems[2] = ipStatus;
+		statusItems[3] = imuStatus;
+		statusItems[4] = cameraStatus;
 	}
 
 	// Cleanup JSON resources
@@ -233,8 +245,21 @@ void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color co
 	DrawRing((Vector2){x, y}, 25, 50, startAngle, endAngle, (int)minSegments, Fade(MAROON, 0.3f));
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+	for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--desktop") == 0) {
+            isDesktop = true;
+        }
+		else if (strcmp(argv[i], "--stdctl") == 0) {
+            isStandardControls = true;
+        }
+    }
+
+	float targetTextureRotation = 0.0f;
+	if(!isDesktop)
+		targetTextureRotation = 90.0f;
+
 	// PIPE
 	//--------------------------------------------------------------------------------------
 	const char *to_renderer_pipe_name = "/tmp/to_renderer";
@@ -256,7 +281,10 @@ int main(void)
 
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	InitWindow(screenHeight, screenWidth, "OpenWiXR");
+	if(isDesktop)
+		InitWindow(screenWidth, screenHeight, "OpenWiXR");
+	else
+		InitWindow(screenHeight, screenWidth, "OpenWiXR");
 
 	// VR device parameters definition
     VrDeviceInfo device = {
@@ -322,8 +350,17 @@ int main(void)
     RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
-    Rectangle destRec = { (float)GetScreenWidth(), 0.0f, (float)GetScreenHeight(), (float)GetScreenWidth() };
+    Rectangle sourceRec;
+	Rectangle destRec;
+
+	if (isDesktop) {
+		sourceRec = (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+		destRec = (Rectangle){ 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
+	} else {
+		sourceRec = (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+		destRec = (Rectangle){ (float)GetScreenWidth(), 0.0f, (float)GetScreenHeight(), (float)GetScreenWidth() };
+	}
+
 
 	// // Define the camera to look into our 3d world
 	// Camera camera = {0};
@@ -335,7 +372,7 @@ int main(void)
 	// Define the camera to look into our 3d world (VR)
     Camera camera = { 0 };
     camera.position = (Vector3){0.0f, 2.5f, -3.0f};    // Camera position
-	camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+	camera.target = (Vector3){ 0.0f, 2.5f, 0.0f };      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
     camera.fovy = 90.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera type
@@ -345,9 +382,9 @@ int main(void)
 
 	MenuItem menuItems[] = {
 		{"Connect to WiFi", {false, 0.0f, 0.0f, false}, C_ConnectToWifi},
-		{"(N/A) Settings", {false, 0.0f, 0.0f, false}, NULL},
-		{"(N/A) Calibration", {false, 0.0f, 0.0f, false}, NULL},
-		{"(N/A) Shutdown", {false, 0.0f, 0.0f, false}, C_Shutdown}};
+		// {"(N/A) Settings", {false, 0.0f, 0.0f, false}, NULL},
+		// {"(N/A) Calibration", {false, 0.0f, 0.0f, false}, NULL},
+		{"Shutdown", {false, 0.0f, 0.0f, false}, C_Shutdown}};
 
 	int i;
 	for (i = 0; i < MENU_ITEMS_LENGTH; ++i)
@@ -459,16 +496,22 @@ int main(void)
 		//	SetCameraMoveControls(KEY_W, KEY_S, KEY_D, KEY_A, KEY_INVALID, KEY_INVALID);
 		//}
 
+		if(!isStandardControls)
 		{ // Get input from sensors
 			Vector3 direction;
 			direction.x = cosf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
 			direction.y = sinf(lastSensorData.pitch);
 			direction.z = sinf(lastSensorData.yaw) * cosf(lastSensorData.pitch);
 			camera.target = Vector3Add(camera.position, direction);
+
+			Vector3 right = GetCameraRight(&camera);
+			camera.up = Vector3RotateByAxisAngle((Vector3) {0, 1, 0}, right, direction.y);
+			camera.up = Vector3RotateByAxisAngle(camera.up, direction, sinf(lastSensorData.roll));
 		}
-		// { // Get input from keyboard
-		// 	UpdateCamera(&camera, CAMERA_FIRST_PERSON);
-		// }
+		else
+		{ // Get input from keyboard
+			UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+		}
 
 		// position the light slightly above the camera
 		// light.position = camera.position;
@@ -479,7 +522,10 @@ int main(void)
 		// UpdateLightValues(shader, light);
 
 		// the ray is always down the cameras point of view
-		ray = GetMouseRay((Vector2){halfHeight, halfWidth}, camera);
+		if(isDesktop)
+			ray = GetMouseRay((Vector2){halfWidth, halfHeight}, camera);
+		else
+			ray = GetMouseRay((Vector2){halfHeight, halfWidth}, camera);
 
 		// Check ray collision against model
 		// NOTE: It considers model.transform matrix!
@@ -634,7 +680,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(BLACK);
             BeginShaderMode(distortion);
-                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 90.0f, BLACK);
+                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, targetTextureRotation, BLACK);
             EndShaderMode();
             // DrawFPS(10, 10);
 			
@@ -642,7 +688,11 @@ int main(void)
 			{
 				BeginBlendMode(BLEND_ALPHA); // Enable alpha blending
 				// Draw your view here with the alpha value
-				DrawRectangle(0, 0, screenHeight, screenWidth, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+				if(isDesktop)
+					DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+				else
+					DrawRectangle(0, 0, screenHeight, screenWidth, (Color){0, 0, 0, (unsigned char)(viewAlpha * 255)});
+
 				EndBlendMode(); // Disable alpha blending
 			}
         EndDrawing();

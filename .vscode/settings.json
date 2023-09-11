@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "raymath.h": "c",
+        "rcamera.h": "c"
+    }
+}
