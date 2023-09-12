@@ -14,7 +14,11 @@
                 "--dynamic-fps",
                 "-v",
                 "--desktop",
-                // "--stdctl"
+                "--stdctl",
+                "--offsetX",
+                "0.0565",
+                "--ipd",
+                "0.063"
             ],
             "justMyCode": true
         }

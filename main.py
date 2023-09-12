@@ -25,6 +25,9 @@ if __name__ == "__main__":
         action="store_true",
         help="Uses keyboard/mouse rather than IMU orientation to control the camera.",
     )
+    parser.add_argument("--ipd", type=float)
+    parser.add_argument("--offsetX", type=float)
+
     parser.add_argument("--verbose", "-v", action="count", default=1)
 
     args = parser.parse_args()

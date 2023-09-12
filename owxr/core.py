@@ -362,6 +362,10 @@ class Core:
                 args.append("--desktop")
             if self.args.stdctl:
                 args.append("--stdctl")
+            if self.args.ipd:
+                args.extend(["--ipd", self.args.ipd])
+            if self.args.offsetX:
+                args.extend(["--offsetX", self.args.offsetX])
 
             self.renderer_process = ProcessHelper.start_process(
                 self.renderer_full_filepath, self.renderer_wd, args
