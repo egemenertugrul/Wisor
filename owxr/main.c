@@ -247,6 +247,9 @@ void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color co
 
 int main(int argc, char* argv[])
 {
+	float ipd = 0.063f;
+	float offsetX = 0.0565f;
+
 	for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--desktop") == 0) {
             isDesktop = true;
@@ -254,6 +257,16 @@ int main(int argc, char* argv[])
 		else if (strcmp(argv[i], "--stdctl") == 0) {
             isStandardControls = true;
         }
+		else if (strcmp(argv[i], "--ipd") == 0 && i + 1 < argc) {
+			// Check if there is another argument after --ipd and it exists
+			// Assuming you want to convert the next argument to an integer
+			ipd = atoi(argv[i + 1]);
+		}
+		else if (strcmp(argv[i], "--offsetX") == 0 && i + 1 < argc) {
+			// Check if there is another argument after --ipd and it exists
+			// Assuming you want to convert the next argument to an integer
+			offsetX = atoi(argv[i + 1]);
+		}
     }
 
 	float targetTextureRotation = 0.0f;
@@ -294,8 +307,8 @@ int main(int argc, char* argv[])
         .vScreenSize = 0.0669f,              // Vertical size in meters
         .vScreenCenter = 0.04678f,           // Screen center in meters
         .eyeToScreenDistance = 0.041f,       // Distance between eye and display in meters
-        .lensSeparationDistance = 0.07f,     // Lens separation distance in meters
-        .interpupillaryDistance = 0.07f,     // IPD (distance between pupils) in meters
+        .lensSeparationDistance = ipd,     // Lens separation distance in meters
+        .interpupillaryDistance = ipd,     // IPD (distance between pupils) in meters
 
         // NOTE: CV1 uses fresnel-hybrid-asymmetric lenses with specific compute shaders
         // Following parameters are just an approximation to CV1 distortion stereo rendering
@@ -316,7 +329,7 @@ int main(int argc, char* argv[])
     //Shader distortion = LoadShader(0, TextFormat("resources/distortion%i.fs", GLSL_VERSION));
     Shader distortion = LoadShader(0, "resources/distortion_openwixr_120.fs");
     
-    const float _offset[] = { 0.0565f, 0.0f };
+    const float _offset[] = { offsetX, 0.0f };
     const float _distortion[] = { 0.3f };
     const float _cubicDistortion[] = { 0 };
     const int _isRight[] = { 0 };
@@ -357,7 +370,7 @@ int main(int argc, char* argv[])
 		sourceRec = (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
 		destRec = (Rectangle){ 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
 	} else {
-		sourceRec = (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+		sourceRec = (Rectangle){ 0.0f, 0.0f, -(float)target.texture.width, -(float)target.texture.height };
 		destRec = (Rectangle){ (float)GetScreenWidth(), 0.0f, (float)GetScreenHeight(), (float)GetScreenWidth() };
 	}
 
