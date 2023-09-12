@@ -8,7 +8,7 @@ public abstract class TextureSource : MonoBehaviour
     public UnityEvent ReadyEvent = new UnityEvent();
     protected bool isReady = false;
 
-    public Texture texture;
+    protected Texture texture;
     public int Width { get => texture.width; }
     public int Height { get => texture.height; }
 

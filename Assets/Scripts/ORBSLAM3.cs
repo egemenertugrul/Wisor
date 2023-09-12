@@ -15,37 +15,30 @@ using UnityEngine;
 
 using static OpenWiXR.Utils.Utils;
 using static OpenWiXR.Communications.WebSocketsClient;
+using OpenWiXR.Communications;
 
 namespace OpenWiXR.Tracking
 {
-    public class SLAM : MonoBehaviour
+    public class ORBSLAM3 : Singleton<ORBSLAM3>
     {
-        [Range(1, 60)]
-        public int DesiredFPS = 60;
-
-        public TextAsset TimestampsFile, IMUFile;
         private string[] timestamps, IMUs;
-        private List<(double, IMU_Point)> tsImuPairs;
+        private List<(double, IMU_Point)> timestampImuPairs;
 
-        public string BaseImagePath;
-
-        public TextureSource TextureSourceObject;
-        public SLAMTarget TargetObject;
-        public string VocabularyPath, SettingsPath; // Relative to StreamingAssets path
-
+        private TextureSource _textureSource;
+        private SLAMTarget _transformTarget;
+        
         private string imagePath;
         private int timestampIndex;
         private static double GlobalTimestamp = 0;
 
-        public Source_Type SourceType = Source_Type.Realtime;
+        private ORBSLAM3Config _settings;
         public enum Source_Type
         {
             File,
             Realtime
         }
 
-        public Sensor_Type SensorType = Sensor_Type.IMU_MONOCULAR;
-        public enum Sensor_Type
+        public enum Sensor_Type // Options will be commented out if they are not implemented in the wrapper.
         {
             MONOCULAR = 0,
             //STEREO = 1,
@@ -54,7 +47,7 @@ namespace OpenWiXR.Tracking
             //IMU_STEREO = 4
         };
 
-        public Tracking_State TrackingState = Tracking_State.SYSTEM_NOT_READY;
+        [ReadOnly] public Tracking_State TrackingState = Tracking_State.SYSTEM_NOT_READY;
         public enum Tracking_State
         {
             SYSTEM_NOT_READY = -1,
@@ -183,49 +176,73 @@ namespace OpenWiXR.Tracking
 
         delegate void SLAMRoutineDelegate();
 
-        private Client client;
+        private WebSocketsClient client;
         private Queue<IMU_Point> imuDataQueue;
         SLAMRoutineDelegate SLAMRoutine;
         private bool isRunning;
         private float dt;
         private int imuIndex;
 
-        public Transform MapPointsBase { get; private set; }
-        public bool DisplayMapPoints;
+        private Transform mapPointsBase;
         public Coroutine CR_GetMapPoints { get; private set; }
 
         void OnEnable()
+        {
+            //StartSLAM();
+
+        }
+
+        public void Initialize(ORBSLAM3Config settings, TextureSource textureSource, SLAMTarget transformTarget)
+        {
+            if (!settings)
+            {
+                throw new NullReferenceException("ORBSLAM3Settings must be defined.");
+            }
+            if (!textureSource)
+            {
+                throw new NullReferenceException("TextureSource must be defined.");
+            }
+            if (!transformTarget)
+            {
+                throw new NullReferenceException("SLAMTarget must be defined.");
+            }
+
+            _settings = settings;
+            _textureSource = textureSource;
+            _transformTarget = transformTarget;
+        }
+
+        public void StartSLAM()
         {
             //ShutdownSLAMSystem();
             string vocabPath, settingsPath;
             if (isAndroid)
             {
-                vocabPath = Path.Combine(Application.persistentDataPath, VocabularyPath);
-                settingsPath = Path.Combine(Application.persistentDataPath, SettingsPath);
+                vocabPath = Path.Combine(Application.persistentDataPath, _settings.VocabularyPath);
+                settingsPath = Path.Combine(Application.persistentDataPath, _settings.SettingsPath);
             }
             else
             {
-                vocabPath = Path.Combine(Application.streamingAssetsPath, VocabularyPath);
-                settingsPath = Path.Combine(Application.streamingAssetsPath, SettingsPath);
+                vocabPath = Path.Combine(Application.streamingAssetsPath, _settings.VocabularyPath);
+                settingsPath = Path.Combine(Application.streamingAssetsPath, _settings.SettingsPath);
             }
 
             CreateSLAMSystem
                 (
                 vocabPath,
                 settingsPath,
-                (int)SensorType
+                (int)_settings.SensorType
                 );
 
             UpdateSLAMRoutine();
 
-            if (DisplayMapPoints)
+            if (_settings.DisplayMapPoints)
                 CR_GetMapPoints = StartCoroutine(GetMapPointsCoroutine());
 
             isRunning = true;
 
             //// TODO: Test code
             //StartCoroutine(MeasureIMUHz());
-
         }
 
         int maxImuCount = 0, imuCount = 0;
@@ -242,10 +259,10 @@ namespace OpenWiXR.Tracking
 
         private IEnumerator GetMapPointsCoroutine()
         {
-            MapPointsBase = new GameObject("MapPointsBase").transform;
-            MapPointsBase.parent = TargetObject ? TargetObject.transform.parent : transform;
-            MapPointsBase.transform.localPosition = Vector3.zero;
-            MapPointsBase.transform.localRotation = Quaternion.identity;
+            mapPointsBase = new GameObject("MapPointsBase").transform;
+            mapPointsBase.parent = _transformTarget ? _transformTarget.transform.parent : transform;
+            mapPointsBase.transform.localPosition = Vector3.zero;
+            mapPointsBase.transform.localRotation = Quaternion.identity;
 
             while (true)
             {
@@ -257,17 +274,21 @@ namespace OpenWiXR.Tracking
 
         private void UpdateSLAMRoutine()
         {
-            if (SourceType == Source_Type.Realtime)
+            if (_settings.SourceType == Source_Type.Realtime)
             {
-                switch (SensorType)
+                switch (_settings.SensorType)
                 {
                     case Sensor_Type.MONOCULAR:
                         SLAMRoutine = SLAMRoutine_Monocular;
                         break;
                     case Sensor_Type.IMU_MONOCULAR:
-                        client = Client.Instance;
+                        client = WebSocketsClient.Instance;
                         imuDataQueue = new Queue<IMU_Point>();
-                        client.OnMessageReceived.AddListener(GetIMUDataFromClient);
+                        client.OnMessageReceived.AddListener(AddIMUDataFromClient);
+
+                        //client = Client.Instance;
+                        //imuDataQueue = new Queue<IMU_Point>();
+                        //client.OnMessageReceived.AddListener(GetIMUDataFromClient);
                         //timestampIndex = 0;
 
                         //string timestampsText = TimestampsFile.text;
@@ -283,18 +304,18 @@ namespace OpenWiXR.Tracking
                 }
             }
 
-            if (SourceType == Source_Type.File)
+            if (_settings.SourceType == Source_Type.File)
             {
                 timestampIndex = 0;
 
-                string timestampsText = TimestampsFile.text;
+                string timestampsText = _settings.TimestampsFile.text;
                 timestamps = Regex.Split(timestampsText, "\r\n");
 
-                string IMUText = IMUFile.text;
+                string IMUText = _settings.IMUFile.text;
                 IMUs = Regex.Split(IMUText, "\n").Skip(1).ToArray();
                 FillTimestampIMUPairs();
 
-                switch (SensorType)
+                switch (_settings.SensorType)
                 {
                     case Sensor_Type.MONOCULAR:
                         SLAMRoutine = SLAMRoutine_File_Monocular;
@@ -307,24 +328,29 @@ namespace OpenWiXR.Tracking
 
         }
 
-        private void GetIMUDataFromClient(string str)
+        public void AddIMUDataFromClient(Message msg)
         {
-            if (imuDataQueue == null)
-                return;
+            //if (imuDataQueue == null)
+            //    return;
 
-            IMU_Data data = JsonConvert.DeserializeObject<IMU_Data>(str);
-            //print(data.ToString());
+            //if (msg.Topic != "Sensor")
+            //    return;
 
-            P3f acc = new P3f(data.Acceleration[0], data.Acceleration[1], data.Acceleration[2]);
-            P3f gyro = new P3f(data.Gyroscope[0] * DEG_TO_RAD_PER_SECOND, data.Gyroscope[1] * DEG_TO_RAD_PER_SECOND, data.Gyroscope[2] * DEG_TO_RAD_PER_SECOND);
-            double timestamp = data.Time;
+            //IMU_Data data = msg.Data as IMU_Data;
+            ////print(data.ToString());
 
-            imuDataQueue.Enqueue(new IMU_Point(acc, gyro, timestamp));
+            //P3f acc = new P3f(data.Acceleration[0], data.Acceleration[1], data.Acceleration[2]);
+            //P3f gyro = new P3f(data.Gyroscope[0], data.Gyroscope[1], data.Gyroscope[2]);
+            //double timestamp = data.Time;
+
+            //imuDataQueue.Enqueue(new IMU_Point(acc, gyro, timestamp));
+
+            // TODO: Commented out
         }
 
         private void FillTimestampIMUPairs()
         {
-            tsImuPairs = new List<(double, IMU_Point)>();
+            timestampImuPairs = new List<(double, IMU_Point)>();
 
             for (int i = 0; i < IMUs.Length; i++)
             {
@@ -343,7 +369,7 @@ namespace OpenWiXR.Tracking
                     ts / 1e9
                     );
 
-                tsImuPairs.Add((ts, imu));
+                timestampImuPairs.Add((ts, imu));
             }
         }
 
@@ -353,7 +379,7 @@ namespace OpenWiXR.Tracking
                 return;
 
             string s_timestamp = timestamps[timestampIndex++];
-            imagePath = BaseImagePath + s_timestamp + ".png";
+            imagePath = _settings.BaseImagePath + s_timestamp + ".png";
             double timestamp = double.Parse(s_timestamp) / 1e9;
             print($"Processing timestamp: {s_timestamp} ...");
 
@@ -374,27 +400,27 @@ namespace OpenWiXR.Tracking
             if (timestampIndex >= timestamps.Length - 1)
                 return;
 
-            if (tsImuPairs == null)
+            if (timestampImuPairs == null)
                 return;
 
             string s_timestamp = timestamps[timestampIndex++];
-            imagePath = BaseImagePath + s_timestamp + ".png";
+            imagePath = _settings.BaseImagePath + s_timestamp + ".png";
             //print($"Processing timestamp: {s_timestamp} ...");
 
             double timestamp = double.Parse(s_timestamp) / 1e9;
-            if (imagePath.Length > 0 && tsImuPairs.Count > 0 && timestamp > 0)
+            if (imagePath.Length > 0 && timestampImuPairs.Count > 0 && timestamp > 0)
             {
                 List<IMU_Point> points = new List<IMU_Point>();
 
                 double curTs;
                 do
                 {
-                    if (imuIndex >= tsImuPairs.Count)
+                    if (imuIndex >= timestampImuPairs.Count)
                         break;
 
-                    curTs = tsImuPairs[imuIndex].Item1 / 1e9;
+                    curTs = timestampImuPairs[imuIndex].Item1 / 1e9;
 
-                    points.Add(tsImuPairs[imuIndex].Item2);
+                    points.Add(timestampImuPairs[imuIndex].Item2);
                     ++imuIndex;
                 }
                 while (curTs <= timestamp);
@@ -432,9 +458,9 @@ namespace OpenWiXR.Tracking
 
         unsafe void SLAMRoutine_Monocular()
         {
-            if (TextureSourceObject.IsReady())
+            if (_textureSource.IsReady())
             {
-                var rawImage = TextureSourceObject.GetData();
+                var rawImage = _textureSource.GetData();
 
                 if (rawImage == null)
                 {
@@ -444,7 +470,7 @@ namespace OpenWiXR.Tracking
 
                 IntPtr poseDataPtr = Marshal.AllocHGlobal(sizeof(float) * 16);
 
-                ExecuteSLAM_Monocular(ref rawImage, GlobalTimestamp++, TextureSourceObject.Width, TextureSourceObject.Height, poseDataPtr, out cameraPoseRows, out cameraPoseCols);
+                ExecuteSLAM_Monocular(ref rawImage, GlobalTimestamp++, _textureSource.Width, _textureSource.Height, poseDataPtr, out cameraPoseRows, out cameraPoseCols);
                 ApplyPoseData(poseDataPtr, cameraPoseRows, cameraPoseCols);
 
                 Marshal.FreeHGlobal(poseDataPtr);
@@ -460,9 +486,9 @@ namespace OpenWiXR.Tracking
 
         unsafe void SLAMRoutine_IMU_Monocular()
         {
-            if (TextureSourceObject.IsReady() && imuDataQueue.Count > 0)
+            if (_textureSource.IsReady() && imuDataQueue.Count > 0)
             {
-                var rawImage = TextureSourceObject.GetData();
+                var rawImage = _textureSource.GetData();
 
                 if (rawImage == null)
                 {
@@ -481,7 +507,7 @@ namespace OpenWiXR.Tracking
 
                 IntPtr poseDataPtr = Marshal.AllocHGlobal(sizeof(float) * 16);
 
-                ExecuteSLAM_IMU_Monocular(ref rawImage, ts, ptr, size, TextureSourceObject.Width, TextureSourceObject.Height, poseDataPtr, out cameraPoseRows, out cameraPoseCols);
+                ExecuteSLAM_IMU_Monocular(ref rawImage, ts, ptr, size, _textureSource.Width, _textureSource.Height, poseDataPtr, out cameraPoseRows, out cameraPoseCols);
                 ApplyPoseData(poseDataPtr, cameraPoseRows, cameraPoseCols);
 
                 Marshal.FreeHGlobal(poseDataPtr);
@@ -516,8 +542,8 @@ namespace OpenWiXR.Tracking
 
                 if (isValidTRS)
                 {
-                    TargetObject.SetPosition(translation);
-                    TargetObject.SetRotation(rotation);
+                    _transformTarget.SetPosition(translation);
+                    _transformTarget.SetRotation(rotation);
                 }
             }
         }
@@ -535,8 +561,8 @@ namespace OpenWiXR.Tracking
 
                 if (isValidTRS)
                 {
-                    TargetObject.SetPosition(translation);
-                    TargetObject.SetRotation(rotation);
+                    _transformTarget.SetPosition(translation);
+                    _transformTarget.SetRotation(rotation);
                 }
             }
         }
@@ -553,7 +579,7 @@ namespace OpenWiXR.Tracking
                 return;
 
             dt += Time.deltaTime;
-            if (dt < 1f / DesiredFPS)
+            if (dt < 1f / _settings.DesiredFPS)
                 return;
             dt = 0;
 
@@ -586,7 +612,7 @@ namespace OpenWiXR.Tracking
             {
                 float[] poseMat = GetArrayFromPointer(ptr, 3);
                 //Utils.GetTranslationRotationFromBuffer(poseMat, out Vector3 translation, out Quaternion rotation);
-                GameObject go = Instantiate(MapPointPrefab, MapPointsBase);
+                GameObject go = Instantiate(MapPointPrefab, mapPointsBase);
                 go.name = $"MapPoint_{i}";
                 go.transform.localPosition = new Vector3(poseMat[0], poseMat[1], poseMat[2]);
                 //go.transform.rotation = rotation;

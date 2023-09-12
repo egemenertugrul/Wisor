@@ -6,7 +6,7 @@ using NetMQ.Sockets;
 
 namespace OpenWiXR.ZMQ
 {
-    public class Listener
+    public class ZMQListener
     {
         private Thread _clientThread;
         private readonly string _host;
@@ -19,7 +19,7 @@ namespace OpenWiXR.ZMQ
 
         private readonly ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
 
-        public Listener(string host, string port, Action<string> messageCallback)
+        public ZMQListener(string host, string port, Action<string> messageCallback)
         {
             _host = host;
             _port = port;

@@ -7,15 +7,14 @@ using OpenWiXR.Communications;
 using static OpenWiXR.Communications.WebSocketsClient;
 using Newtonsoft.Json.Linq;
 
-public class IMU_PoseDriver : PoseDriver
+public sealed class IMUPoseDriver : PoseDriver
 {
-    [SerializeField] Transform target;
     private WebSocketsClient webSocketsClient;
 
     void Start()
     {
         webSocketsClient = WebSocketsClient.Instance;
-        webSocketsClient.OnMessage.AddListener(IMUMessageHandler);
+        webSocketsClient.OnMessageReceived.AddListener(IMUMessageHandler);
     }
 
     private void IMUMessageHandler(Message msg)
@@ -35,10 +34,5 @@ public class IMU_PoseDriver : PoseDriver
                 }
             }
         }
-    }
-
-    void Update()
-    {
-        
     }
 }

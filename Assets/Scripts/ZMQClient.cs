@@ -10,7 +10,7 @@ namespace OpenWiXR.ZMQ
 
     }
 
-    public class Client : Singleton<Client>
+    public class ZMQClient : Singleton<ZMQClient>
     {
         public UnityEvent<string> OnMessageReceived = new UnityEvent<string>();
 
@@ -24,12 +24,12 @@ namespace OpenWiXR.ZMQ
 
         [SerializeField] private string host;
         [SerializeField] private string port;
-        private Listener _listener;
+        private ZMQListener _listener;
         private ClientStatus _clientStatus = ClientStatus.Inactive;
 
         private void Start()
         {
-            _listener = new Listener(host, port, HandleMessage);
+            _listener = new ZMQListener(host, port, HandleMessage);
             _listener.ClientStarted += () => _clientStatus = ClientStatus.Active;
             _listener.ClientStopped += () => _clientStatus = ClientStatus.Inactive;
 

@@ -92,7 +92,7 @@ Material:
     - _distortion: 0.3
     - _isRight: 0
     - _offsetX: -0.0565
-    - _offsetY: 0
+    - _offsetY: 0.3
     - _scale: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
