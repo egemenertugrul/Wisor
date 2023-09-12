@@ -43,7 +43,7 @@ class ProcessHelper:
     def start_process(executable_full_filepath, wd=None, args=None) -> subprocess.Popen:
         args = [str(arg) for arg in args if arg]
         command = [executable_full_filepath] + args
-
+    
         process = subprocess.Popen(command, cwd=wd)
         return process
 

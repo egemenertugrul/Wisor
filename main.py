@@ -27,6 +27,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--ipd", type=float)
     parser.add_argument("--offsetX", type=float)
+    parser.add_argument("--offsetY", type=float)
 
     parser.add_argument("--verbose", "-v", action="count", default=1)
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=args.verbose,
         format="%(asctime)s %(levelname)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        datefmt="%d-%m-%Y %H:%M:%S",
     )
 
     core = Core(args=args)

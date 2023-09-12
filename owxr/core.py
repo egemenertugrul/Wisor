@@ -366,6 +366,8 @@ class Core:
                 args.extend(["--ipd", self.args.ipd])
             if self.args.offsetX:
                 args.extend(["--offsetX", self.args.offsetX])
+            if self.args.offsetY:
+                args.extend(["--offsetY", self.args.offsetY])
 
             self.renderer_process = ProcessHelper.start_process(
                 self.renderer_full_filepath, self.renderer_wd, args
