@@ -248,7 +248,8 @@ void DrawFilledCircle(float x, float y, float radius, float fillAmount, Color co
 int main(int argc, char* argv[])
 {
 	float ipd = 0.063f;
-	float offsetX = 0.0565f;
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
 
 	for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--desktop") == 0) {
@@ -258,14 +259,13 @@ int main(int argc, char* argv[])
             isStandardControls = true;
         }
 		else if (strcmp(argv[i], "--ipd") == 0 && i + 1 < argc) {
-			// Check if there is another argument after --ipd and it exists
-			// Assuming you want to convert the next argument to an integer
-			ipd = atoi(argv[i + 1]);
+			ipd = atof(argv[i + 1]);
 		}
 		else if (strcmp(argv[i], "--offsetX") == 0 && i + 1 < argc) {
-			// Check if there is another argument after --ipd and it exists
-			// Assuming you want to convert the next argument to an integer
-			offsetX = atoi(argv[i + 1]);
+			offsetX = atof(argv[i + 1]);
+		}
+		else if (strcmp(argv[i], "--offsetY") == 0 && i + 1 < argc) {
+			offsetY = atof(argv[i + 1]);
 		}
     }
 
@@ -329,7 +329,7 @@ int main(int argc, char* argv[])
     //Shader distortion = LoadShader(0, TextFormat("resources/distortion%i.fs", GLSL_VERSION));
     Shader distortion = LoadShader(0, "resources/distortion_openwixr_120.fs");
     
-    const float _offset[] = { offsetX, 0.0f };
+    const float _offset[] = { offsetX, offsetY };
     const float _distortion[] = { 0.3f };
     const float _cubicDistortion[] = { 0 };
     const int _isRight[] = { 0 };

@@ -37,7 +37,7 @@ vec2 barrel(vec2 uv) {
     vec2 ret = vec2(f * h.x + center.x, h.y + dec);
 
     if (ret.x < 0.0 || ret.x > 1.0 || ret.x > center.x * 2.0 || ret.x < center.x - leftScreenCenter.x || ret.y < 0.0 || ret.y > 1.0) {
-        return vec2(-5.0, -5.0);
+        return vec2(-1.0, -1.0);
     }
 
     return ret;
