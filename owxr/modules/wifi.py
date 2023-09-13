@@ -61,7 +61,11 @@ class Wifi:
         
     def connect_to(self, ssid, password) -> Tuple[bool, str]:
         try:
-            subprocess.run(["nmcli", "device", "wifi", "connect", ssid, "password", password], check=True)
+            cmd = ["sudo", "nmcli", "device", "wifi", "connect", ssid]
+            if len(password) > 0:
+                cmd.extend(["password", password])
+            subprocess.run(cmd, check=True)
+
             log = f"Connected to: {ssid}"
             logging.info(log)
             return True, log

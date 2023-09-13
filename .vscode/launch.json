@@ -13,8 +13,8 @@
             "args": [
                 "--dynamic-fps",
                 "-v",
-                // "--desktop",
-                // "--stdctl",
+                "--desktop",
+                "--stdctl",
 
                 "--offsetX",
                 "0.00",

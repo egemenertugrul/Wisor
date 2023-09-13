@@ -13,6 +13,7 @@ from enum import Enum
 
 # from owxr.modules.sensor_mpu9250 import MPU9250
 from owxr.modules.sensor_sensehat import SenseHat
+from owxr.modules.camera import PiCamera2CaptureSource
 from owxr.modules.qr import QRScanner
 from owxr.modules.wifi import Wifi
 
@@ -78,7 +79,7 @@ class Core:
         self.out_message_queue = Queue()
 
         self.wifi = Wifi()
-        self.qrScanner = QRScanner(duration=10)
+        self.qrScanner = QRScanner(capture_src=PiCamera2CaptureSource(), duration=10)
 
         self.commands_dict = {
             "Begin": self.set_renderer_ready,
@@ -381,13 +382,16 @@ class Core:
         if self.socket_process:
             self.socket_process.process_messages()
 
-        if self.qrScanner.process:
+        if self.qrScanner.isRunning:
             data = self.qrScanner.get_qr_data()
             if data is not None:
                 logging.debug(f"QRData: {data}")
-                connect_res, log = self.wifi.connect_to(data["S"], data["P"])
-                self.qrScanner.stop_scanning()
-                self.out_message_queue.put(self.update_status())
+                if data.get("S") is None or len(data.get("S")) == 0:
+                    logging.error("Invalid SSID from QRData.")
+                else:
+                    connect_res, log = self.wifi.connect_to(data["S"], data["P"])
+                    self.qrScanner.stop_scanning()
+                    self.out_message_queue.put(self.update_status())
 
     def shutdown(self):
         logging.info("Shutting down..")
