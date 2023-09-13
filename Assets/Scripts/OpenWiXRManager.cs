@@ -4,10 +4,10 @@ using UnityEngine;
 using OpenWiXR.Tracking;
 using OpenWiXR.Communications;
 using System;
+using OpenWiXR.Texturing;
 
 namespace OpenWiXR
 {
-
     public class OpenWiXRManager : MonoBehaviour
     {
         public enum OpMode
@@ -30,14 +30,16 @@ namespace OpenWiXR
         
         public VideoStreamerConfig VideoStreamerConfig;
         public bool VideoStreamerConfig_IdenticalIP = true;
-        private string VideoStreamerConfig_previousIP;
+        private string _VideoStreamerConfig_previousIP;
+
+        public VideoReceiverConfig VideoReceiverConfig;
 
         private ORBSLAM3 SLAM;
         private string[] requestedIMUTopics = new string[] { };
         private WebSocketsClient WSClient;
 
         private StereoVideoStreamer videoStreamer;
-
+        private VideoReceiver videoReceiver;
 
         private async void Start()
         {
@@ -71,8 +73,18 @@ namespace OpenWiXR
                             WSClient.OnMessageReceived.AddListener((msg) => { SLAM.AddIMUDataFromClient(msg); });
                             break;
                     }
+                    
+                    videoReceiver = GetComponentInChildren<VideoReceiver>(includeInactive: false);
+                    videoReceiver.Initialize(VideoReceiverConfig);
+                    videoReceiver.BeginPlaying();
+                    SLAMTextureSource.ReadyEvent.AddListener(() =>
+                    {
+                        if (!SLAM.IsRunning)
+                        {
+                            SLAM.StartSLAM();
+                        }
+                    });
 
-                    SLAM.StartSLAM();
                     break;
             }
 
@@ -97,20 +109,22 @@ namespace OpenWiXR
 
             if (VideoStreamerConfig_IdenticalIP)
             {
-                VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
+                _VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
                 VideoStreamerConfig.IP = IP;
 
             }
 
             videoStreamer.Initialize(VideoStreamerConfig);
             videoStreamer.StartStreaming();
+
+            // --
         }
 
         private void OnDestroy()
         {
             if (VideoStreamerConfig_IdenticalIP)
             {
-                VideoStreamerConfig.IP = VideoStreamerConfig_previousIP;
+                VideoStreamerConfig.IP = _VideoStreamerConfig_previousIP;
             }
             videoStreamer.StopStreaming();
         }

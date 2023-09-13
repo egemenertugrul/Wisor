@@ -36,7 +36,7 @@ namespace OpenWiXR
             slam.HasManager = hasManager;
             if (hasManager)
             {
-                GUILayout.Label("These values are driven by OpenWiXR Manager.", EditorStyles.centeredGreyMiniLabel);
+                EditorUtilities.OverridePlaceholder();
                 EditorGUI.BeginDisabledGroup(true);
             }
 
@@ -54,6 +54,7 @@ namespace OpenWiXR
 
 
             EditorGUILayout.PropertyField(_poseUpdatedProp, new GUIContent("On Pose Updated"));
+            EditorUtilities.PropertyField(serializedObject, "MapPointPrefab");
 
             serializedObject.ApplyModifiedProperties();
         }

@@ -8,7 +8,9 @@ using UnityEngine;
 [CustomEditor(typeof(SLAMPoseDriver))]
 public class SLAMPoseDriverEditor : Editor
 {
-    public override void OnInspectorGUI() { 
+    public override void OnInspectorGUI() {
+        serializedObject.Update();
+
         bool hasManager = ((SLAMPoseDriver)target).GetComponentInParent<OpenWiXRManager>();
 
         if (hasManager)
@@ -19,5 +21,7 @@ public class SLAMPoseDriverEditor : Editor
         {
             EditorUtilities.PropertyField(serializedObject, "target");
         }
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

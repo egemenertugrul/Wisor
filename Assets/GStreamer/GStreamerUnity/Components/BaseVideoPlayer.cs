@@ -23,6 +23,8 @@ public abstract class BaseVideoPlayer : DependencyRoot {
 		get{return m_Texture;}
 	}
 
+	public bool Autostart = true;
+
     private void OnDisable()
     {
 		if (m_Texture.IsPlaying)
@@ -52,41 +54,50 @@ public abstract class BaseVideoPlayer : DependencyRoot {
 
 	// Use this for initialization
 	protected override void Start () {
+        if (Autostart)
+        {
+			BeginPlaying();
+        }	
+	}
 
+	public void BeginPlaying()
+    {
 		_disabledPause = false;
 
-		_Processor =new OffscreenProcessor();
+		_Processor = new OffscreenProcessor();
 		m_Texture = gameObject.GetComponent<GstCustomTexture>();
 
-		material=gameObject.GetComponent<MeshRenderer> ().material;
+		material = gameObject.GetComponent<MeshRenderer>().material;
 		// Check to make sure we have an instance.
 		if (m_Texture == null)
 		{
 			DestroyImmediate(this);
 		}
 
-		m_Texture.Initialize ();
+		m_Texture.Initialize();
 		//		pipeline = "filesrc location=\""+VideoPath+"\" ! decodebin ! videoconvert ! video/x-raw,format=I420 ! appsink name=videoSink sync=true";
 		//		pipeline = "filesrc location=~/Documents/Projects/BeyondAR/Equirectangular_projection_SW.jpg ! jpegdec ! videoconvert ! imagefreeze ! videoconvert ! imagefreeze ! videoconvert ! video/x-raw,format=I420 ! appsink name=videoSink sync=true";
 		//		pipeline = "videotestsrc ! videoconvert ! video/x-raw,width=3280,height=2048,format=I420 ! appsink name=videoSink sync=true";
-		m_Texture.SetPipeline (_GetPipeline());
-		m_Texture.Play ();
+		m_Texture.SetPipeline(_GetPipeline());
+		m_Texture.Play();
 
 
 		m_Texture.OnFrameGrabbed += OnFrameGrabbed;
 
-		_Processor.ShaderName="Image/I420ToRGB";
+		_Processor.ShaderName = "Image/I420ToRGB";
 
-		if (PostProcessors != null) {
+		if (PostProcessors != null)
+		{
 			_postProcessors = new OffscreenProcessor[PostProcessors.Length];
-			for (int i = 0; i < PostProcessors.Length; ++i) {
-				_postProcessors [i] = new OffscreenProcessor ();
-				_postProcessors [i].ProcessingShader = PostProcessors [i];
+			for (int i = 0; i < PostProcessors.Length; ++i)
+			{
+				_postProcessors[i] = new OffscreenProcessor();
+				_postProcessors[i].ProcessingShader = PostProcessors[i];
 			}
 		}
 
-		Debug.Log ("Starting Base");
-		base.Start ();
+		Debug.Log("Starting Base");
+		base.Start();
 	}
 
 	bool _newFrame=false;

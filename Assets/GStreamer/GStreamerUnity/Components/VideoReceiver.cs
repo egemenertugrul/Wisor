@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
-using OpenWiXR;
 
-public class VideoReceiver : CustomPipelinePlayer
+namespace OpenWiXR
 {
-
-    //public string pipeline = "";
-    [SerializeField] VideoReceiverConfig config;
-
-    // Use this for initialization
-    protected override string _GetPipeline()
+    public class VideoReceiver : CustomPipelinePlayer
     {
-        string P = config.GetPipeline() + " ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink";
+        [SerializeField] VideoReceiverConfig config;
 
-        return P;
+        public void Initialize(VideoReceiverConfig config)
+        {
+            this.config = config;
+        }
+
+        protected override string _GetPipeline()
+        {
+            string P = config.GetPipeline() + " ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink";
+
+            return P;
+        }
     }
 }

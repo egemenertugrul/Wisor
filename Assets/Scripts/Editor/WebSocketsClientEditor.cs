@@ -13,7 +13,7 @@ public class WebSocketsClientEditor : Editor
 
         if (hasManager)
         {
-            GUILayout.Label("These values are driven by OpenWiXR Manager.", EditorStyles.centeredGreyMiniLabel);
+            EditorUtilities.OverridePlaceholder();
             EditorUtilities.DisableField(serializedObject, "IP");
             EditorUtilities.DisableField(serializedObject, "port");
             EditorUtilities.DisableField(serializedObject, "AutoconnectInterval");

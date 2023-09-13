@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5339819509818506889}
   - component: {fileID: 5339819509818506888}
   - component: {fileID: 5339819509818506891}
-  - component: {fileID: 7964097093682889845}
+  - component: {fileID: 7137431607190546483}
   m_Layer: 0
   m_Name: MapPoint
   m_TagString: Untagged
@@ -84,7 +84,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7964097093682889845
+--- !u!114 &7137431607190546483
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

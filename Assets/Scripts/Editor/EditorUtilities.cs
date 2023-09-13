@@ -1,10 +1,16 @@
-﻿namespace OpenWiXR
-{
-    using UnityEditor;
-    using UnityEngine;
+﻿using System;
+using UnityEditor;
+using UnityEngine;
 
+namespace OpenWiXR
+{
     public static class EditorUtilities
     {
+        public static readonly string OverridePlaceholderText = "These properties are driven by OpenWiXR.";
+        public static void OverridePlaceholder()
+        {
+            GUILayout.Label(OverridePlaceholderText, EditorStyles.centeredGreyMiniLabel);
+        }
         public static void HideField(SerializedObject serializedObject, string fieldName)
         {
             SerializedProperty prop = serializedObject.FindProperty(fieldName);
@@ -50,6 +56,12 @@
             EditorGUI.DrawRect(r, color);
         }
 
+        public static void Separator()
+        {
+            GUILayout.Space(10);
+            EditorUtilities.DrawUILine(Color.gray);
+            GUILayout.Space(10);
+        }
     }
 
 }

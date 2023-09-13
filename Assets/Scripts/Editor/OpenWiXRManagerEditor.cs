@@ -1,3 +1,4 @@
+using OpenWiXR.Texturing;
 using OpenWiXR.Tracking;
 using UnityEditor;
 using UnityEngine;
@@ -8,10 +9,13 @@ namespace OpenWiXR
     public class OpenWiXRManagerEditor : Editor
     {
         private bool showNetworkSettings = true; 
-        private bool showVideoStreamerSettings = true; 
+        private bool showVideoStreamerSettings = true;
+        private bool showVideoReceiverSettings = true;
 
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
+
             OpenWiXRManager manager = (OpenWiXRManager)target;
 
             // -- Network settings
@@ -36,9 +40,7 @@ namespace OpenWiXR
             EditorGUILayout.EndFoldoutHeaderGroup();
             // --
 
-            GUILayout.Space(10);
-            EditorUtilities.DrawUILine(Color.gray);
-            GUILayout.Space(10);
+            EditorUtilities.Separator();
 
             // -- Video streamer settings
             showVideoStreamerSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showVideoStreamerSettings, "Video Streamer Settings");
@@ -52,9 +54,20 @@ namespace OpenWiXR
             EditorGUILayout.EndFoldoutHeaderGroup();
             // --
 
-            GUILayout.Space(10);
-            EditorUtilities.DrawUILine(Color.gray);
-            GUILayout.Space(10);
+            EditorUtilities.Separator();
+
+            // -- Video streamer settings
+            showVideoReceiverSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showVideoReceiverSettings, "Video Receiver Settings");
+            if (showVideoReceiverSettings)
+            {
+                EditorGUI.indentLevel++;
+                manager.VideoReceiverConfig = EditorGUILayout.ObjectField(manager.VideoReceiverConfig, typeof(VideoReceiverConfig)) as VideoReceiverConfig;
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+            // --
+
+            EditorUtilities.Separator();
 
             EditorGUI.BeginChangeCheck();
             manager.OpenWiXROpMode = (OpenWiXRManager.OpMode)EditorGUILayout.EnumPopup("Op Mode", manager.OpenWiXROpMode);

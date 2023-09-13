@@ -59,5 +59,10 @@ namespace OpenWiXR.Utils
             return isValidTRS;
         }
 
+        public static string ToDelimitedString(this double[] values)
+        {
+            return string.Join(",", values);
+        }
+
     }
 }

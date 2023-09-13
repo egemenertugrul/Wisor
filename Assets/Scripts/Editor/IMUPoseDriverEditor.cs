@@ -12,7 +12,7 @@ public class IMUPoseDriverEditor : Editor
 
         if (hasManager)
         {
-            GUILayout.Label("These values are driven by OpenWiXR Manager.", EditorStyles.centeredGreyMiniLabel);
+            EditorUtilities.OverridePlaceholder();
             EditorUtilities.DisableField(serializedObject, "target");
         }
         else
