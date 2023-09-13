@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GstCustomTexture))]
 public class CustomPipelinePlayer : BaseVideoPlayer {
 
-	public string pipeline = "";
+    public string pipeline = "";
 
 	// Use this for initialization
 	protected override string _GetPipeline()
