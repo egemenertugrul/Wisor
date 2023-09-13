@@ -7,138 +7,26 @@ GStreamerCore - Registering Elements!
 GStreamerCore - GStreamer inited
 Initializing GStreamer - Done
 Entering main loop
-mray_gstreamer_initialize
-mray_gstreamer_initialize
 Info: Creating Pipeline: udpsrc port=7000 ! application/x-rtp, payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink
 Info: : GstPipelineHandler::CreatePipeline 
 Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
 Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
 Warning: Can't seek to invalid time
 Info: : Playing
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pausing
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
-Info: : Pausing
-Info: : GstPipelineHandler::Stop 
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_READY
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Warning: Can't seek to invalid time
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: Checking is active
 mray_gstreamer_initialize
 mray_gstreamer_initialize
-mray_gstreamer_initialize
-Info: Creating Pipeline: udpsrc port=7000 ! application/x-rtp, payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Playing
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_READY
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Warning: Can't seek to invalid time
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: Checking is active
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-Info: Creating Pipeline: udpsrc port=7000 ! application/x-rtp, payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Playing
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_READY
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Warning: Can't seek to invalid time
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: Checking is active
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-Info: Creating Pipeline: udpsrc port=7000 ! application/x-rtp, payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Playing
 Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=GRAY8,width=0,height=0,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-Error: GstCustomVideoPlayer: Pipeline error:could not link src to videoconvert9, videoconvert9 can't handle caps video/x-raw, format=(string)GRAY8, width=(int)0, height=(int)0, framerate=(fraction)60/1
+Error: GstCustomVideoPlayer: Pipeline error:could not link src to videoconvert2, videoconvert2 can't handle caps video/x-raw, format=(string)GRAY8, width=(int)0, height=(int)0, framerate=(fraction)60/1
 Info: : GstPipelineHandler::CreatePipeline 
 Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
 Info: : Pausing
 Info: : Playing
-Warning: : GstPipelineHandler::HandleMessage(): error in module src  reported: Internal data stream error. - ../libs/gst/base/gstbasesrc.c(3127): gst_base_src_loop (): /GstPipeline:pipeline5/GstAppSrc:src:
+Warning: : GstPipelineHandler::HandleMessage(): error in module src  reported: Internal data stream error. - ../libs/gst/base/gstbasesrc.c(3127): gst_base_src_loop (): /GstPipeline:pipeline1/GstAppSrc:src:
 streaming stopped, reason not-linked (-1)
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
 Info: : Pausing
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_READY
-Info: : GstPipelineHandler::Close 
-Info: : GstPipelineHandler::Stop 
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Warning: Can't seek to invalid time
-Info: : GstPipelineHandler::Close 
 Info: : GstPipelineHandler::Stop 
 Info: : GstPipelineHandler::Close 
 Info: : GstPipelineHandler::Stop 
-Info: Checking is active
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-Info: Creating Pipeline: udpsrc port=7000 ! application/x-rtp, payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! video/x-raw,format=I420 ! videoconvert ! appsink name=videoSink
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Playing
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=GRAY8,width=0,height=0,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-Error: GstCustomVideoPlayer: Pipeline error:could not link src to videoconvert13, videoconvert13 can't handle caps video/x-raw, format=(string)GRAY8, width=(int)0, height=(int)0, framerate=(fraction)60/1
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pausing
-Info: : Playing
-Warning: : GstPipelineHandler::HandleMessage(): error in module src  reported: Internal data stream error. - ../libs/gst/base/gstbasesrc.c(3127): gst_base_src_loop (): /GstPipeline:pipeline8/GstAppSrc:src:
-streaming stopped, reason not-linked (-1)
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pausing
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
 Info: : GstPipelineHandler::Stop 
 Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_READY
 Info: : GstPipelineHandler::Close 

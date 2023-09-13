@@ -7,32 +7,37 @@ using OpenWiXR.Communications;
 using static OpenWiXR.Communications.WebSocketsClient;
 using Newtonsoft.Json.Linq;
 
-public sealed class IMUPoseDriver : PoseDriver
+namespace OpenWiXR.Tracking
 {
-    private WebSocketsClient webSocketsClient;
-
-    void Start()
+    public sealed class IMUPoseDriver : PoseDriver
     {
-        webSocketsClient = WebSocketsClient.Instance;
-        webSocketsClient.OnMessageReceived.AddListener(IMUMessageHandler);
-    }
-
-    private void IMUMessageHandler(Message msg)
-    {
-        if(msg.Topic == "IMU")
+        public WebSocketsClient WSClient;
+        private void Start()
         {
-            JToken orientation = msg.Data["orientation"];
-            if (orientation != null)
+            if (!WSClient)
             {
-                float pitch = -(float) orientation[0];
-                float yaw = (float) orientation[1];
-                float roll = -(float) orientation[2];
-
-                if (target != null)
-                {
-                    target.localRotation = Quaternion.Euler(new Vector3(pitch, yaw, roll) * Mathf.Rad2Deg);
-                }
+                throw new NullReferenceException("WebSocketsClient is required for the IMUPoseDriver.");
             }
+
+            WSClient.OnMessageReceived.AddListener(IMUMessageHandler);
+        }
+
+        private void IMUMessageHandler(Message msg)
+        {
+            if (msg.Topic != "IMU")
+            {
+                return;
+            }
+            JToken orientation = msg.Data["orientation"];
+            if (orientation == null)
+            {
+                return;
+            }
+            float pitch = -(float)orientation[0];
+            float yaw = (float)orientation[1];
+            float roll = -(float)orientation[2];
+
+            UpdateRotation(Quaternion.Euler(new Vector3(pitch, yaw, roll) * Mathf.Rad2Deg));
         }
     }
 }

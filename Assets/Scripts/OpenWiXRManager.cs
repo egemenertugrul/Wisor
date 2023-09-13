@@ -24,10 +24,13 @@ namespace OpenWiXR
 
         public ORBSLAM3Config ORBSLAM3_Settings;
         public TextureSource SLAMTextureSource;
-        public SLAMTarget SLAMTarget;
-
+        
+        public PoseDriver PoseDriver;
+        public Transform PoseDriverTarget;
+        
         public VideoStreamerConfig VideoStreamerConfig;
         public bool VideoStreamerConfig_IdenticalIP = true;
+        private string VideoStreamerConfig_previousIP;
 
         private ORBSLAM3 SLAM;
         private string[] requestedIMUTopics = new string[] { };
@@ -35,11 +38,16 @@ namespace OpenWiXR
 
         private StereoVideoStreamer videoStreamer;
 
-        public string PreviousIP { get; private set; }
 
         private async void Start()
         {
-            WSClient = WebSocketsClient.Instance;
+            WSClient = GetComponentInChildren<WebSocketsClient>(includeInactive: false);
+            if (!WSClient)
+            {
+                Debug.LogWarning("WebSockets client could not be found. Creating one..");
+                WSClient = new GameObject("WebSocketsClient").AddComponent<WebSocketsClient>();
+                WSClient.transform.SetParent(transform);
+            }
 
             switch (OpenWiXROpMode)
             {
@@ -48,10 +56,11 @@ namespace OpenWiXR
                     break;
 
                 case OpMode.SLAM:
-                    SLAM = ORBSLAM3.Instance;
-                    SLAM.Initialize(ORBSLAM3_Settings, SLAMTextureSource, SLAMTarget);
+                    SLAM = GetComponentInChildren<ORBSLAM3>(includeInactive: false);
+                    SLAM.Initialize(ORBSLAM3_Settings, SLAMTextureSource);
                     SLAM.transform.SetParent(transform);
 
+                    // TODO: Ask for camera stream
                     switch (ORBSLAM3_Settings.SensorType)
                     {
                         case ORBSLAM3.Sensor_Type.MONOCULAR:
@@ -71,13 +80,24 @@ namespace OpenWiXR
             WSClient.OnOpen.AddListener(() => { WSClient.Send("SetIMUTopics", requestedIMUTopics); });
             WSClient.Connect();
 
+            if (!PoseDriver)
+                throw new NullReferenceException($"[{Enum.GetName(typeof(OpMode), OpenWiXROpMode)}] Pose driver must be set.");
+
+            PoseDriver.SetTarget(PoseDriverTarget);
+            PoseDriver.name = $"> {PoseDriver.name}";
+
             videoStreamer = GetComponentInChildren<StereoVideoStreamer>(includeInactive: false);
-            if (videoStreamer == null)
-                throw new NullReferenceException("Video streamer could not be found.");
+            if (!videoStreamer)
+            {
+                Debug.LogWarning("StereoVideoStreamer could not be found. Creating one..");
+                videoStreamer = new GameObject("StereoVideoStreamer").AddComponent<StereoVideoStreamer>();
+                videoStreamer.transform.SetParent(transform);
+            }
+
 
             if (VideoStreamerConfig_IdenticalIP)
             {
-                PreviousIP = VideoStreamerConfig.IP;
+                VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
                 VideoStreamerConfig.IP = IP;
 
             }
@@ -90,7 +110,7 @@ namespace OpenWiXR
         {
             if (VideoStreamerConfig_IdenticalIP)
             {
-                VideoStreamerConfig.IP = PreviousIP;
+                VideoStreamerConfig.IP = VideoStreamerConfig_previousIP;
             }
             videoStreamer.StopStreaming();
         }

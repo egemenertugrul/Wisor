@@ -38,8 +38,8 @@ namespace OpenWiXR.Communications
         [JsonProperty("gyroscope")]
         public double[] Gyroscope;
 
-        [JsonProperty("orientation")]
-        public double[] Orientation;
+        //[JsonProperty("orientation")]
+        //public double[] Orientation;
 
         [JsonProperty("time")]
         public double Time;
@@ -50,7 +50,7 @@ namespace OpenWiXR.Communications
         }
     }
 
-    public class WebSocketsClient : Singleton<WebSocketsClient>
+    public class WebSocketsClient : MonoBehaviour
     {
         public string IP;
         public uint port, AutoconnectInterval;
@@ -108,11 +108,6 @@ namespace OpenWiXR.Communications
                 Message msg = JsonConvert.DeserializeObject<Message>(message);
                 OnMessageReceived.Invoke(msg);
             };
-
-            // Keep sending messages at every 0.3s
-            //InvokeRepeating("SendWebSocketMessage", 0.0f, 0.3f);
-
-            //Connect();
         }
 
         public async void Connect()

@@ -94,3 +94,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Dd]emo[Mm]odels.meta
 
 !*.gitkeep
+GStreamerLog.txt

@@ -133,7 +133,6 @@ GameObject:
   - component: {fileID: 6546870033973281645}
   - component: {fileID: 1304215671}
   - component: {fileID: 6327401650571146990}
-  - component: {fileID: 2657410038213808337}
   m_Layer: 0
   m_Name: Streamer
   m_TagString: Untagged
@@ -150,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 6546870033973281644}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6546870033984996891}
@@ -185,27 +184,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6213a43739d87b542815b36b8cd9c842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 1280
-  Height: 720
-  Pipeline: videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1
-    ! mpegtsmux ! udpsink host=192.168.144.109 port=5000 sync=false
-  fps: 60
+  config: {fileID: 0}
   _created: 0
   _tempRenderTarget: {fileID: 0}
   TempTex: {fileID: 0}
---- !u!114 &2657410038213808337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6546870033973281644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 816fb9a13a7859a47bc57d6a33f1a804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 6546870033973281645}
 --- !u!1 &6546870033984996890
 GameObject:
   m_ObjectHideFlags: 0

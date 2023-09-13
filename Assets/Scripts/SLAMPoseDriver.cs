@@ -7,15 +7,25 @@ using OpenWiXR.Communications;
 using static OpenWiXR.Communications.WebSocketsClient;
 using Newtonsoft.Json.Linq;
 
-public sealed class SLAMPoseDriver : PoseDriver
+namespace OpenWiXR.Tracking
 {
-    void Start()
+    public sealed class SLAMPoseDriver : PoseDriver
     {
-        throw new NotImplementedException();
-    }
+        private ORBSLAM3 SLAM;
+        private void Start()
+        {
+            SLAM = GetComponent<ORBSLAM3>();
+            if (!SLAM)
+            {
+                throw new NullReferenceException("SLAM is required for the SLAMPoseDriver.");
+            }
 
-    void Update()
-    {
+            SLAM.OnPoseUpdated.AddListener(SLAMPoseHandler);
+        }
 
+        private void SLAMPoseHandler(Vector3 translation, Quaternion rotation)
+        {
+            UpdatePositionAndRotation(translation, rotation);
+        }
     }
 }
