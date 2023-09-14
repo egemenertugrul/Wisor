@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class VideoReceiverConfigEditor : MonoBehaviour
+public class VideoReceiverConfigMenuEditor : MonoBehaviour
 {
     [MenuItem("OpenWiXR/Create Video Receiver Config")]
     public static void CreateVideoStreamerConfig()
@@ -11,6 +11,6 @@ public class VideoReceiverConfigEditor : MonoBehaviour
         VideoReceiverConfig config = ScriptableObject.CreateInstance<VideoReceiverConfig>();
 
         // Prompt the user to fill in the information in a custom editor window
-        VideoReceiverConfigEditorWindow.Init(config);
+        VideoReceiverConfigMenuEditorWindow.Init(config);
     }
 }

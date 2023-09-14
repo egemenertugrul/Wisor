@@ -192,7 +192,7 @@ namespace OpenWiXR.Tracking
                 return;
 
             dt += Time.deltaTime;
-            if (dt < 1f / _config.DesiredFPS)
+            if (dt < 1f / _config.FPS)
                 return;
             dt = 0;
 

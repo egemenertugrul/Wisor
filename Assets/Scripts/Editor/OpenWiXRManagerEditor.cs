@@ -11,12 +11,22 @@ namespace OpenWiXR
         private bool showNetworkSettings = true; 
         private bool showVideoStreamerSettings = true;
         private bool showVideoReceiverSettings = true;
+        private RenderTexture prevTex;
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
             OpenWiXRManager manager = (OpenWiXRManager)target;
+
+            // -- LOGO
+            Texture2D logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Miscellaneous/owxr_small_logo_reddot.png");
+
+            if (logoTexture != null)
+            {
+                GUILayout.Box(logoTexture, GUILayout.MinHeight(30), GUILayout.Height(logoTexture.height), GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
+            }
+            // --
 
             // -- Network settings
             showNetworkSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showNetworkSettings, "Network Settings");
