@@ -33,6 +33,7 @@ public class WebSocketsClientEditor : Editor
         EditorUtilities.PropertyField(serializedObject, "OnError");
         EditorUtilities.PropertyField(serializedObject, "OnClose");
         EditorUtilities.PropertyField(serializedObject, "OnMessageReceived");
+        GUIUtility.ExitGUI();
 
     }
 }

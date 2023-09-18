@@ -103,6 +103,7 @@ namespace OpenWiXR
             }
             
             manager.PoseDriverTarget = (Transform)EditorGUILayout.ObjectField("Pose Driver Target", manager.PoseDriverTarget, typeof(Transform), true);
+            GUIUtility.ExitGUI();
         }
 
         private void HideField(string fieldName)

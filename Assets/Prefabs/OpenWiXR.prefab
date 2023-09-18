@@ -186,13 +186,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4492ecc15e22a4044b652ddfa919ad34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenWiXROpMode: 1
+  OpenWiXROpMode: 0
   IP: 192.168.144.109
   port: 8765
   AutoconnectInterval: 1
   ORBSLAM3_Settings: {fileID: 11400000, guid: 44ba4739df7d02646928e867b1af9857, type: 2}
   SLAMTextureSource: {fileID: 5412943079869675419}
-  PoseDriver: {fileID: 4465621809046487268}
+  PoseDriver: {fileID: 5583852301806950468}
   PoseDriverTarget: {fileID: 5212368041143834202}
   VideoStreamerConfig: {fileID: 11400000, guid: ecade1bcb6fd8d04992f69402acdc886, type: 2}
   VideoStreamerConfig_IdenticalIP: 1
@@ -539,7 +539,7 @@ GameObject:
   - component: {fileID: 4803080688502583590}
   - component: {fileID: 6031357006821258299}
   m_Layer: 0
-  m_Name: VideoReceiver
+  m_Name: GstVideoReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

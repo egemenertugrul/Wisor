@@ -19,5 +19,6 @@ public class IMUPoseDriverEditor : Editor
         {
             EditorUtilities.PropertyField(serializedObject, "target");
         }
+        GUIUtility.ExitGUI();
     }
 }

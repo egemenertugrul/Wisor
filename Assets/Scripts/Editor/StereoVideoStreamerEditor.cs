@@ -28,6 +28,7 @@ namespace OpenWiXR
             EditorUtilities.DisableField(serializedObject, "TempTex");
 
             serializedObject.ApplyModifiedProperties();
+            GUIUtility.ExitGUI();
         }
     }
 }

@@ -57,6 +57,7 @@ namespace OpenWiXR
             EditorUtilities.PropertyField(serializedObject, "MapPointPrefab");
 
             serializedObject.ApplyModifiedProperties();
+            GUIUtility.ExitGUI();
         }
     }
 

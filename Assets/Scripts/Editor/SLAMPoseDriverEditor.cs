@@ -23,5 +23,6 @@ public class SLAMPoseDriverEditor : Editor
         }
 
         serializedObject.ApplyModifiedProperties();
+        GUIUtility.ExitGUI();
     }
 }

@@ -34,6 +34,7 @@ namespace OpenWiXR
             EditorUtilities.PropertyField(serializedObject, "PostProcessors");
 
             serializedObject.ApplyModifiedProperties();
+            GUIUtility.ExitGUI();
         }
     }
 }
