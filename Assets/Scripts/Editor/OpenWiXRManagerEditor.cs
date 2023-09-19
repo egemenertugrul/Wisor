@@ -11,7 +11,6 @@ namespace OpenWiXR
         private bool showNetworkSettings = true; 
         private bool showVideoStreamerSettings = true;
         private bool showVideoReceiverSettings = true;
-        private RenderTexture prevTex;
 
         public override void OnInspectorGUI()
         {
@@ -80,30 +79,41 @@ namespace OpenWiXR
             EditorUtilities.Separator();
 
             EditorGUI.BeginChangeCheck();
-            manager.OpenWiXROpMode = (OpenWiXRManager.OpMode)EditorGUILayout.EnumPopup("Op Mode", manager.OpenWiXROpMode);
+            //manager.OpenWiXROpMode = (OpenWiXRManager.OpMode)EditorGUILayout.EnumPopup("Op Mode", manager.OpenWiXROpMode);
+            manager.PoseDriverTarget = (Transform)EditorGUILayout.ObjectField("Pose Driver Target", manager.PoseDriverTarget, typeof(Transform), true);
+
+            EditorUtilities.PropertyField(serializedObject, "OpenWiXROpMode");
             EditorGUI.indentLevel++;
             if (manager.OpenWiXROpMode == OpenWiXRManager.OpMode.ORIENTATION_ONLY)
             {
-                HideField("ORBSLAM3 Settings");
-                HideField("SLAM Texture Source");
+                //HideField("ORBSLAM3 Settings");
+                //HideField("SLAM Texture Source");
                 manager.PoseDriver = (IMUPoseDriver)EditorGUILayout.ObjectField("Active Pose Driver", FindAnyObjectByType<IMUPoseDriver>(FindObjectsInactive.Include), typeof(IMUPoseDriver), true);
             }
-            else
+            else if (manager.OpenWiXROpMode == OpenWiXRManager.OpMode.KEYBOARD_MOUSE)
+            {
+                manager.PoseDriver = (KeyboardMousePoseDriver)EditorGUILayout.ObjectField("Active Pose Driver", FindAnyObjectByType<KeyboardMousePoseDriver>(FindObjectsInactive.Include), typeof(KeyboardMousePoseDriver), true);
+            }
+            else if(manager.OpenWiXROpMode == OpenWiXRManager.OpMode.SLAM)
             {
                 manager.ORBSLAM3_Settings = (ORBSLAM3Config)EditorGUILayout.ObjectField("ORBSLAM3 Settings", manager.ORBSLAM3_Settings, typeof(ORBSLAM3Config), true);
                 manager.SLAMTextureSource = (TextureSource)EditorGUILayout.ObjectField("SLAM Texture Source", manager.SLAMTextureSource, typeof(TextureSource), true);
                 manager.PoseDriver = (SLAMPoseDriver)EditorGUILayout.ObjectField("Active Pose Driver", FindAnyObjectByType<SLAMPoseDriver>(FindObjectsInactive.Include), typeof(SLAMPoseDriver), true);
+            } else
+            {
+                manager.PoseDriver = null;
+                DisableField("Active Pose Driver");
+                DisableField("Pose Driver Target");
             }
-            DisableField("Active Pose Driver");
 
             EditorGUI.indentLevel--;
+
+
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
             }
-            
-            manager.PoseDriverTarget = (Transform)EditorGUILayout.ObjectField("Pose Driver Target", manager.PoseDriverTarget, typeof(Transform), true);
-            GUIUtility.ExitGUI();
+           
         }
 
         private void HideField(string fieldName)

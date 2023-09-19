@@ -7,6 +7,11 @@ namespace OpenWiXR.Tracking
     {
         [SerializeField] protected Transform target;
 
+        public void TranslatePosition(Vector3 translation)
+        {
+            target.localPosition += translation;
+        }
+
         public void UpdateRotation(Quaternion rotation)
         {
             if (!target)

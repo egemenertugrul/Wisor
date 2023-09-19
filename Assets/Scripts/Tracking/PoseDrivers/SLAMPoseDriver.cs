@@ -12,7 +12,7 @@ namespace OpenWiXR.Tracking
     public sealed class SLAMPoseDriver : PoseDriver
     {
         private ORBSLAM3 SLAM;
-        private void Start()
+        public void Initialize()
         {
             SLAM = GetComponent<ORBSLAM3>();
             if (!SLAM)

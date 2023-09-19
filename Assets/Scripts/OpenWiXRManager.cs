@@ -12,6 +12,8 @@ namespace OpenWiXR
     {
         public enum OpMode
         {
+            None,
+            KEYBOARD_MOUSE,
             ORIENTATION_ONLY,
             SLAM,
         }
@@ -53,11 +55,19 @@ namespace OpenWiXR
 
             switch (OpenWiXROpMode)
             {
+                case OpMode.None:
+                    Debug.LogWarning("OpenWiXR OpMode was not set.");
+                    break;
                 case OpMode.ORIENTATION_ONLY:
                     requestedIMUTopics = new string[] { "orientation", "time" };
+                    ((IMUPoseDriver)PoseDriver).Initialize(WSClient);
                     break;
-
+                case OpMode.KEYBOARD_MOUSE:
+                    ((KeyboardMousePoseDriver)PoseDriver).Initialize();
+                    break;
                 case OpMode.SLAM:
+                    ((SLAMPoseDriver)PoseDriver).Initialize();
+
                     SLAM = GetComponentInChildren<ORBSLAM3>(includeInactive: false);
                     SLAM.Initialize(ORBSLAM3_Settings, SLAMTextureSource);
                     SLAM.transform.SetParent(transform);
@@ -92,7 +102,7 @@ namespace OpenWiXR
             WSClient.OnOpen.AddListener(() => { WSClient.Send("SetIMUTopics", requestedIMUTopics); });
             WSClient.Connect();
 
-            if (!PoseDriver)
+            if (!PoseDriver && OpenWiXROpMode != OpMode.None)
                 throw new NullReferenceException($"[{Enum.GetName(typeof(OpMode), OpenWiXROpMode)}] Pose driver must be set.");
 
             PoseDriver.SetTarget(PoseDriverTarget);

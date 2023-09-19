@@ -8,8 +8,10 @@ namespace OpenWiXR.Tracking
     public sealed class IMUPoseDriver : PoseDriver
     {
         public WebSocketsClient WSClient;
-        private void Start()
+
+        public void Initialize(WebSocketsClient webSocketsClient)
         {
+            WSClient = webSocketsClient;
             if (!WSClient)
             {
                 throw new NullReferenceException("WebSocketsClient is required for the IMUPoseDriver.");

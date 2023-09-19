@@ -89,7 +89,7 @@ namespace OpenWiXR.Communications
 
             websocket.OnError += (e) =>
             {
-                Debug.Log("Error! " + e);
+                Debug.LogError("Error! " + e);
                 OnError.Invoke();
             };
 
