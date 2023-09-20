@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07ebfc6fce91b8f449188684387dcb20, type: 3}
-  m_Name: VideoStreamerConfig_nvh264enc_mpegtsmux
+  m_Name: VideoStreamerConfig_x264enc_mpegtsmux
   m_EditorClassIdentifier: 
   Width: 1280
   Height: 720
-  Pipeline: videoflip method=3 ! nvh264enc zerolatency=true ! h264parse config-interval=1
-    ! mpegtsmux ! udpsink host={IP} port={PORT} sync=false
-  IP: 
+  Pipeline: videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency
+    pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host={IP} port={PORT}
+    sync=false
+  IP: 172.20.43.248
   Port: 5000
   Fps: 60

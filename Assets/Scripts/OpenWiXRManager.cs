@@ -52,7 +52,7 @@ namespace OpenWiXR
                 WSClient = new GameObject("WebSocketsClient").AddComponent<WebSocketsClient>();
                 WSClient.transform.SetParent(transform);
             }
-
+            requestedIMUTopics = new string[0];
             switch (OpenWiXROpMode)
             {
                 case OpMode.None:
@@ -84,7 +84,7 @@ namespace OpenWiXR
                             break;
                     }
                     
-                    videoReceiver = GetComponentInChildren<VideoReceiver>(includeInactive: false);
+                    videoReceiver = GetComponentInChildren<VideoReceiver>(includeInactive: false); // TODO: WSClient wrap in OnOpen and OnClose
                     videoReceiver.Initialize(VideoReceiverConfig);
                     videoReceiver.BeginPlaying();
                     SLAMTextureSource.ReadyEvent.AddListener(() =>
@@ -98,8 +98,25 @@ namespace OpenWiXR
                     break;
             }
 
-            WSClient.Initialize();
-            WSClient.OnOpen.AddListener(() => { WSClient.Send("SetIMUTopics", requestedIMUTopics); });
+            if (VideoStreamerConfig_IdenticalIP)
+            {
+                _VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
+                VideoStreamerConfig.IP = IP;
+            }
+
+            WSClient.Initialize(this.IP, this.port);
+            WSClient.OnOpen.AddListener(() => { 
+
+                WSClient.Send("SetIMUTopics", requestedIMUTopics);
+
+                videoStreamer.Initialize(VideoStreamerConfig);
+                videoStreamer.StartStreaming();
+            });
+            WSClient.OnClose.AddListener(() =>
+            {
+                videoStreamer.StopStreaming();
+            });
+
             WSClient.Connect();
 
             if (!PoseDriver && OpenWiXROpMode != OpMode.None)
@@ -115,17 +132,6 @@ namespace OpenWiXR
                 videoStreamer = new GameObject("StereoVideoStreamer").AddComponent<StereoVideoStreamer>();
                 videoStreamer.transform.SetParent(transform);
             }
-
-
-            if (VideoStreamerConfig_IdenticalIP)
-            {
-                _VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
-                VideoStreamerConfig.IP = IP;
-
-            }
-
-            videoStreamer.Initialize(VideoStreamerConfig);
-            videoStreamer.StartStreaming();
 
             // --
         }

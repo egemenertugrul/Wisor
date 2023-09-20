@@ -27,6 +27,8 @@ namespace OpenWiXR
             }
             // --
 
+            EditorGUI.BeginChangeCheck();
+
             // -- Network settings
             showNetworkSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showNetworkSettings, "Network Settings");
             if (showNetworkSettings)
@@ -78,7 +80,6 @@ namespace OpenWiXR
 
             EditorUtilities.Separator();
 
-            EditorGUI.BeginChangeCheck();
             //manager.OpenWiXROpMode = (OpenWiXRManager.OpMode)EditorGUILayout.EnumPopup("Op Mode", manager.OpenWiXROpMode);
             manager.PoseDriverTarget = (Transform)EditorGUILayout.ObjectField("Pose Driver Target", manager.PoseDriverTarget, typeof(Transform), true);
 

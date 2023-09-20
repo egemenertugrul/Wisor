@@ -39,7 +39,9 @@ namespace OpenWiXR
             {
                 throw new Exception($"IP is invalid: {IP}");
             }
-            return Pipeline.Replace("{IP}", IP).Replace("{PORT}", Port.ToString());
+            string pipeline = Pipeline.Replace("{IP}", IP).Replace("{PORT}", Port.ToString());
+            Debug.Log($"VideoStreamer Pipeline: {pipeline}");
+            return pipeline;
         }
     }
 }

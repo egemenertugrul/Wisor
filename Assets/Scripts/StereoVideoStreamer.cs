@@ -35,10 +35,10 @@ namespace OpenWiXR
             if (!_isStreaming)
             {
                 PrepareTexture();
-
-                _streamer.CreateStream();
-                _streamer.Stream();
-                _isStreaming = true;
+                //_streamer.CreateStream();
+                //_streamer.Stream();
+                //_created = true;
+                //_isStreaming = true;
             }
         }
 
@@ -75,7 +75,8 @@ namespace OpenWiXR
 
         void Destroy()
         {
-
+            StopStreaming();
+            DestroyTexture();
         }
 
         void PrepareTexture()
@@ -117,7 +118,11 @@ namespace OpenWiXR
                 return;
             }
 
-            Initialize(config);
+            if (!GetComponentInParent<OpenWiXRManager>())
+            {
+                Initialize(config);
+                StartStreaming();
+            }
         }
 
         void OnDestroy()
@@ -127,13 +132,13 @@ namespace OpenWiXR
 
         void Update()
         {
-            //if (!_created && _grabber != null && HasData)
-            //{
-            //    //important to create stream after data is confirmed
-            //    _streamer.CreateStream();
-            //    _streamer.Stream();
-            //    _created = true;
-            //}
+            if (!_created && _grabber != null && HasData)
+            {
+                //important to create stream after data is confirmed
+                _streamer.CreateStream();
+                _streamer.Stream();
+                _created = true;
+            }
 
         }
 
