@@ -1,0 +1,17 @@
+{
+    "name": "norwanderwan.arucounity.scenes",
+    "rootNamespace": "",
+    "references": [
+        "GUID:38f291c2e79a954489cb59402475c2bf",
+        "GUID:31f720d11224aa748b8306775ec89718"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

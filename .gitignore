@@ -95,3 +95,6 @@ crashlytics-build.properties
 
 !*.gitkeep
 GStreamerLog.txt
+Export/*
+/[Aa]ssets/Generated/*
+/[Aa]ssets/Generated.meta

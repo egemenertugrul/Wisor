@@ -8,7 +8,7 @@ GStreamerCore - GStreamer inited
 Initializing GStreamer - Done
 Entering main loop
 mray_gstreamer_initialize
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1920,height=1080,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=172.20.43.248 port=5000 sync=false
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.137.202 port=5000 sync=false
 Info: : GstPipelineHandler::CreatePipeline 
 Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
 Info: : Pausing
@@ -18,7 +18,9 @@ Info: : Playing
 Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
 mray_gstreamer_initialize
 mray_gstreamer_initialize
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=172.20.43.248 port=5000 sync=false
+mray_gstreamer_initialize
+mray_gstreamer_initialize
+Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=192.168.137.202 port=5000 sync=false
 Info: : GstPipelineHandler::CreatePipeline 
 Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
 Info: : Pausing
@@ -26,15 +28,3 @@ Info: : Playing
 Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
 Info: : Playing
 Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
-mray_gstreamer_initialize
-mray_gstreamer_initialize
-Info: Creating Pipeline: appsrc name=src do-timestamp=true is-live=true block=true ! video/x-raw,format=RGB,width=1280,height=720,framerate=60/1 ! videoconvert  ! video/x-raw,format=I420 ! videoflip method=3 ! x264enc name=videoEnc bitrate=5000 tune=zerolatency pass=qual  ! h264parse config-interval=1 ! mpegtsmux ! udpsink host=172.20.43.248 port=5000 sync=false
-Info: : GstPipelineHandler::CreatePipeline 
-Info: : Pipeline State Changes:  GST_STATE_NULL--> GST_STATE_READY
-Info: : Pausing
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_READY--> GST_STATE_PAUSED
-Info: : Playing
-Info: : Pipeline State Changes:  GST_STATE_PAUSED--> GST_STATE_PLAYING
-mray_gstreamer_initialize
-mray_gstreamer_initialize

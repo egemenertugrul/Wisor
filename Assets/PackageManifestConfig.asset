@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f67b488b4458983fd973bbda8c8fa, type: 3}
+  m_Name: PackageManifestConfig
+  m_EditorClassIdentifier: 
+  packageSourcePaths:
+  - Assets/OpenWiXR
+  packageIgnorePaths:
+  - Assets/OpenWiXR/Runtime/Thirdparty/ORBSLAM3_Unity/Plugins
+  - Assets/OpenWiXR/Runtime/Thirdparty/GStreamer/Plugins
+  - Assets/OpenWiXR/Runtime/Thirdparty/ArucoUnity
+  packageDestinationPath: Export/Package
+  legacyPackageDestinationPath: Export/Legacy
+  packageName: com.egemenertugrul.openwixr
+  displayName: OpenWiXR
+  packageVersion: 0.1.0
+  unityVersion: 2022.3
+  description: Open Wireless XR Headset
+  category: XR
+  author:
+    name: "Egemen Ertu\u011Frul"
+    email: 
+    url: https://github.com/egemenertugrul/OpenWiXR#Unity
+  keywords:
+  - xr
+  - vr
+  - ar
+  - open
+  - wireless
+  - headset
+  dependencies:
+  - packageName: com.endel.nativewebsocket
+    packageVersion: 1.1.4
+  - packageName: com.unity.nuget.newtonsoft-json
+    packageVersion: 3.2.1
+  versionConstantsPath: 
+  versionTemplateGuid: 
+  _id: 5b787188-20fd-4401-b701-22e541896980
