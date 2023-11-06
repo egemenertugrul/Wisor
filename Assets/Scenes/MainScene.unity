@@ -123,17 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &109179247 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5583852301806950468, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
-  m_PrefabInstance: {fileID: 6062496555590670509}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 816fb9a13a7859a47bc57d6a33f1a804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &409835702
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,14 +677,6 @@ PrefabInstance:
     - target: {fileID: 4326993022202002848, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9215853748184252006, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
-      propertyPath: PoseDriver
-      value: 
-      objectReference: {fileID: 109179247}
-    - target: {fileID: 9215853748184252006, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
-      propertyPath: OpenWiXROpMode
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
