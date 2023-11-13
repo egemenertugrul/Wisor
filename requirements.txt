@@ -11,13 +11,14 @@ keyring==24.2.0
 mock==5.1.0
 mypy_extensions==1.0.0
 numpy
+picamera2
 ordereddict==1.1
 psutil==5.9.5
 pyee==11.0.0
 pyOpenSSL==23.2.0
 pyzbar==0.1.9
 pyzmq==25.1.1
-sense_hat==2.4.0
+# sense_hat==2.4.0
 simplejson==3.19.1
 smbus==1.1.post2
 typing_extensions==4.7.1

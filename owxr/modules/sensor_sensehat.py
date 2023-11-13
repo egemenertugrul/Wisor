@@ -45,9 +45,9 @@ class SenseHat(IMU_Sensor):
         self.accelVals = [acc["x"], acc["y"], acc["z"]]
         self.gyroVals = [gyro["x"], gyro["y"], gyro["z"]]
         self.orientationVals = [
-            orientation["pitch"],
+            -orientation["pitch"],
             orientation["yaw"],
-            orientation["roll"],
+            -orientation["roll"],
         ]
 
         now = time.time()

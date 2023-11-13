@@ -13,15 +13,15 @@
             "args": [
                 "--dynamic-fps",
                 "-v",
-                "--desktop",
-                "--stdctl",
+                // "--desktop",
+                // "--stdctl",
 
                 "--offsetX",
                 "0.00",
                 "--offsetY",
                 "0.3",
                 "--ipd",
-                "0.05",
+                "0.056",
             ],
             "justMyCode": true
         }

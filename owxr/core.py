@@ -64,6 +64,9 @@ class Core:
     omx_cmd = "omxplayer -o hdmi udp://127.0.0.1:5000 --timeout 0 --no-keys --fps 60 --aspect-mode stretch --live"
     omx_player_process = None
 
+    qrScanner = None
+    wifi = None
+
     def __init__(self, args):
         self.args = args
         self.FPS = self.args.fps or 90
@@ -79,11 +82,16 @@ class Core:
         self.out_message_queue = Queue()
 
         self.wifi = Wifi()
-        self.qrScanner = QRScanner(capture_src=PiCamera2CaptureSource(), duration=10)
-
+        try:
+            self.qrScanner = QRScanner(capture_src=PiCamera2CaptureSource(), duration=10)
+        except Exception as e:
+            logging.error(str(e))
+        qrScanFn = None
+        if self.qrScanner is not None:
+            qrScanFn = self.qrScanner.start_scanning
         self.commands_dict = {
             "Begin": self.set_renderer_ready,
-            "QRScan": self.qrScanner.start_scanning,
+            "QRScan": qrScanFn,
             "FPSUpdate": self.update_fps,
             "Heartbeat": self.heartbeat,
             "Shutdown": self.shutdown,
@@ -186,7 +194,7 @@ class Core:
     def on_remote_connection_begin(self):
         self.opMode.value = OpMode.REMOTE
 
-    def on_set_imu_topics(self, topics):
+    def on_set_imu_topics(self, topics=None):
         if topics is None or len(topics) == 0:
             logging.error("Requested IMU topics are not valid.")
             self.requested_imu_topics = None
@@ -381,17 +389,18 @@ class Core:
     def update_common(self):
         if self.socket_process:
             self.socket_process.process_messages()
-
-        if self.qrScanner.isRunning:
-            data = self.qrScanner.get_qr_data()
-            if data is not None:
-                logging.debug(f"QRData: {data}")
-                if data.get("S") is None or len(data.get("S")) == 0:
-                    logging.error("Invalid SSID from QRData.")
-                else:
-                    connect_res, log = self.wifi.connect_to(data["S"], data["P"])
-                    self.qrScanner.stop_scanning()
-                    self.out_message_queue.put(self.update_status())
+        
+        if self.qrScanner is not None:
+            if self.qrScanner.isRunning:
+                data = self.qrScanner.get_qr_data()
+                if data is not None:
+                    logging.debug(f"QRData: {data}")
+                    if data.get("S") is None or len(data.get("S")) == 0:
+                        logging.error("Invalid SSID from QRData.")
+                    else:
+                        connect_res, log = self.wifi.connect_to(data["S"], data["P"])
+                        self.qrScanner.stop_scanning()
+                        self.out_message_queue.put(self.update_status())
 
     def shutdown(self):
         logging.info("Shutting down..")
