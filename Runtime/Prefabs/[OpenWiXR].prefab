@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccc77aaeeda088e419a00b775ef3cbde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IP: 0.0.0.0
+  IP: 
   port: 8765
   AutoconnectInterval: 1
   OnOpen:
@@ -187,13 +187,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4492ecc15e22a4044b652ddfa919ad34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenWiXROpMode: 1
-  IP: 0.0.0.0
+  OpenWiXROpMode: 2
+  IP: x.x.x.x
   port: 8765
   AutoconnectInterval: 1
   ORBSLAM3_Settings: {fileID: 11400000, guid: 44ba4739df7d02646928e867b1af9857, type: 2}
   SLAMTextureSource: {fileID: 5412943079869675419}
-  PoseDriver: {fileID: 6546925530784643959}
+  PoseDriver: {fileID: 5583852301806950468}
   PoseDriverTarget: {fileID: 5212368041143834202}
   VideoStreamerConfig: {fileID: 11400000, guid: ecade1bcb6fd8d04992f69402acdc886, type: 2}
   VideoStreamerConfig_IdenticalIP: 1

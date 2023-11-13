@@ -45,7 +45,6 @@ namespace OpenWiXR
 
         private async void Start()
         {
-            IP = "192.168.137.202";
             WSClient = GetComponentInChildren<WebSocketsClient>(includeInactive: false);
             if (!WSClient)
             {
@@ -84,7 +83,7 @@ namespace OpenWiXR
                             WSClient.OnMessageReceived.AddListener((msg) => { SLAM.AddIMUDataFromClient(msg); });
                             break;
                     }
-
+                    
                     videoReceiver = GetComponentInChildren<VideoReceiver>(includeInactive: false); // TODO: WSClient wrap in OnOpen and OnClose
                     videoReceiver.Initialize(VideoReceiverConfig);
                     videoReceiver.BeginPlaying();
@@ -104,7 +103,15 @@ namespace OpenWiXR
                 _VideoStreamerConfig_previousIP = VideoStreamerConfig.IP;
                 VideoStreamerConfig.IP = IP;
             }
+
             videoStreamer = GetComponentInChildren<StereoVideoStreamer>(includeInactive: false);
+
+            if (!videoStreamer)
+            {
+                Debug.LogWarning("StereoVideoStreamer could not be found. Creating one..");
+                videoStreamer = new GameObject("StereoVideoStreamer").AddComponent<StereoVideoStreamer>();
+                videoStreamer.transform.SetParent(transform);
+            }
 
             WSClient.Initialize(this.IP, this.port);
             WSClient.OnOpen.AddListener(() => { 
@@ -126,13 +133,6 @@ namespace OpenWiXR
 
             PoseDriver.SetTarget(PoseDriverTarget);
             PoseDriver.name = $"> {PoseDriver.name}";
-
-            if (!videoStreamer)
-            {
-                Debug.LogWarning("StereoVideoStreamer could not be found. Creating one..");
-                videoStreamer = new GameObject("StereoVideoStreamer").AddComponent<StereoVideoStreamer>();
-                videoStreamer.transform.SetParent(transform);
-            }
 
             // --
         }

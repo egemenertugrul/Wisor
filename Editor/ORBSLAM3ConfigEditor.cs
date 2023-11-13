@@ -8,31 +8,29 @@ public class ORBSLAM3ConfigEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        //base.OnInspectorGUI();
         serializedObject.Update();
         GUILayout.Label("ORBSLAM3 Config", EditorStyles.boldLabel);
-        ORBSLAM3Config config = (ORBSLAM3Config)target;
-        config.SourceType = (Source_Type)EditorGUILayout.EnumPopup("Source Type", config.SourceType);
-        config.FPS = EditorGUILayout.IntField("FPS", config.FPS);
-
-        if (config.SourceType == Source_Type.Realtime)
+        EditorUtilities.PropertyField(serializedObject, "Source Type");
+        EditorUtilities.PropertyField(serializedObject, "FPS");
+        SerializedProperty sourceType = serializedObject.FindProperty("SourceType");
+        Source_Type enumValue = (Source_Type)sourceType.enumValueIndex;
+        if (enumValue == Source_Type.Realtime)
         {
 
         }
-        else if (config.SourceType == Source_Type.File)
+        else if (enumValue == Source_Type.File)
         {
-            config.TimestampsFile = (TextAsset)EditorGUILayout.ObjectField("Timestamps File", config.TimestampsFile, typeof(TextAsset), false);
-            config.IMUFile = (TextAsset)EditorGUILayout.ObjectField("IMU File", config.IMUFile, typeof(TextAsset), false);
-            config.BaseImagePath = EditorGUILayout.TextField("Base Image Path", config.BaseImagePath);
+            EditorUtilities.PropertyField(serializedObject, "TimestampsFile");
+            EditorUtilities.PropertyField(serializedObject, "IMUFile");
+            EditorUtilities.PropertyField(serializedObject, "BaseImagePath");
         }
 
         EditorUtilities.Separator();
 
-        config.VocabularyPath = EditorGUILayout.TextField("Vocabulary Path", config.VocabularyPath);
-        config.SettingsPath = EditorGUILayout.TextField("Settings Path", config.SettingsPath);
-        config.SensorType = (Sensor_Type)EditorGUILayout.EnumPopup("Sensor Type", config.SensorType);
-        config.DisplayMapPoints = EditorGUILayout.Toggle("Display Map Points", config.DisplayMapPoints);
-
+        EditorUtilities.PropertyField(serializedObject, "VocabularyPath");
+        EditorUtilities.PropertyField(serializedObject, "SettingsPath");
+        EditorUtilities.PropertyField(serializedObject, "SensorType");
+        EditorUtilities.PropertyField(serializedObject, "DisplayMapPoints");
 
         serializedObject.ApplyModifiedProperties();
     }
