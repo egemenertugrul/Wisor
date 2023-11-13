@@ -37,17 +37,3 @@ make rebuild module=owxr PLATFORM=PLATFORM_DESKTOP
 make clean module=raylib/src
 make clean module=owxr
 ```
-
-## Contributing
-
-We welcome contributions to the OpenWiXR-Renderer! If you're interested in contributing, please follow these steps:
-
-1. Fork this repository and create a new branch.
-2. Make your changes and test them thoroughly.
-3. Submit a pull request describing your changes.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE). Feel free to use and modify the code according to the terms of the license.
-
-For more information about raylib, please refer to the [raylib repository](https://github.com/raysan5/raylib).
