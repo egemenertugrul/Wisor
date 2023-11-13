@@ -29,7 +29,7 @@ MonoBehaviour:
   author:
     name: "Egemen Ertu\u011Frul"
     email: 
-    url: https://github.com/egemenertugrul/OpenWiXR#Unity
+    url: https://github.com/egemenertugrul/OpenWiXR#unity
   keywords:
   - xr
   - vr
@@ -38,8 +38,6 @@ MonoBehaviour:
   - wireless
   - headset
   dependencies:
-  - packageName: com.endel.nativewebsocket
-    packageVersion: 1.1.4
   - packageName: com.unity.nuget.newtonsoft-json
     packageVersion: 3.2.1
   versionConstantsPath: 
