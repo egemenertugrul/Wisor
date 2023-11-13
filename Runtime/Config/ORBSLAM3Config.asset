@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f4b5dfeea1373499ca0a207c6feabf, type: 3}
+  m_Name: ORBSLAM3Config
+  m_EditorClassIdentifier: 
+  DesiredFPS: 60
+  TimestampsFile: {fileID: 4900000, guid: 37bd5361a04c3b646835419cf00bbb13, type: 3}
+  IMUFile: {fileID: 4900000, guid: 6ffccb0fcc905dc48a14e27ab97d0e4b, type: 3}
+  BaseImagePath: C:\Users\Egemen\Documents\Datasets\data\
+  VocabularyPath: ORBSLAM/ORBvoc.bin
+  SettingsPath: ORBSLAM/rpi_new_ov9281.yaml
+  SourceType: 1
+  SensorType: 3
+  DisplayMapPoints: 0
