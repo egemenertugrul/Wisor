@@ -22,14 +22,14 @@ MonoBehaviour:
   legacyPackageDestinationPath: Export/Legacy
   packageName: com.egemenertugrul.openwixr
   displayName: OpenWiXR
-  packageVersion: 0.1.0
+  packageVersion: 0.9.0
   unityVersion: 2022.3
   description: Open Wireless XR Headset
   category: XR
   author:
     name: "Egemen Ertu\u011Frul"
     email: 
-    url: https://github.com/egemenertugrul/OpenWiXR#unity
+    url: https://github.com/egemenertugrul/OpenWiXR
   keywords:
   - xr
   - vr
