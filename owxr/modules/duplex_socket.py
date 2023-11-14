@@ -1,6 +1,7 @@
 import asyncio
 import multiprocessing as mp
 import logging
+from websockets.exceptions import ConnectionClosedError
 from websockets.server import serve
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 import json
@@ -34,9 +35,13 @@ class DuplexWebsocketsServerProcess(mp.Process, EventEmitter):
         self._send_queue.put(item)
 
     async def consumer_handler(self, websocket):
-        async for message in websocket:
-            msg = json.loads(message)
-            self.message_queue.put(msg)
+        try:
+            async for message in websocket:
+                msg = json.loads(message)
+                self.message_queue.put(msg)
+        except ConnectionClosedError as e:
+            logging.log(f"WebSocket connection closed: {e}")
+            # Handle the closed connection as needed, possibly reconnect or log the error.
 
     async def producer_handler(self, websocket):
         while True:
