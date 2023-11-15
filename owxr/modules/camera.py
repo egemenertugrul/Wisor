@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from picamera2 import Picamera2, Preview
+import logging
+
 
 class CaptureSource(ABC):
     @abstractmethod

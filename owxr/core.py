@@ -83,7 +83,9 @@ class Core:
 
         self.wifi = Wifi()
         try:
-            self.qrScanner = QRScanner(capture_src=PiCamera2CaptureSource(), duration=10)
+            self.qrScanner = QRScanner(
+                capture_src=PiCamera2CaptureSource(), duration=10
+            )
         except Exception as e:
             logging.error(str(e))
         qrScanFn = None
@@ -107,7 +109,7 @@ class Core:
 
         if mode == OpMode.STANDALONE:
             ProcessHelper.stop_process(self.omx_player_process)
-            logging.debug("Stopping omxplayer..")
+            logging.info("Stopping omxplayer..")
 
             self.sleepTime = float(1 / self.FPS)
             self.update = self.update_standalone
@@ -121,8 +123,8 @@ class Core:
             self.update = self.update_remote
             self.send_method = self.send_remote
             ProcessHelper.stop_process(self.omx_player_process)
-            logging.debug("Starting omxplayer..")
-            self.omx_player_process = ProcessHelper.start_command_process(self.omx_cmd)
+            logging.info("Starting omxplayer..")
+            self.omx_player_process = ProcessHelper.start_persistent_command_process(self.omx_cmd)
 
     def on_opmode_change(self, mode: OpMode):
         logging.info(f"OpMode changed: {mode}")
@@ -139,7 +141,7 @@ class Core:
             self.FPS = new_fps
 
     def set_renderer_ready(self):
-        time.sleep(5)
+        time.sleep(3)
         self.isRendererReady = True
 
         status = self.update_status()
@@ -211,17 +213,17 @@ class Core:
             logging.log("Is already running!")
             return
 
-        self.socket_process = DuplexWebsocketsServerProcess(daemon=False)
-        self.socket_process.on("Connect", self.on_remote_connection_begin)
-        self.socket_process.on("SetIMUTopics", self.on_set_imu_topics)
-        self.socket_process.on("Disconnect", self.on_remote_connection_end)
-        self.socket_process.start()
-
         # endregion
 
         self.sleepTime = float(1 / self.FPS)
 
         self.update_opmode(self.opMode)
+
+        self.socket_process = DuplexWebsocketsServerProcess(daemon=False)
+        self.socket_process.on("Connect", self.on_remote_connection_begin)
+        self.socket_process.on("SetIMUTopics", self.on_set_imu_topics)
+        self.socket_process.on("Disconnect", self.on_remote_connection_end)
+        self.socket_process.start()
 
         self.isRunning = True
 
@@ -355,7 +357,7 @@ class Core:
     def start_renderer(self):
         self.stop_renderer()
         if not self.args.disable_renderer:
-            self.renderer_wd = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
+            self.renderer_wd = Path(__file__).resolve().parent / "renderer"
             self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
             if not self.renderer_full_filepath.is_file():
                 logging.error(
@@ -389,7 +391,6 @@ class Core:
     def update_common(self):
         if self.socket_process:
             self.socket_process.process_messages()
-        
         if self.qrScanner is not None:
             if self.qrScanner.isRunning:
                 data = self.qrScanner.get_qr_data()
