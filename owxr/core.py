@@ -357,7 +357,7 @@ class Core:
     def start_renderer(self):
         self.stop_renderer()
         if not self.args.disable_renderer:
-            self.renderer_wd = Path(os.path.normpath("../OpenWiXR-Renderer")).resolve()
+            self.renderer_wd = Path(__file__).resolve().parent / "renderer"
             self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
             if not self.renderer_full_filepath.is_file():
                 logging.error(
