@@ -1,5 +1,5 @@
 <p align="center">
-  <img style="width: 300px" src="https://github.com/egemenertugrul/OpenWiXR/assets/10247966/21b2c03a-7a00-499e-a6aa-f917b2b6a1ac">
+  <img style="width: 300px" src="https://github.com/egemenertugrul/OpenWiXR/assets/10247966/fe7f9506-046c-4b3c-96b0-b933e62152a8">
 </p>
 
 <h1 align="center">OpenWiXR</h1>
