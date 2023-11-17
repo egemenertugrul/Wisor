@@ -2,9 +2,9 @@
 
 # List of sub-modules
 
-.PHONY: all rebuild raylib owxr clean
+.PHONY: all rebuild raylib wisor clean
 
-MODULES = all raylib/src owxr
+MODULES = all raylib/src wisor
 
 all:
 	@for module in $(MODULES); do \
@@ -25,8 +25,8 @@ rebuild:
 raylib:
 	$(MAKE) -C raylib/src $(MAKEFLAGS);
 
-owxr:
-	$(MAKE) -C owxr $(MAKEFLAGS);
+wisor:
+	$(MAKE) -C wisor $(MAKEFLAGS);
 
 clean:
 	@if [ -z "$(module)" ]; then \

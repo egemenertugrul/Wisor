@@ -295,9 +295,9 @@ int main(int argc, char* argv[])
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	if(isDesktop)
-		InitWindow(screenWidth, screenHeight, "OpenWiXR");
+		InitWindow(screenWidth, screenHeight, "Wisor");
 	else
-		InitWindow(screenHeight, screenWidth, "OpenWiXR");
+		InitWindow(screenHeight, screenWidth, "Wisor");
 
 	// VR device parameters definition
     VrDeviceInfo device = {
@@ -327,7 +327,7 @@ int main(int argc, char* argv[])
 
 	// Distortion shader (uses device lens distortion and chroma)
     //Shader distortion = LoadShader(0, TextFormat("resources/distortion%i.fs", GLSL_VERSION));
-    Shader distortion = LoadShader(0, "resources/distortion_openwixr_120.fs");
+    Shader distortion = LoadShader(0, "resources/distortion_wisor_120.fs");
     
     const float _offset[] = { offsetX, offsetY };
     const float _distortion[] = { 0.3f };

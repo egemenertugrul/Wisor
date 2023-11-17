@@ -21,7 +21,7 @@
 #
 #**************************************************************************************************
 
-.PHONY: all owxr rebuild clean
+.PHONY: all wisor rebuild clean
 
 # Define required environment variables
 #------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@
 PLATFORM              ?= PLATFORM_DESKTOP
 
 # Define required raylib variables
-PROJECT_NAME          ?= OpenWiXR-Renderer
+PROJECT_NAME          ?= Wisor-Renderer
 RAYLIB_VERSION        ?= 4.5.0
 RAYLIB_PATH           ?= ../raylib
 
@@ -402,21 +402,21 @@ INCLUDE_PATHS += -I./include
 INCLUDE_PATHS += -I./include
 
 BUILD_DIR = ..
-EXECUTABLE_NAME = openwixr_renderer
+EXECUTABLE_NAME = renderer
 
-OWXR = \
+wisor = \
         external/parson.c \
         external/raycast_helper.c \
         pipe_rw.c \
         hoverlib.c \
         main.c \
 
-all: owxr
+all: wisor
 
-owxr: $(OWXR)
+wisor: $(wisor)
 	$(CC) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)$(EXT) $^ $(CFLAGS) $(INCLUDE_PATHS) $(LDFLAGS) $(LDLIBS) -D$(PLATFORM)
 	
-	@echo OpenWiXR Renderer is built. Makeflags: $(MAKEFLAGS)
+	@echo Wisor Renderer is built. Makeflags: $(MAKEFLAGS)
 
 rebuild: clean all
 
