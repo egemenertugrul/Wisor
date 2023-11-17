@@ -1,7 +1,7 @@
 import random
 import time
 from sense_hat import SenseHat as SenseHatLib
-from owxr.modules.sensor import IMU_Sensor, IMU_Data
+from wisor.modules.sensor import IMU_Sensor, IMU_Data
 import logging
 import threading
 
@@ -18,7 +18,7 @@ class SenseHat(IMU_Sensor):
 
             display_thread = threading.Thread(
                 target=lambda: self.sensehat.show_message(
-                    "OWXR",
+                    "WISOR",
                     text_colour=(255, 255, 255),
                     back_colour=(0, 0, 0),
                     scroll_speed=0.1,

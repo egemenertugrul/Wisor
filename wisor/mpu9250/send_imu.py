@@ -72,7 +72,7 @@ while True:
 	try:
 		imu.readSensor()
 		imu.computeOrientation()
-		imu.loadCalibDataFromFile("./owxr/imu_only/calib.json")
+		imu.loadCalibDataFromFile("./wisor/imu_only/calib.json")
 	except:
 		try:
 			address = 0x68

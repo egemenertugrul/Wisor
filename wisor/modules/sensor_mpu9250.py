@@ -25,7 +25,7 @@ class MPU9250:
             bus = smbus.SMBus(1)
             self.imu = MPU9250Lib.MPU9250(bus, address)
             self.imu.begin()
-            self.imu.loadCalibDataFromFile("./owxr/mpu9250/calib.json")
+            self.imu.loadCalibDataFromFile("./wisor/mpu9250/calib.json")
 
             # self.sensorfusion = kalman.Kalman()
             # self.sensorfusion_fn = self.sensorfusion.updateRollPitchYaw

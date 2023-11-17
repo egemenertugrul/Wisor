@@ -11,7 +11,7 @@ bus = smbus.SMBus(1)
 imu = MPU9250.MPU9250(bus, address)
 imu.begin()
 
-imu.loadCalibDataFromFile("./owxr/imu_only/calib.json")
+imu.loadCalibDataFromFile("./wisor/imu_only/calib.json")
 
 imu.caliberateAccelerometer()
 print ("Acceleration calib successful")
@@ -24,10 +24,10 @@ gyroBias = imu.GyroBias
 mags = imu.Mags 
 magBias = imu.MagBias
 
-imu.saveCalibDataToFile("./owxr/imu_only/calib.json")
+imu.saveCalibDataToFile("./wisor/imu_only/calib.json")
 print ("calib data saved")
 
-imu.loadCalibDataFromFile("./owxr/imu_only/calib.json")
+imu.loadCalibDataFromFile("./wisor/imu_only/calib.json")
 if np.array_equal(accelscale, imu.Accels) & np.array_equal(accelBias, imu.AccelBias) & \
 	np.array_equal(mags, imu.Mags) & np.array_equal(magBias, imu.MagBias) & \
 	np.array_equal(gyroBias, imu.GyroBias):

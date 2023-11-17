@@ -9,19 +9,19 @@ from pathlib import Path
 from queue import Queue
 from enum import Enum
 
-# from owxr.modules.clock import Clock
+# from wisor.modules.clock import Clock
 
-# from owxr.modules.sensor_mpu9250 import MPU9250
-from owxr.modules.sensor_sensehat import SenseHat
-from owxr.modules.camera import PiCamera2CaptureSource
-from owxr.modules.qr import QRScanner
-from owxr.modules.wifi import Wifi
+# from wisor.modules.sensor_mpu9250 import MPU9250
+from wisor.modules.sensor_sensehat import SenseHat
+from wisor.modules.camera import PiCamera2CaptureSource
+from wisor.modules.qr import QRScanner
+from wisor.modules.wifi import Wifi
 
-from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
+from wisor.modules.duplex_socket import DuplexWebsocketsServerProcess
 
-from owxr.utils.process_helper import ProcessHelper
-from owxr.utils.evalue import EValue
-from owxr.utils.math import clamp
+from wisor.utils.process_helper import ProcessHelper
+from wisor.utils.evalue import EValue
+from wisor.utils.math import clamp
 
 MIN_FPS = 1
 MAX_FPS = 100
@@ -358,7 +358,7 @@ class Core:
         self.stop_renderer()
         if not self.args.disable_renderer:
             self.renderer_wd = Path(__file__).resolve().parent / "renderer"
-            self.renderer_full_filepath = self.renderer_wd.joinpath("openwixr_renderer")
+            self.renderer_full_filepath = self.renderer_wd.joinpath("renderer")
             if not self.renderer_full_filepath.is_file():
                 logging.error(
                     f"Renderer executable at {self.renderer_full_filepath} does not seem to exist.\nMake sure to build the renderer."

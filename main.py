@@ -1,12 +1,12 @@
-from owxr.core import Core
+from wisor.core import Core
 import argparse
 import logging
 import atexit
 
-from owxr.modules.duplex_socket import DuplexWebsocketsServerProcess
+from wisor.modules.duplex_socket import DuplexWebsocketsServerProcess
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog="OpenWiXR", description="OpenWirelessXR")
+    parser = argparse.ArgumentParser(prog="Wisor", description="Open Source Wireless XR Headset")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--fps", type=int, default=90, help="Set a fixed FPS")
     group.add_argument("--dynamic-fps", action="store_true", help="Use dynamic FPS")
