@@ -1,0 +1,17 @@
+{
+    "name": "egemenertugrul.wisor.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:31f720d11224aa748b8306775ec89718",
+        "GUID:110803decef0e8443be92fcc154680ed"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

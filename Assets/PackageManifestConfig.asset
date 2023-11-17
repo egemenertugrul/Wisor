@@ -13,23 +13,23 @@ MonoBehaviour:
   m_Name: PackageManifestConfig
   m_EditorClassIdentifier: 
   packageSourcePaths:
-  - Assets/OpenWiXR
+  - Assets/Wisor
   packageIgnorePaths:
-  - Assets/OpenWiXR/Runtime/Thirdparty/ORBSLAM3_Unity/Plugins
-  - Assets/OpenWiXR/Runtime/Thirdparty/GStreamer/Plugins
-  - Assets/OpenWiXR/Runtime/Thirdparty/ArucoUnity
+  - Assets/Wisor/Runtime/Thirdparty/ORBSLAM3_Unity/Plugins
+  - Assets/Wisor/Runtime/Thirdparty/GStreamer/Plugins
+  - Assets/Wisor/Runtime/Thirdparty/ArucoUnity
   packageDestinationPath: Export/Package
   legacyPackageDestinationPath: Export/Legacy
-  packageName: com.egemenertugrul.openwixr
-  displayName: OpenWiXR
+  packageName: com.egemenertugrul.wisor
+  displayName: Wisor
   packageVersion: 0.9.0
   unityVersion: 2022.3
-  description: Open Wireless XR Headset
+  description: Open Source Wireless XR Headset
   category: XR
   author:
     name: "Egemen Ertu\u011Frul"
     email: 
-    url: https://github.com/egemenertugrul/OpenWiXR
+    url: https://github.com/egemenertugrul/Wisor
   keywords:
   - xr
   - vr

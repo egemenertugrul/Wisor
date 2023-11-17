@@ -632,7 +632,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3155015900116215199, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
       propertyPath: m_Name
-      value: '[OpenWiXR]'
+      value: '[Wisor]'
       objectReference: {fileID: 0}
     - target: {fileID: 4326993022202002848, guid: cd5d5409e28138a4084454a2fdb971d8, type: 3}
       propertyPath: m_RootOrder
