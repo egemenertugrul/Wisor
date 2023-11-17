@@ -1,4 +1,4 @@
-Shader "Openwixr Lens Distortion Shader" {
+Shader "Wisor Lens Distortion Shader" {
 	Properties {
 		_MainTex("MainTex", 2D) = "white" {}
 		[MaterialToggle] _isRight("isRight", Range(0, 1)) = 0.0
