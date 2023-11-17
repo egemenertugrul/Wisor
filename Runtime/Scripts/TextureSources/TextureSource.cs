@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace OpenWiXR.Texturing
+namespace Wisor.Texturing
 {
     public abstract class TextureSource : MonoBehaviour
     {

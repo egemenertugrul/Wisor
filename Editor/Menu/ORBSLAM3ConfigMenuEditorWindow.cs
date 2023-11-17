@@ -1,9 +1,9 @@
-using OpenWiXR;
-using OpenWiXR.Tracking;
+using Wisor;
+using Wisor.Tracking;
 using System;
 using UnityEditor;
 using UnityEngine;
-using static OpenWiXR.Tracking.ORBSLAM3;
+using static Wisor.Tracking.ORBSLAM3;
 
 public class ORBSLAM3ConfigMenuEditorWindow : EditorWindow
 {

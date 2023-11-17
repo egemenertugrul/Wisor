@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     public class HMD : MonoBehaviour
     {

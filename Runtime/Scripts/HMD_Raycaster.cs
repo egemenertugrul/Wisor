@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace OpenWiXR
+namespace Wisor
 {
     public class HMD_Raycaster : MonoBehaviour
     {

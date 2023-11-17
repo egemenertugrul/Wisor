@@ -1,8 +1,8 @@
-using OpenWiXR.Tracking;
+using Wisor.Tracking;
 using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     [CustomEditor(typeof(ORBSLAM3))]
     public class ORBSLAM3Editor : Editor
@@ -32,7 +32,7 @@ namespace OpenWiXR
             EditorUtilities.DrawUILine(Color.gray);
             GUILayout.Space(5);
 
-            bool hasManager = slam.GetComponentInParent<OpenWiXRManager>();
+            bool hasManager = slam.GetComponentInParent<WisorManager>();
             slam.HasManager = hasManager;
             if (hasManager)
             {

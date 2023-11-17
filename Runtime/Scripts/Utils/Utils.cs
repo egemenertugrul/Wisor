@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace OpenWiXR.Utils
+namespace Wisor.Utils
 {
     public static class Utils
     {

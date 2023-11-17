@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace OpenWiXR.Tracking
+namespace Wisor.Tracking
 {
     public abstract class PoseDriver : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     public class VideoReceiver : CustomPipelinePlayer
     {

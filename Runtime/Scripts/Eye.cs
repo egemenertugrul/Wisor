@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace OpenWiXR
+namespace Wisor
 {
     [RequireComponent(typeof(Camera))]
     public class Eye : MonoBehaviour

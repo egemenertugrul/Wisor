@@ -5,11 +5,11 @@ using UnityEngine;
 
 using NativeWebSocket;
 using Newtonsoft.Json;
-using OpenWiXR.Utils;
+using Wisor.Utils;
 using UnityEngine.Events;
 using Newtonsoft.Json.Linq;
 
-namespace OpenWiXR.Communications
+namespace Wisor.Communications
 {
     public class Message
     {

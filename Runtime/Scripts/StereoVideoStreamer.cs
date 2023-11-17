@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     public class StereoVideoStreamer : MonoBehaviour
     {
@@ -118,7 +118,7 @@ namespace OpenWiXR
                 return;
             }
 
-            if (!GetComponentInParent<OpenWiXRManager>())
+            if (!GetComponentInParent<WisorManager>())
             {
                 Initialize(config);
                 StartStreaming();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
-namespace OpenWiXR.Texturing
+namespace Wisor.Texturing
 {
     [RequireComponent(typeof(VideoPlayer))]
     public class VideoSource : TextureSource

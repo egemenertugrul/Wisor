@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using OpenWiXR.Communications;
-using static OpenWiXR.Communications.WebSocketsClient;
+using Wisor.Communications;
+using static Wisor.Communications.WebSocketsClient;
 using Newtonsoft.Json.Linq;
 
-namespace OpenWiXR.Tracking
+namespace Wisor.Tracking
 {
     public sealed class SLAMPoseDriver : PoseDriver
     {

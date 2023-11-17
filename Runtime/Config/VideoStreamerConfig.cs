@@ -3,9 +3,9 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
-    [CreateAssetMenu(fileName = "VideoStreamerConfig", menuName = "OpenWiXR/Create Video Streamer Configuration", order = 1)]
+    [CreateAssetMenu(fileName = "VideoStreamerConfig", menuName = "Wisor/Create Video Streamer Configuration", order = 1)]
     public class VideoStreamerConfig : ScriptableObject
     {
         public int Width = 0;

@@ -1,10 +1,10 @@
-using OpenWiXR;
+using Wisor;
 using UnityEditor;
 using UnityEngine;
 
 public class VideoStreamerConfigMenuEditor : MonoBehaviour
 {
-    [MenuItem("OpenWiXR/Create Video Streamer Config")]
+    [MenuItem("Wisor/Create Video Streamer Config")]
     public static void CreateVideoStreamerConfig()
     {
         // Create a new instance of VideoStreamerConfig

@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using OpenWiXR.Communications;
+using Wisor.Communications;
 using Newtonsoft.Json.Linq;
 
-namespace OpenWiXR.Tracking
+namespace Wisor.Tracking
 {
     public sealed class IMUPoseDriver : PoseDriver
     {

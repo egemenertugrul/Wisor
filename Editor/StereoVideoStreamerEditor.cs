@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     [CustomEditor(typeof(StereoVideoStreamer))]
     public class StereoVideoStreamerEditor : Editor
@@ -10,7 +10,7 @@ namespace OpenWiXR
         {
             serializedObject.Update();
 
-            bool hasManager = ((StereoVideoStreamer)target).GetComponentInParent<OpenWiXRManager>();
+            bool hasManager = ((StereoVideoStreamer)target).GetComponentInParent<WisorManager>();
 
             if (hasManager)
             {

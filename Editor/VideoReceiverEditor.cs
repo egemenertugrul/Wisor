@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     [CustomEditor(typeof(VideoReceiver))]
     public class VideoReceiverEditor : Editor
@@ -10,7 +10,7 @@ namespace OpenWiXR
         {
             serializedObject.Update();
             VideoReceiver videoReceiver = ((VideoReceiver)target);
-            bool hasManager = videoReceiver.GetComponentInParent<OpenWiXRManager>();
+            bool hasManager = videoReceiver.GetComponentInParent<WisorManager>();
 
             if (hasManager)
             {

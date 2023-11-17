@@ -1,6 +1,6 @@
-﻿using OpenWiXR;
-using OpenWiXR.Communications;
-using OpenWiXR.Tracking;
+﻿using Wisor;
+using Wisor.Communications;
+using Wisor.Tracking;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ public class WebSocketsClientEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        bool hasManager = ((WebSocketsClient)target).GetComponentInParent<OpenWiXRManager>();
+        bool hasManager = ((WebSocketsClient)target).GetComponentInParent<WisorManager>();
 
         if (hasManager)
         {

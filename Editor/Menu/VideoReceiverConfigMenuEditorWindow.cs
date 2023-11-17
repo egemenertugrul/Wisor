@@ -1,4 +1,4 @@
-﻿using OpenWiXR;
+﻿using Wisor;
 using UnityEditor;
 using UnityEngine;
 

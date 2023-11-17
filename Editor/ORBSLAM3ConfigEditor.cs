@@ -1,7 +1,7 @@
-using OpenWiXR;
+using Wisor;
 using UnityEditor;
 using UnityEngine;
-using static OpenWiXR.Tracking.ORBSLAM3;
+using static Wisor.Tracking.ORBSLAM3;
 
 [CustomEditor(typeof(ORBSLAM3Config))]
 public class ORBSLAM3ConfigEditor : Editor

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace OpenWiXR.Utils
+namespace Wisor.Utils
 {
 
     /// <summary>

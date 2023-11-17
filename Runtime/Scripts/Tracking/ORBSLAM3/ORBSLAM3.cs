@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Events;
-using OpenWiXR.Communications;
-using OpenWiXR.Utils;
-using OpenWiXR.Texturing;
+using Wisor.Communications;
+using Wisor.Utils;
+using Wisor.Texturing;
 
-namespace OpenWiXR.Tracking
+namespace Wisor.Tracking
 {
     [RequireComponent(typeof(SLAMPoseDriver))]
     public partial class ORBSLAM3 : Singleton<ORBSLAM3>
@@ -51,7 +51,7 @@ namespace OpenWiXR.Tracking
 
         void Start()
         {
-            // If there is a OpenWiXR Manager class above the hierarchy, the properties and behaviours are driven by it.
+            // If there is a Wisor Manager class above the hierarchy, the properties and behaviours are driven by it.
             if (HasManager)
                 return;
 

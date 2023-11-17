@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OpenWiXR.Tracking;
-using OpenWiXR.Communications;
+using Wisor.Tracking;
+using Wisor.Communications;
 using System;
-using OpenWiXR.Texturing;
+using Wisor.Texturing;
 
-namespace OpenWiXR
+namespace Wisor
 {
-    public class OpenWiXRManager : MonoBehaviour
+    public class WisorManager : MonoBehaviour
     {
         public enum OpMode
         {
@@ -18,7 +18,7 @@ namespace OpenWiXR
             SLAM,
         }
 
-        public OpMode OpenWiXROpMode;
+        public OpMode WisorOpMode;
 
         public string IP;
         public uint port;
@@ -53,10 +53,10 @@ namespace OpenWiXR
                 WSClient.transform.SetParent(transform);
             }
             requestedIMUTopics = new string[0];
-            switch (OpenWiXROpMode)
+            switch (WisorOpMode)
             {
                 case OpMode.None:
-                    Debug.LogWarning("OpenWiXR OpMode was not set.");
+                    Debug.LogWarning("Wisor OpMode was not set.");
                     break;
                 case OpMode.ORIENTATION_ONLY:
                     requestedIMUTopics = new string[] { "orientation", "time" };
@@ -128,8 +128,8 @@ namespace OpenWiXR
 
             WSClient.Connect();
 
-            if (!PoseDriver && OpenWiXROpMode != OpMode.None)
-                throw new NullReferenceException($"[{Enum.GetName(typeof(OpMode), OpenWiXROpMode)}] Pose driver must be set.");
+            if (!PoseDriver && WisorOpMode != OpMode.None)
+                throw new NullReferenceException($"[{Enum.GetName(typeof(OpMode), WisorOpMode)}] Pose driver must be set.");
 
             PoseDriver.SetTarget(PoseDriverTarget);
             PoseDriver.name = $"> {PoseDriver.name}";

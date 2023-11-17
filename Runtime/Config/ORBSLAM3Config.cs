@@ -1,12 +1,12 @@
-using OpenWiXR.Tracking;
+using Wisor.Tracking;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static OpenWiXR.Tracking.ORBSLAM3;
+using static Wisor.Tracking.ORBSLAM3;
 
-namespace OpenWiXR
+namespace Wisor
 {
-    [CreateAssetMenu(fileName = "ORBSLAM3Config", menuName = "OpenWiXR/Create ORBSLAM3 Configuration", order = 1)]
+    [CreateAssetMenu(fileName = "ORBSLAM3Config", menuName = "Wisor/Create ORBSLAM3 Configuration", order = 1)]
     public class ORBSLAM3Config : ScriptableObject
     {
         public int FPS = 60;

@@ -2,11 +2,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
     public static class EditorUtilities
     {
-        public static readonly string OverridePlaceholderText = "These properties are driven by OpenWiXR.";
+        public static readonly string OverridePlaceholderText = "These properties are driven by Wisor.";
         public static void OverridePlaceholder()
         {
             GUILayout.Label(OverridePlaceholderText, EditorStyles.centeredGreyMiniLabel);

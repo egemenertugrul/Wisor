@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
-    [CreateAssetMenu(fileName = "VideoReceiverConfig", menuName = "OpenWiXR/Create Video Receiver Configuration", order = 1)]
+    [CreateAssetMenu(fileName = "VideoReceiverConfig", menuName = "Wisor/Create Video Receiver Configuration", order = 1)]
     public class VideoReceiverConfig : ScriptableObject
     {
         public string Pipeline = "";

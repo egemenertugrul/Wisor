@@ -1,12 +1,12 @@
 using Microsoft.Win32.SafeHandles;
-using OpenWiXR.Utils;
+using Wisor.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace OpenWiXR.Tracking
+namespace Wisor.Tracking
 {
     public partial class ORBSLAM3 : Singleton<ORBSLAM3>
     {

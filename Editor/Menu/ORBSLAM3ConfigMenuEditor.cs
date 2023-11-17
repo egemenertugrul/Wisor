@@ -1,10 +1,10 @@
-using OpenWiXR;
+using Wisor;
 using UnityEditor;
 using UnityEngine;
 
 public class ORBSLAM3ConfigMenuEditor : MonoBehaviour
 {
-    [MenuItem("OpenWiXR/Create ORBSLAM3 Config")]
+    [MenuItem("Wisor/Create ORBSLAM3 Config")]
     public static void CreateORBSLAM3Config()
     {
         // Create a new instance of ORBSLAM3Config

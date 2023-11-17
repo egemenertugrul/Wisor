@@ -1,12 +1,12 @@
-using OpenWiXR.Texturing;
-using OpenWiXR.Tracking;
+using Wisor.Texturing;
+using Wisor.Tracking;
 using UnityEditor;
 using UnityEngine;
 
-namespace OpenWiXR
+namespace Wisor
 {
-    [CustomEditor(typeof(OpenWiXRManager))]
-    public class OpenWiXRManagerEditor : Editor
+    [CustomEditor(typeof(WisorManager))]
+    public class WisorManagerEditor : Editor
     {
         private bool showNetworkSettings = true; 
         private bool showVideoStreamerSettings = true;
@@ -17,9 +17,9 @@ namespace OpenWiXR
             serializedObject.Update();
 
             // -- LOGO
-            Texture2D logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/OpenWiXR/Editor/Images/owxr_small_logo_reddot.png");
+            Texture2D logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Wisor/Editor/Images/wisor_small_logo_reddot.png");
             if(!logoTexture)
-                logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/OpenWiXR/Editor/Images/owxr_small_logo_reddot.png");
+                logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/Wisor/Editor/Images/wisor_small_logo_reddot.png");
 
             if (logoTexture != null)
             {
@@ -82,23 +82,23 @@ namespace OpenWiXR
             EditorUtilities.Separator();
 
             EditorUtilities.PropertyField(serializedObject, "PoseDriverTarget");
-            EditorUtilities.PropertyField(serializedObject, "OpenWiXROpMode");
+            EditorUtilities.PropertyField(serializedObject, "WisorOpMode");
             EditorGUI.indentLevel++;
             
-            SerializedProperty opModeProperty = serializedObject.FindProperty("OpenWiXROpMode");
-            OpenWiXRManager.OpMode opMode = (OpenWiXRManager.OpMode)opModeProperty.enumValueIndex;
+            SerializedProperty opModeProperty = serializedObject.FindProperty("WisorOpMode");
+            WisorManager.OpMode opMode = (WisorManager.OpMode)opModeProperty.enumValueIndex;
 
             SerializedProperty poseDriver = serializedObject.FindProperty("PoseDriver");
 
-            if (opMode == OpenWiXRManager.OpMode.ORIENTATION_ONLY)
+            if (opMode == WisorManager.OpMode.ORIENTATION_ONLY)
             {
                 poseDriver.objectReferenceValue = (IMUPoseDriver)EditorGUILayout.ObjectField("Active Pose Driver", FindAnyObjectByType<IMUPoseDriver>(FindObjectsInactive.Include), typeof(IMUPoseDriver), true);
             }
-            else if (opMode == OpenWiXRManager.OpMode.KEYBOARD_MOUSE)
+            else if (opMode == WisorManager.OpMode.KEYBOARD_MOUSE)
             {
                 poseDriver.objectReferenceValue = (KeyboardMousePoseDriver)EditorGUILayout.ObjectField("Active Pose Driver", FindAnyObjectByType<KeyboardMousePoseDriver>(FindObjectsInactive.Include), typeof(KeyboardMousePoseDriver), true);
             }
-            else if(opMode == OpenWiXRManager.OpMode.SLAM)
+            else if(opMode == WisorManager.OpMode.SLAM)
             {
                 SerializedProperty ORBSLAM3_Settings = serializedObject.FindProperty("ORBSLAM3_Settings");
                 SerializedProperty SLAMTextureSource = serializedObject.FindProperty("SLAMTextureSource");

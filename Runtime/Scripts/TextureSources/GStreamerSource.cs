@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace OpenWiXR.Texturing
+namespace Wisor.Texturing
 {
     public class GStreamerSource : TextureSource
     {
