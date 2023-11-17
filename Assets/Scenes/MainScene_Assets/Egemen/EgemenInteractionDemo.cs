@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OpenWiXR.Demo
+namespace Wisor.Demo
 {
     public class EgemenInteractionDemo : MonoBehaviour
     {

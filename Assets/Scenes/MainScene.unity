@@ -676,7 +676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3643219199647339248, guid: 13df46c101114654994eb1dd89d5d30d, type: 3}
       propertyPath: m_Name
-      value: '[OpenWiXR]'
+      value: '[Wisor]'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

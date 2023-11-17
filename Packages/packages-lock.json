@@ -12,8 +12,8 @@
       },
       "url": "https://package.openupm.com"
     },
-    "com.egemenertugrul.openwixr": {
-      "version": "https://github.com/egemenertugrul/OpenWiXR.git#unity-package",
+    "com.egemenertugrul.Wisor": {
+      "version": "https://github.com/egemenertugrul/Wisor.git#unity-package",
       "depth": 0,
       "source": "git",
       "dependencies": {

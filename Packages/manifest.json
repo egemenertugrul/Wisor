@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.atteneder.gltfast": "6.0.1",
-    "com.egemenertugrul.openwixr": "https://github.com/egemenertugrul/OpenWiXR.git#unity-package",
+    "com.egemenertugrul.Wisor": "https://github.com/egemenertugrul/Wisor.git#unity-package",
     "com.unity.collab-proxy": "2.2.0",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.6",
