@@ -15,8 +15,8 @@ Documentation: [https://wisorxr.com/docs](https://wisorxr.com/docs)
 <hr/>
 
 Active branches:
-- [core](https://github.com/egemenertugrul/wisorxr/tree/core)
-- [renderer](https://github.com/egemenertugrul/wisorxr/tree/renderer)
-- [unity-starter](https://github.com/egemenertugrul/wisorxr/tree/unity-starter)
-- [unity-package](https://github.com/egemenertugrul/wisorxr/tree/unity-package)
-- [unity-development](https://github.com/egemenertugrul/wisorxr/tree/unity-development)
+- [core](https://github.com/egemenertugrul/wisor/tree/core)
+- [renderer](https://github.com/egemenertugrul/wisor/tree/renderer)
+- [unity-starter](https://github.com/egemenertugrul/wisor/tree/unity-starter)
+- [unity-package](https://github.com/egemenertugrul/wisor/tree/unity-package)
+- [unity-development](https://github.com/egemenertugrul/wisor/tree/unity-development)
