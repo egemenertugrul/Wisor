@@ -8,6 +8,7 @@ import numpy as np
 from pathlib import Path
 from queue import Queue
 from enum import Enum
+import inspect
 
 # from wisor.modules.clock import Clock
 
@@ -124,7 +125,9 @@ class Core:
             self.send_method = self.send_remote
             ProcessHelper.stop_process(self.omx_player_process)
             logging.info("Starting omxplayer..")
-            self.omx_player_process = ProcessHelper.start_persistent_command_process(self.omx_cmd)
+            self.omx_player_process = ProcessHelper.start_persistent_command_process(
+                self.omx_cmd
+            )
 
     def on_opmode_change(self, mode: OpMode):
         logging.info(f"OpMode changed: {mode}")
@@ -357,7 +360,9 @@ class Core:
     def start_renderer(self):
         self.stop_renderer()
         if not self.args.disable_renderer:
-            self.renderer_wd = Path(__file__).resolve().parent / "renderer"
+            self.renderer_wd = (
+                Path(os.path.abspath((inspect.stack()[0])[1])).parents[2] / "renderer"
+            )
             self.renderer_full_filepath = self.renderer_wd.joinpath("renderer")
             if not self.renderer_full_filepath.is_file():
                 logging.error(
